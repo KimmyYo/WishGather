@@ -1,9 +1,9 @@
 import React, { useState, useCallback } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, View, Text, Modal } from "react-native";
+import { StyleSheet, Pressable, View, Text, Modal, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import KeyboardOverlay from "../components/KeyboardOverlay";
-import Component1 from "../components/Component1";
+import ProductItem from "../components/PorductItem";
 import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
 
 const OfferingPage4 = () => {
@@ -22,6 +22,8 @@ const OfferingPage4 = () => {
   return (
     <>
       <View style={styles.offeringPage1}>
+
+        {/*footer*/}
         <View style={[styles.footer, styles.menuLayout]}>
           <View style={[styles.menu, styles.menuLayout]}>
             <View style={[styles.homeIconParent, styles.parentFlexBox]}>
@@ -63,11 +65,13 @@ const OfferingPage4 = () => {
             </View>
           </View>
         </View>
+
         <Image
           style={[styles.offeringPage1Child, styles.childLayout]}
           contentFit="cover"
           source={require("../assets/ellipse-3.png")}
         />
+        {/*搜尋欄位，改成可輸入形式*/}
         <Pressable style={styles.searchBar} onPress={openSearchBarContainer}>
           <View style={[styles.searchBarChild, styles.childPosition]} />
           <Text style={[styles.text, styles.textFlexBox]}>搜尋</Text>
@@ -77,54 +81,50 @@ const OfferingPage4 = () => {
             source={require("../assets/search-icon.png")}
           />
         </Pressable>
-        <View style={[styles.parent, styles.parentFlexBox]}>
-          <Pressable
-            style={styles.pressable}
-            onPress={() => navigation.navigate("OfferingPage6")}
-          >
-            <Image
-              style={[styles.child, styles.childPosition]}
-              contentFit="cover"
-              source={require("../assets/rectangle-19.png")}
+
+        {/*此處先以自帶資料顯示，帶連接資料庫後再更動，目前點擊該項目product後會先統一至offeringpage6*/}
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={[styles.parent, styles.parentFlexBox]}>
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-19.png")}
+              title="線上點燈"
             />
-            <View style={[styles.item, styles.childPosition]} />
-            <Text style={[styles.text1, styles.textFlexBox]}>線上點燈</Text>
-          </Pressable>
-          <Component1
-            rectangle19={require("../assets/rectangle-191.png")}
-            prop="金紙香品"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-192.png")}
-            prop="生鮮蔬果"
-            propBackgroundColor="#fff"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-193.png")}
-            prop="精緻糕點"
-            propBackgroundColor="unset"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-194.png")}
-            prop="餅乾糖果"
-            propBackgroundColor="unset"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-195.png")}
-            prop="解渴飲品"
-            propBackgroundColor="unset"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-196.png")}
-            prop="文創周邊"
-            propBackgroundColor="unset"
-            propFontFamily="Inter-Regular"
-          />
-        </View>
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-191.png")}
+              title="金紙香品"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-192.png")}
+              title="生鮮蔬果"
+              backgroundColor="#fff"
+              fontFamily="Roboto-Regular"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-193.png")}
+              title="精緻糕點"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-194.png")}
+              title="餅乾糖果"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-195.png")}
+              title="解渴飲品"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-196.png")}
+              title="文創周邊"
+              fontFamily="Inter-Regular"
+            />
+          </View>
+        </ScrollView>
       </View>
 
       <Modal
@@ -151,7 +151,13 @@ const styles = StyleSheet.create({
   },
   parentFlexBox: {
     flexDirection: "row",
+    flexWrap:"wrap",
     position: "absolute",
+  },
+  scrollViewContent: { 
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   iconLayout: {
     height: 40,
