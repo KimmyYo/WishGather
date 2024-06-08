@@ -34,11 +34,17 @@ const UserPage = () => {
                     source={require("../assets/home-icon1.png")}
                   />
                 </Pressable>
-                <Image
+                <Pressable
                   style={[styles.templeIcon, styles.iconLayout1]}
+                  onPress={() => navigation.navigate("OfferingPage4")}
+                >
+                  <Image
+                  style={[styles.icon, styles.iconLayout1]}
                   contentFit="cover"
                   source={require("../assets/temple-icon.png")}
                 />
+
+                </Pressable>
                 <Pressable
                   style={[styles.templeIcon, styles.iconLayout1]}
                   onPress={() => navigation.navigate("CartPage")}
