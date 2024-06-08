@@ -1,27 +1,23 @@
 import React, { useState, useCallback } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, View, Text, Modal } from "react-native";
+import { StyleSheet, Pressable, View, Text, Modal, ScrollView,KeyboardAvoidingView,Platform, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import KeyboardOverlay from "../components/KeyboardOverlay";
-import Component1 from "../components/Component1";
+
 import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
+import ProductItem from "../components/PouductItem";
 
 const OfferingPage4 = () => {
-  const [searchBarContainerVisible, setSearchBarContainerVisible] =
-    useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
 
-  const openSearchBarContainer = useCallback(() => {
-    setSearchBarContainerVisible(true);
-  }, []);
-
-  const closeSearchBarContainer = useCallback(() => {
-    setSearchBarContainerVisible(false);
-  }, []);
 
   return (
-    <>
+    
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+
       <View style={styles.offeringPage1}>
+
+        {/*footer*/}
         <View style={[styles.footer, styles.menuLayout]}>
           <View style={[styles.menu, styles.menuLayout]}>
             <View style={[styles.homeIconParent, styles.parentFlexBox]}>
@@ -50,6 +46,8 @@ const OfferingPage4 = () => {
                   source={require("../assets/shopping-bag-icon.png")}
                 />
               </Pressable>
+
+
               <Pressable
                 style={[styles.templeIcon, styles.iconLayout]}
                 onPress={() => navigation.navigate("UserPage")}
@@ -63,84 +61,74 @@ const OfferingPage4 = () => {
             </View>
           </View>
         </View>
-        <Image
+        
+        {/* <Image
           style={[styles.offeringPage1Child, styles.childLayout]}
           contentFit="cover"
           source={require("../assets/ellipse-3.png")}
-        />
-        <Pressable style={styles.searchBar} onPress={openSearchBarContainer}>
-          <View style={[styles.searchBarChild, styles.childPosition]} />
-          <Text style={[styles.text, styles.textFlexBox]}>搜尋</Text>
-          <Image
-            style={[styles.searchIcon, styles.childLayout]}
-            contentFit="cover"
-            source={require("../assets/search-icon.png")}
-          />
-        </Pressable>
-        <View style={[styles.parent, styles.parentFlexBox]}>
-          <Pressable
-            style={styles.pressable}
-            onPress={() => navigation.navigate("OfferingPage6")}
-          >
-            <Image
-              style={[styles.child, styles.childPosition]}
-              contentFit="cover"
-              source={require("../assets/rectangle-19.png")}
-            />
-            <View style={[styles.item, styles.childPosition]} />
-            <Text style={[styles.text1, styles.textFlexBox]}>線上點燈</Text>
-          </Pressable>
-          <Component1
-            rectangle19={require("../assets/rectangle-191.png")}
-            prop="金紙香品"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-192.png")}
-            prop="生鮮蔬果"
-            propBackgroundColor="#fff"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-193.png")}
-            prop="精緻糕點"
-            propBackgroundColor="unset"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-194.png")}
-            prop="餅乾糖果"
-            propBackgroundColor="unset"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-195.png")}
-            prop="解渴飲品"
-            propBackgroundColor="unset"
-            propFontFamily="Roboto-Regular"
-          />
-          <Component1
-            rectangle19={require("../assets/rectangle-196.png")}
-            prop="文創周邊"
-            propBackgroundColor="unset"
-            propFontFamily="Inter-Regular"
-          />
-        </View>
-      </View>
+        /> */}
 
-      <Modal
-        animationType="fade"
-        transparent
-        visible={searchBarContainerVisible}
-      >
-        <View style={styles.searchBarContainerOverlay}>
-          <Pressable
-            style={styles.searchBarContainerBg}
-            onPress={closeSearchBarContainer}
-          />
-          <KeyboardOverlay onClose={closeSearchBarContainer} />
+      
+        <View style={styles.searchBar}>
+              <Image
+                style={[styles.searchIcon]}
+                source={require("../assets/search-icon.png")}
+              />
+              <TextInput
+                style={[styles.input, styles.textFlexBox]}
+                placeholder="搜索"
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+              />
         </View>
-      </Modal>
-    </>
+      
+
+        {/*此處先以自帶資料顯示，帶連接資料庫後再更動，目前點擊該項目product後會先統一至offeringpage6*/}
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          <View style={[styles.parent, styles.parentFlexBox]}>
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-19.png")}
+              title="線上點燈"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-191.png")}
+              title="金紙香品"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-192.png")}
+              title="生鮮蔬果"
+              backgroundColor="#fff"
+              fontFamily="Roboto-Regular"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-193.png")}
+              title="精緻糕點"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-194.png")}
+              title="餅乾糖果"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-195.png")}
+              title="解渴飲品"
+            />
+            <ProductItem
+              onPress={() => navigation.navigate("OfferingPage6")}
+              imageSource={require("../assets/rectangle-196.png")}
+              title="文創周邊"
+              fontFamily="Inter-Regular"
+            />
+          </View>
+        </ScrollView>
+      </View>
+    </KeyboardAvoidingView>
+
   );
 };
 
@@ -149,18 +137,20 @@ const styles = StyleSheet.create({
     height: 66,
     position: "absolute",
   },
-  parentFlexBox: {
+  parentFlexBox: { 
     flexDirection: "row",
+    flexWrap: "wrap",
     position: "absolute",
+   
+  },
+  scrollViewContent: { 
+    flexGrow: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
   iconLayout: {
     height: 40,
     width: 40,
-  },
-  childLayout: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-    overflow: "hidden",
   },
   childPosition: {
     left: "0%",
@@ -219,99 +209,47 @@ const styles = StyleSheet.create({
     left: "39.53%",
     position: "absolute",
   },
-  searchBarContainerOverlay: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(113, 113, 113, 0.3)",
+  container: {
+    flex:1,
+    backgroundColor: '#fff',
   },
-  searchBarContainerBg: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    left: 0,
-    top: 0,
-  },
-  searchBarChild: {
-    borderRadius: Border.br_11xl,
-    backgroundColor: Color.colorWhitesmoke_300,
-    top: "0%",
-    height: "100%",
-  },
-  text: {
-    width: "78.95%",
-    left: "17.89%",
-    fontSize: FontSize.size_6xl,
-    fontFamily: FontFamily.interRegular,
-    color: Color.colorDarkgray_100,
-    textAlign: "left",
-    top: "0%",
-    height: "100%",
-  },
+
   searchIcon: {
-    height: "66.67%",
-    width: "10.53%",
-    top: "16.67%",
-    right: "85.53%",
-    bottom: "16.67%",
-    left: "3.95%",
-    position: "absolute",
+    height: 30,
+    width: 30,
   },
+
   searchBar: {
-    height: "6.44%",
-    width: "88.37%",
-    top: "6.97%",
-    right: "5.58%",
-    bottom: "86.59%",
-    left: "6.05%",
-    position: "absolute",
+    display:'flex',
+    flexDirection: 'row',
+    width:'auto',
+    top:'15%',
+    left:'5%',
+    alignItems:'center',
   },
-  child: {
-    borderRadius: Border.br_3xs,
-    top: "0%",
-    height: "100%",
-    maxHeight: "100%",
-    maxWidth: "100%",
-    overflow: "hidden",
+
+  input: {
+    height: 50,
+    width:'80%',
+    flex: 1,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 15,
   },
-  item: {
-    height: "26.69%",
-    top: "73.31%",
-    borderBottomRightRadius: Border.br_3xs,
-    borderBottomLeftRadius: Border.br_3xs,
-    borderStyle: "solid",
-    borderColor: Color.colorLightgray,
-    borderWidth: 2,
-    backgroundColor: Color.colorWhite,
-    bottom: "0%",
-    right: "0%",
-  },
-  text1: {
-    height: "12%",
-    width: "48%",
-    top: "84%",
-    left: "26%",
-    fontSize: FontSize.size_lg,
-    fontFamily: FontFamily.robotoRegular,
-    color: Color.colorBlack,
-    textAlign: "center",
-    justifyContent: "center",
-  },
+  
   pressable: {
     width: 160,
     height: 160,
   },
   parent: {
-    top: 160,
-    left: 44,
-    width: 357,
-    height: 671,
+    left: 40,
+    width: 'auto',
     flexWrap: "wrap",
+    overflow:'hidden',
   },
   offeringPage1: {
     borderRadius: Border.br_21xl,
     flex: 1,
-    height: 932,
     overflow: "hidden",
     width: "100%",
     backgroundColor: Color.colorWhite,
