@@ -2,9 +2,8 @@ import React, { useState, useCallback } from "react";
 import { Image } from "expo-image";
 import { StyleSheet, Pressable, View, Text, Modal, ScrollView,KeyboardAvoidingView,Platform, TextInput } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-
 import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
-import ProductItem from "../components/PouductItem";
+import ProductItem from "../components/ProductItem";
 
 const OfferingPage4 = () => {
   const [searchQuery, setSearchQuery] = useState('');

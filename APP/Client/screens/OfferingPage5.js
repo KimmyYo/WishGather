@@ -235,7 +235,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   textPosition: {
-    top: "12%",
+    top: "5%",
     width: "62.79%",
     height: "66.67%",
     left: "3.72%",
@@ -246,7 +246,7 @@ const styles = StyleSheet.create({
   text41Position: {
     left: 0,
     width: 360,
-    top: 0,
+    top: -10,
     height: 70,
     position: "absolute",
   },
@@ -402,6 +402,7 @@ const styles = StyleSheet.create({
     borderRadius: Border.br_xl,
   },
   text41: {
+    paddingVertical: 10,
     fontSize: FontSize.size_11xl,
     fontWeight: "600",
     fontFamily: FontFamily.interSemiBold,

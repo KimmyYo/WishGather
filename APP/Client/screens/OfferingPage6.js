@@ -1,14 +1,20 @@
 import * as React from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, View, Text } from "react-native";
+import { StyleSheet, Pressable, View, Text, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily, Padding } from "../GlobalStyles";
+import TempleCard from "../components/TempleCard";
 
 const OfferingPage6 = () => {
   const navigation = useNavigation();
 
   return (
     <View style={styles.offeringPage2}>
+
+      {/*標題*/}
+      <Text style={[styles.text24, styles.textFlexBox]}>線上點燈</Text>
+
+      {/*返回鍵*/}
       <Pressable
         style={[styles.goBackButton, styles.iconLayout]}
         onPress={() => navigation.navigate("OfferingPage4")}
@@ -19,157 +25,65 @@ const OfferingPage6 = () => {
           source={require("../assets/go-back-button.png")}
         />
       </Pressable>
-      <View style={styles.offeringPage2Inner}>
+
+      {/*TempleCard onpress會對應到該廟宇的有關線上點燈的商品頁面*/}
+      <ScrollView style={styles.offeringPage2Inner}>
         <View style={[styles.parent, styles.menuPosition]}>
-          <Pressable
-            style={styles.view4Layout}
+          <TempleCard
+            imageSource={require("../assets/rectangle-214.png")}
+            title={`大甲 鎮瀾宮媽祖廟`}
+            distance="222公里"
+            savedStateSource={require("../assets/saved-state1.png")}
             onPress={() => navigation.navigate("OfferingPage5")}
-          >
-            <View style={styles.child} />
-            <Image
-              style={[styles.item, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-214.png")}
-            />
-            <Text style={[styles.text, styles.textFlexBox]}>
-              <Text style={styles.text1}>{`大甲 鎮瀾宮媽祖廟
-`}</Text>
-              <Text style={styles.text2}>222公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state1.png")}
-            />
-          </Pressable>
-          <View style={styles.view4Layout}>
-            <View style={styles.child} />
-            <Image
-              style={[styles.rectangleIcon, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-215.png")}
-            />
-            <Text style={[styles.text3, styles.textFlexBox]}>
-              <Text style={styles.text1}>{`左營 仁濟宮
-`}</Text>
-              <Text style={styles.text2}>11公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon1, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state2.png")}
-            />
-          </View>
-          <View style={styles.view4Layout}>
-            <View style={styles.child} />
-            <Image
-              style={[styles.rectangleIcon, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-216.png")}
-            />
-            <Text style={[styles.text3, styles.textFlexBox]}>
-              <Text style={styles.text7}>{`鳳邑 雷府大將廟
-`}</Text>
-              <Text style={styles.text2}>12公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon1, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state2.png")}
-            />
-          </View>
-          <View style={styles.view4Layout}>
-            <View style={styles.child} />
-            <Image
-              style={[styles.rectangleIcon, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-217.png")}
-            />
-            <Text style={[styles.text3, styles.textFlexBox]}>
-              <Text style={styles.text7}>{`左營 金鑾殿
-`}</Text>
-              <Text style={styles.text2}>12公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon1, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state2.png")}
-            />
-          </View>
-          <View style={styles.view4Layout}>
-            <View style={styles.child} />
-            <Image
-              style={[styles.rectangleIcon, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-218.png")}
-            />
-            <Text style={[styles.text3, styles.textFlexBox]}>
-              <Text style={styles.text7}>{`朝元宮 鐵路媽祖
-`}</Text>
-              <Text style={styles.text2}>8.2公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon1, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state2.png")}
-            />
-          </View>
-          <View style={[styles.view4, styles.view4Layout]}>
-            <View style={styles.child} />
-            <Image
-              style={[styles.rectangleIcon, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-219.png")}
-            />
-            <Text style={[styles.text3, styles.textFlexBox]}>
-              <Text style={styles.text7}>{`東照山 關帝廟
-`}</Text>
-              <Text style={styles.text2}>24公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon1, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state2.png")}
-            />
-          </View>
-          <View style={styles.view4Layout}>
-            <View style={styles.child} />
-            <Image
-              style={[styles.rectangleIcon, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-2110.png")}
-            />
-            <Text style={[styles.text3, styles.textFlexBox]}>
-              <Text style={styles.text19}>{`府城 三山國王廟
-`}</Text>
-              <Text style={styles.text2}>34公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon1, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state2.png")}
-            />
-          </View>
-          <View style={styles.view4Layout}>
-            <View style={styles.child} />
-            <Image
-              style={[styles.item, styles.itemLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-2111.png")}
-            />
-            <Text style={[styles.text, styles.textFlexBox]}>
-              <Text style={styles.text1}>{`車城 福安宮
-`}</Text>
-              <Text style={styles.text2}>82公里</Text>
-            </Text>
-            <Image
-              style={[styles.savedStateIcon, styles.savedIconPosition]}
-              contentFit="cover"
-              source={require("../assets/saved-state1.png")}
-            />
-          </View>
+          />
+          <TempleCard
+            imageSource={require("../assets/rectangle-215.png")}
+            title={`左營 仁濟宮`}
+            distance="11公里"
+            savedStateSource={require("../assets/saved-state2.png")}
+            onPress={() => navigation.navigate("OfferingPage5")}
+          />
+          <TempleCard
+            imageSource={require("../assets/rectangle-216.png")}
+            title={`鳳邑 雷府大將廟`}
+            distance="12公里"
+            savedStateSource={require("../assets/saved-state2.png")}
+            onPress={() => navigation.navigate("OfferingPage5")}
+          />
+          <TempleCard
+            imageSource={require("../assets/rectangle-217.png")}
+            title={`左營 金鑾殿`}
+            distance="12公里"
+            savedStateSource={require("../assets/saved-state2.png")}
+            onPress={() => navigation.navigate("OfferingPage5")}
+          />
+          <TempleCard
+            imageSource={require("../assets/rectangle-218.png")}
+            title={`朝元宮 鐵路媽祖`}
+            distance="8.2公里"
+            savedStateSource={require("../assets/saved-state2.png")}
+          />
+          <TempleCard
+            imageSource={require("../assets/rectangle-219.png")}
+            title={`東照山 關帝廟`}
+            distance="24公里"
+            savedStateSource={require("../assets/saved-state2.png")}
+          />
+          <TempleCard
+            imageSource={require("../assets/rectangle-2110.png")}
+            title={`府城 三山國王廟`}
+            distance="34公里"
+            savedStateSource={require("../assets/saved-state2.png")}
+          />
+          <TempleCard
+            imageSource={require("../assets/rectangle-2111.png")}
+            title={`車城 福安宮`}
+            distance="82公里"
+            savedStateSource={require("../assets/saved-state1.png")}
+          />
         </View>
-      </View>
+      </ScrollView>
+
       <View style={[styles.footer, styles.menuLayout]}>
         <View style={[styles.menu, styles.menuLayout]}>
           <View style={styles.homeIconParent}>
@@ -211,12 +125,13 @@ const OfferingPage6 = () => {
           </View>
         </View>
       </View>
+
       <Image
         style={[styles.offeringPage2Child, styles.itemLayout]}
         contentFit="cover"
         source={require("../assets/ellipse-3.png")}
       />
-      <Text style={[styles.text24, styles.textFlexBox]}>線上點燈</Text>
+      
     </View>
   );
 };
@@ -262,8 +177,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   goBackButton: {
-    left: 23,
-    top: 80,
+    left: '5%',
+    top: '6%',
+    width: 40,
+    height: 40,
     position: "absolute",
   },
   child: {
@@ -402,7 +319,7 @@ const styles = StyleSheet.create({
     left: "39.53%",
   },
   text24: {
-    top: 68,
+    top: '6%',
     left: 70,
     fontSize: FontSize.size_11xl,
     fontWeight: "600",
