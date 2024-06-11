@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Text, StyleSheet, View, Pressable } from "react-native";
+import { Text, StyleSheet, View  ,ScrollView, Pressable } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
@@ -10,7 +10,28 @@ const UserPage2 = () => {
   return (
     <View style={styles.userPage4}>
       <View style={styles.applicationSoftwareLicenseAWrapper}>
-        <Text style={[styles.applicationSoftwareLicense, styles.textTypo]}>{`
+      
+        {/*返回鍵*/}
+        <Pressable
+          style={styles.goBackButton}
+          onPress={() => navigation.navigate("UserPage")}
+        >
+          <Image
+            style={styles.icon}
+            contentFit="cover"
+            source={require("../assets/go-back-button.png")}
+          />
+        </Pressable>
+
+        {/*標題*/}
+        <Text style={[styles.title, styles.textTypo]}>服務條款</Text>
+
+        {/*服務條款文字*/}
+        <ScrollView style={styles.scrollbox}>
+          <Text style={[styles.applicationSoftwareLicense]}>{`
+
+
+
 
 
 
@@ -59,68 +80,64 @@ If User has any questions about this Agreement, User may contact Developer at [C
 11. Acceptance
 
 BY DOWNLOADING, INSTALLING, OR USING THE APPLICATION, USER ACKNOWLEDGES THAT USER HAS READ, UNDERSTOOD, AND AGREES TO `}</Text>
+  </ScrollView>
       </View>
-      <Text style={[styles.text, styles.textTypo]}>服務條款</Text>
-      <Pressable
-        style={styles.goBackButton}
-        onPress={() => navigation.navigate("UserPage")}
-      >
-        <Image
-          style={styles.icon}
-          contentFit="cover"
-          source={require("../assets/go-back-button.png")}
-        />
-      </Pressable>
+  
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   textTypo: {
-    textAlign: "left",
-    color: Color.colorBlack,
+    display: "flex",
     fontFamily: FontFamily.interRegular,
+    alignItems: "center",
     position: "absolute",
   },
+
   applicationSoftwareLicense: {
     top: -95,
-    left: 12,
     fontSize: 10,
     height: 844,
-    width: 364,
+    width: '100%',
   },
   applicationSoftwareLicenseAWrapper: {
-    top: 119,
+    top: '119',
     left: 33,
     height: 806,
     width: 364,
     position: "absolute",
   },
-  text: {
-    top: 48,
-    left: 155,
-    fontSize: FontSize.size_11xl,
-    display: "flex",
-    alignItems: "center",
+  title: {
+    top: '7%',
+    left: '33%',
+    fontSize: 30,
+    textAlign: "center",
     width: 120,
     height: 77,
   },
+  
   icon: {
     height: "100%",
     width: "100%",
   },
-  goBackButton: {
-    left: 20,
-    top: 28,
+  goBackButton: {  
+    top: '5%',
     width: 40,
     height: 40,
     position: "absolute",
   },
+  scrollbox:{
+    top:'15%',
+    width:'auto',
+    height:'70%',
+    paddingHorizontal:10,
+
+  },
   userPage4: {
-    borderRadius: Border.br_21xl,
     backgroundColor: Color.colorGray_100,
     flex: 1,
-    height: 932,
+    height: 'auto',
     overflow: "hidden",
     width: "100%",
   },

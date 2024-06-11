@@ -398,6 +398,7 @@ const styles = StyleSheet.create({
     left: 0,
   },
   text38: {
+    paddingVertical:10,
     fontSize: FontSize.size_11xl,
     color: Color.colorWhite,
     textAlign: "center",
