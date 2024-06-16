@@ -1,3 +1,5 @@
+{/*點擊廟宇後顯示該廟宇提供之商品頁面後按下前往結帳之頁面*/}
+
 import React, { useState, useCallback } from "react";
 import { StyleSheet, View, Text, Pressable, Modal } from "react-native";
 import { Image } from "expo-image";
@@ -30,6 +32,12 @@ const OfferingPage = () => {
   return (
     <>
       <View style={styles.offeringPage4}>
+        {/*此頁標題 : 訂單*/}
+        <Text style={[styles.text_title]}> 訂單</Text>
+
+         {/*宮廟名稱*/}
+        <Text style={[styles.textTypo, styles.text_temple_name]}> 大甲鎮瀾宮媽祖廟</Text>
+        
         <View style={[styles.view, styles.viewLayout]}>
           <View style={[styles.child, styles.childPosition]} />
           <Image
@@ -77,7 +85,7 @@ const OfferingPage = () => {
             source={require("../assets/cross-icon.png")}
           />
         </Pressable>
-        <Text style={[styles.text7, styles.textTypo1]}> 訂單</Text>
+        
         <Pressable
           style={[styles.confirmOrder, styles.confirmLayout]}
           onPress={() => navigation.navigate("OfferingPage1")}
@@ -112,10 +120,7 @@ const OfferingPage = () => {
           <Text style={[styles.text12, styles.textTypo]}>新增商品</Text>
         </Pressable>
         <Text style={[styles.text13, styles.textFlexBox1]}>
-          <Text style={styles.txt}>
-            <Text style={styles.textTypo1}>{`  `}</Text>
-            <Text style={styles.textTypo}> 大甲 鎮瀾宮媽祖廟</Text>
-          </Text>
+          
         </Text>
         <Pressable
           style={[styles.mageedit, styles.mageeditLayout]}
@@ -201,10 +206,6 @@ const styles = StyleSheet.create({
     width: 247,
     fontFamily: FontFamily.interRegular,
     left: 128,
-  },
-  textTypo1: {
-    fontFamily: FontFamily.interSemiBold,
-    fontWeight: "600",
   },
   confirmLayout: {
     height: 70,
@@ -295,19 +296,19 @@ const styles = StyleSheet.create({
     height: 30,
     position: "absolute",
   },
-  text7: {
-    top: 51,
-    fontSize: FontSize.size_16xl,
-    height: 80,
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    color: Color.colorBlack,
-    position: "absolute",
+  text_title: {
+    top: '7%',
+    left: '3%',
     width: 430,
-    left: 0,
+    height: 80,
+    fontSize: FontSize.size_16xl,
     fontFamily: FontFamily.interSemiBold,
     fontWeight: "600",
+    color: Color.colorDimgray_200,
+    display: "flex",
+    alignItems: "center",
+    textAlign: "left",
+    position: "absolute",
   },
   confirmOrderChild: {
     borderRadius: Border.br_xl,
@@ -373,12 +374,14 @@ const styles = StyleSheet.create({
     left: 281,
     height: 40,
   },
-  text13: {
-    top: 126,
-    left: -4,
+  //宮廟名稱
+  text_temple_name: {
+    top: '15%',
+    left: '4%',
     fontSize: FontSize.size_11xl,
-    width: 430,
+    width: 'auto',
   },
+
   mageeditIconOverlay: {
     flex: 1,
     alignItems: "center",
