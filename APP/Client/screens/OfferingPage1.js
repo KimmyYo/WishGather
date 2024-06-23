@@ -87,15 +87,15 @@ const OfferingPage1 = () => {
       </Pressable>
       <Text style={[styles.text9, styles.textTypo]}> 捐贈選擇</Text>
       <Pressable
-        style={[styles.confirmOrder, styles.confirmLayout]}
+        style={[styles.goCheckoutButton]}
         onPress={() => navigation.navigate("OfferingPage2")}
       >
         <Image
-          style={[styles.confirmOrderChild, styles.confirmLayout]}
+          style={[styles.checkoutImage]}
           contentFit="cover"
           source={require("../assets/rectangle-92.png")}
         />
-        <Text style={[styles.text10, styles.confirmLayout]}>送出訂單</Text>
+        <Text style={[styles.checkoutText]}>送出訂單</Text>
       </Pressable>
     </View>
   );
@@ -278,6 +278,26 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     width: "100%",
   },
+  goCheckoutButton: {
+    top: '90%',
+    left: '8%',
+    width: 360,
+    height: 70,
+    position: "absolute",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  checkoutImage: {
+    ...StyleSheet.absoluteFillObject,
+    borderRadius: Border.br_xl,
+  },
+  checkoutText: {
+    position: "absolute",
+    fontSize: FontSize.size_11xl,
+    fontWeight: "600",
+    fontFamily: FontFamily.interSemiBold,
+    color: Color.colorWhite,
+  }
 });
 
 export default OfferingPage1;

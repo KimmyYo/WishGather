@@ -1,4 +1,5 @@
 import * as React from "react";
+import { useState } from "react";
 import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
@@ -12,8 +13,17 @@ const OfferingPage5 = () => {
   const Category = ({ label }) => (
     <View style={[styles.categoryContainer, styles.shadowBox]}>
       <Text style={styles.categoryText}>{label}</Text>
-    </View>
-  );
+    </View>);
+
+  const [selectedOfferings, setSelectedOfferings] = useState([]);
+
+  const handleSelectOffering = (offering) => {
+    setSelectedOfferings((prevOfferings) => [...prevOfferings, offering]);
+  };
+
+  const handleCheckout = () => {
+    navigation.navigate("OfferingPage", { selectedOfferings });
+  };
 
   return (
     <View style={styles.container}>
@@ -54,40 +64,47 @@ const OfferingPage5 = () => {
           title="祈福燈"
           price="$800"
           description="請於備註填寫祈福對象資訊"
+          onSelect={() => handleSelectOffering({ title: "祈福燈", price: 800 })}
         />
         <OfferingItem
           imageSource={require("../assets/rectangle-43.png")}
           title="光明燈"
           price="$1000"
           description="請於備註填寫祈福對象資訊"
+          onSelect={() => handleSelectOffering({ title: "光明燈", price: 1000 })}
         />
         <OfferingItem
           imageSource={require("../assets/rectangle-44.png")}
           title="太歲燈"
           price="$1500"
           description="請於備註填寫祈福對象資訊"
+          onSelect={() => handleSelectOffering({ title: "太歲燈", price: 1500 })}
         />
         <OfferingItem
           imageSource={require("../assets/rectangle-45.png")}
           title="媽祖燈"
           price="$1500"
           description="請於備註填寫祈福對象資訊"
+          onSelect={() => handleSelectOffering({ title: "媽祖燈", price: 1500 })}
         />
         <Text style={styles.sectionTitle}>文創商品</Text>
         <OfferingItem
           imageSource={require("../assets/rectangle-46.png")}
           title="開運吊飾"
           price="$120"
+          onSelect={() => handleSelectOffering({ title: "開運吊飾", price: 120 })}
         />
         <OfferingItem
           imageSource={require("../assets/rectangle-47.png")}
           title="符令壓克力鑰匙圈"
           price="$100"
+          onSelect={() => handleSelectOffering({ title: "符令壓克力鑰匙圈", price: 100 })}
         />
         <OfferingItem
           imageSource={require("../assets/rectangle-48.png")}
           title="好運公仔五入組"
           price="$1500"
+          onSelect={() => handleSelectOffering({ title: "好運公仔五入組", price: 1500 })}
         />
       </ScrollView>
       

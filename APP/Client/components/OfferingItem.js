@@ -1,30 +1,37 @@
-{/*點選宮廟，會顯示該宮廟提供之商品頁面中的商品Components*/}
-
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
+import Counter from "./Counter";  // 引入 Counter 組件
+
 
 const OfferingItem = ({ imageSource, title, price, description }) => {
+  const [quantity, setQuantity] = useState(0);
+
+  const handleIncrease = () => setQuantity(quantity + 1);
+  const handleDecrease = () => {
+    if (quantity > 0) {
+      setQuantity(quantity - 1);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <View style={[styles.inner, styles.childPosition]} />
-      <Image
-        style={[styles.counterIcon, styles.iconLayout]}
-        contentFit="cover"
-        source={require("../assets/counter3.png")}
-      />
       <Image
         style={[styles.rectangleIcon, styles.iconLayout]}
         contentFit="cover"
         source={imageSource}
       />
-      <Text style={[styles.text, styles.textPosition]}>
+      <View style={styles.textContainer}>
         <Text style={styles.textTypo}>
           <Text style={styles.title}>{`${title} `}</Text>
           <Text style={styles.price}>{`${price}\n`}</Text>
         </Text>
         {description && <Text style={styles.description}>{description}</Text>}
-      </Text>
+        <View style={styles.counterContainer}>
+          <Counter quantity={quantity} onIncrease={handleIncrease} onDecrease={handleDecrease} />
+        </View>
+      </View>
     </View>
   );
 };
@@ -54,14 +61,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     overflow: "hidden",
   },
-  counterIcon: {
-    height: "26.67%",
-    width: "32.56%",
-    top: "57.33%",
-    right: "63.72%",
-    bottom: "16%",
-    left: "3.72%",
-  },
   rectangleIcon: {
     height: "80%",
     width: "27.91%",
@@ -71,14 +70,11 @@ const styles = StyleSheet.create({
     left: "67.91%",
     borderRadius: Border.br_8xs,
   },
-  textPosition: {
+  textContainer: {
+    position: 'absolute',
     top: "5%",
-    width: "62.79%",
-    height: "66.67%",
     left: "3.72%",
-    textAlign: "left",
-    color: Color.colorBlack,
-    position: "absolute",
+    width: "62.79%",
   },
   textTypo: {
     fontFamily: FontFamily.interMedium,
@@ -92,6 +88,10 @@ const styles = StyleSheet.create({
   },
   description: {
     fontSize: FontSize.size_mini,
+    marginBottom: 5,  // 添加 marginBottom 來確保 description 和 counter 之間有間距
+  },
+  counterContainer: {
+    marginBottom: 10,
   },
 });
 
