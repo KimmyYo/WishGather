@@ -1,13 +1,27 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, Text, View } from "react-native";
+import axios from 'axios';
+import { StyleSheet, Pressable, Text, View ,ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import TabBar from "../components/TabBar";
 import Component from "../components/Component1";
 import { FontSize, FontFamily, Color, Border } from "../GlobalStyles";
 
+
 const UserPage21 = () => {
   const navigation = useNavigation();
+  const [temples, setTemples] = useState([]);
+
+  useEffect(() => {
+    
+    axios.get('http://192.168.1.111:3000/temples')
+      .then(response => {
+        setTemples(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the temples!!!', error);
+      });
+  }, []);
 
   return (
     <View style={styles.userPage21}>
@@ -30,7 +44,7 @@ const UserPage21 = () => {
       <Text style={styles.text}>收藏清單</Text>
       
       {/* 連接資料庫後，顯示收藏宮廟的component增加處 */}
-      <Component
+      {/* <Component
         rectangle21={require("../assets/rectangle-213.png")}
         prop={`大甲 鎮瀾宮媽祖廟
 `}
@@ -39,7 +53,23 @@ const UserPage21 = () => {
         propTop={200}
         propLeft={20}
         onPressablePress={() => navigation.navigate("OfferingPage5")}
-      />
+      /> */}
+<ScrollView>
+  {temples.map((temple, index) => (
+    <Component
+      key={index}
+      rectangle21={{ uri: temple.IMAGE || 'default_image_path.png' }}
+      prop={temple.NAME}
+      prop1={temple.ADDRESS}
+      savedStateIcon
+      propTop={200 + index * 150} // 调整间距
+      propLeft={20}
+      onPressablePress={() => navigation.navigate("OfferingPage5")}
+    />
+  ))}
+</ScrollView>
+
+
     </View>
   );
 };
