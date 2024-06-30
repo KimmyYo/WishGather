@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, ScrollView, Text, Pressable, Modal } from "react-native";
+import { StyleSheet, View, ScrollView, Text, TextInput, KeyboardAvoidingView, Platform, Pressable, Modal } from "react-native";
 import { Image } from "expo-image";
 import KeyboardOverlay from "../components/KeyboardOverlay";
 import AddressOverlay from "../components/AddressOverlay";
@@ -12,6 +12,7 @@ const HomePage = () => {
   const [locationIconVisible, setLocationIconVisible] = useState(false);
   const [text1Visible, setText1Visible] = useState(false);
   const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
+  const [searchText, setSearchText] = useState(""); {/* 紀錄搜尋內容 */}
   const navigation = useNavigation();
 
   const openSearchBarContainer = useCallback(() => {
@@ -48,42 +49,15 @@ const HomePage = () => {
 
   return (
     <>
-      <View style={styles.homePage}>
-        
-        {/* 宮廟搜尋欄位 輸入>>連接資料庫查詢>>顯示宮廟在ScrollView那裏 */}
-        <Pressable style={[styles.searchBar, styles.searchLayout]} onPress={openSearchBarContainer}>
-          <View style={styles.searchBarChild} />
-          <Text style={styles.text}>搜尋</Text>
-          <Image
-            style={styles.searchIcon}
-            contentFit="cover"
-            source={require("../assets/search-icon.png")}
-          />
-        </Pressable>
+      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}></KeyboardAvoidingView>
 
-        {/* footer */}
-        <View style={styles.footer}>
-          <View style={styles.menu}>
-            <View style={styles.homeIconParent}>
-              <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/home-icon.png")} />
-              <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/temple-icon.png")} />
-              <Pressable onPress={() => navigation.navigate("CartPage")}>
-                <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/shopping-bag-icon.png")} />
-              </Pressable>
-              <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/user-icon.png")} />
-            </View>
-          </View>
-          <Image
-            style={styles.footerChild}
-            contentFit="cover"
-            source={require("../assets/ellipse-3.png")}
-          />
-        </View>
+       <View style={styles.homePage} keyboardShouldPersistTaps="handled">
 
         {/* 地點設定欄位 */}
         <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
           <Image style={styles.icon} contentFit="cover" source={require("../assets/location-icon.png")} />
         </Pressable>
+
         <Pressable style={styles.pressable} onPress={openText1}>
           <Text style={styles.text1}>
             <Text style={styles.txt}>
@@ -93,9 +67,18 @@ const HomePage = () => {
             </Text>
           </Text>
         </Pressable>
+
         <Pressable style={styles.mageedit} onPress={openMageeditIcon}>
           <Image style={styles.icon} contentFit="cover" source={require("../assets/mageedit.png")} />
         </Pressable>
+
+        {/* 搜尋欄位 */}
+        <View style={[styles.inputContainer, styles.searchLayout] }>
+              <TextInput placeholder="搜尋" style={styles.input}
+                value={searchText}
+                onChangeText={setSearchText} />
+        </View>
+      
 
         {/* 顯示距離最近的宮廟處，連接資料庫(?) */}
         <ScrollView contentContainerStyle={styles.activityContainer}>
@@ -153,17 +136,78 @@ const HomePage = () => {
           <AddressOverlay onClose={closeMageeditIcon} />
         </View>
       </Modal>
+
+      {/* footer */}
+      <View style={[styles.footer, styles.menuLayout]}>
+        <View style={[styles.menu, styles.menuLayout]}>
+          <View style={styles.homeIconParent}>
+            <Pressable
+              style={styles.iconLayout}
+              onPress={() => navigation.navigate("HomePage")}
+            >
+              <Image
+                style={styles.icon}
+                contentFit="cover"
+                source={require("../assets/home-icon.png")}
+              />
+            </Pressable>
+            <Pressable
+              style={[styles.templeIcon, styles.iconLayout]}
+              onPress={() => navigation.navigate("OfferingPage4")}
+            >
+              <Image
+                style={styles.icon}
+                contentFit="cover"
+                source={require("../assets/temple-icon.png")}
+              />
+            </Pressable>
+
+            <Pressable
+              style={[styles.templeIcon, styles.iconLayout]}
+              onPress={() => navigation.navigate("CartPage")}
+            >
+              <Image
+              style={[styles.icon, styles.iconLayout]}
+              contentFit="cover"
+              source={require("../assets/shopping-bag-icon.png")}
+            />
+            </Pressable>
+
+            <Pressable
+              style={[styles.templeIcon, styles.iconLayout]}
+              onPress={() => navigation.navigate("UserPage")}
+            >
+              <Image
+                style={styles.icon}
+                contentFit="cover"
+                source={require("../assets/user-icon.png")}
+              />
+            </Pressable>
+          </View>
+        </View>
+      </View>
     </>
   );
 };
 
 const styles = StyleSheet.create({
+  
+  pressable:{
+    width:'100%',
+  },
   searchLayout: {
     height: 60,
     width: 380,
     position: "absolute",
     top: 127,
     left: 25,
+  },
+  input: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 5,
+    zIndex:3,
   },
   text: {
     left: 68,
@@ -174,24 +218,46 @@ const styles = StyleSheet.create({
     top: 0,
     position: "absolute",
   },
-  searchIcon: {
-    top: 10,
-    left: 15,
+ 
+  menu: {
+    width: 355,
+    left: 0,
+    top: 0,
+  },
+  menuLayout: {
+    height: 66,
     position: "absolute",
   },
-  searchBarChild: {
-    borderRadius: Border.br_11xl,
-    backgroundColor: Color.colorWhitesmoke_300,
-    height: 60,
-    width: 380,
+  iconLayout: {
+    height: 40,
+    width: 40,
+  },
+  templeIcon: {
+    marginLeft: 41,
+  },
+  menuPosition: {
+    left: 0,
+    top: 0,
+  },
+  itemLayout: {
+    maxHeight: "100%",
+    maxWidth: "100%",
     position: "absolute",
+    overflow: "hidden",
   },
   footer: {
-    height: 66,
-    width: 355,
-    position: "absolute",
     top: 831,
     left: 38,
+    shadowColor: "rgba(0, 0, 0, 0.25)",
+    shadowOffset: {
+      width: 0,
+      height: 20,
+    },
+    shadowRadius: 30,
+    elevation: 30,
+    shadowOpacity: 1,
+    width: 383,
+    zIndex: 20,
   },
   homeIconParent: {
     marginTop: -33,
@@ -214,6 +280,10 @@ const styles = StyleSheet.create({
     bottom: "4.55%",
     left: "14.37%",
   },
+  icon:{
+    width:'100%',
+    height:'100%',
+  },
   locationIcon: {
     left: 26,
     top: 65,
@@ -221,16 +291,15 @@ const styles = StyleSheet.create({
     height: 30,
     position: "absolute",
   },
-  pressable: {
-    left: 61,
-    top: 73,
-    position: "absolute",
-  },
   text1: {
     color: "#898989",
     width: 321,
-    fontSize: FontSize.size_xl,
     height: 30,
+    fontSize: FontSize.size_xl,
+    textAlign: 'center',
+    position:'absolute',
+    top: 70,
+    left:'15%'
   },
   txt: {
     width: "100%",
