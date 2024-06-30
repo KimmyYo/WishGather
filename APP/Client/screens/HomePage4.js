@@ -1,3 +1,4 @@
+{/* 與OfferingPage3.js 同為加載中頁面 */}
 import * as React from "react";
 import { Image } from "expo-image";
 import { StyleSheet, Text, View } from "react-native";

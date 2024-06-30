@@ -1,15 +1,14 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, Text, Pressable, Modal } from "react-native";
+import { StyleSheet, View, ScrollView, Text, Pressable, Modal } from "react-native";
 import { Image } from "expo-image";
 import KeyboardOverlay from "../components/KeyboardOverlay";
-import { useNavigation } from "@react-navigation/native";
 import AddressOverlay from "../components/AddressOverlay";
-import Activity from "../components/Activity";
+import TempleDistance from "../components/TempleDistance";
+import { useNavigation } from "@react-navigation/native";
 import { Border, Color, FontSize, FontFamily, Padding } from "../GlobalStyles";
 
 const HomePage = () => {
-  const [searchBarContainerVisible, setSearchBarContainerVisible] =
-    useState(false);
+  const [searchBarContainerVisible, setSearchBarContainerVisible] = useState(false);
   const [locationIconVisible, setLocationIconVisible] = useState(false);
   const [text1Visible, setText1Visible] = useState(false);
   const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
@@ -49,69 +48,44 @@ const HomePage = () => {
 
   return (
     <>
-      <View style={styles.homePage1}>
-        <Pressable
-          style={[styles.searchBar, styles.searchLayout]}
-          onPress={openSearchBarContainer}
-        >
-          <View style={[styles.searchBarChild, styles.menuPosition]} />
-          <Text style={[styles.text, styles.textFlexBox]}>搜尋</Text>
+      <View style={styles.homePage}>
+        
+        {/* 宮廟搜尋欄位 輸入>>連接資料庫查詢>>顯示宮廟在ScrollView那裏 */}
+        <Pressable style={[styles.searchBar, styles.searchLayout]} onPress={openSearchBarContainer}>
+          <View style={styles.searchBarChild} />
+          <Text style={styles.text}>搜尋</Text>
           <Image
-            style={[styles.searchIcon, styles.iconLayout]}
+            style={styles.searchIcon}
             contentFit="cover"
             source={require("../assets/search-icon.png")}
           />
         </Pressable>
-        <View style={[styles.footer, styles.menuLayout]}>
-          <View style={[styles.footer1, styles.footer1Position]}>
-            <View style={[styles.menu, styles.menuLayout]}>
-              <View style={styles.homeIconParent}>
-                <Image
-                  style={styles.iconLayout}
-                  contentFit="cover"
-                  source={require("../assets/home-icon.png")}
-                />
-                <Image
-                  style={[styles.templeIcon, styles.iconLayout]}
-                  contentFit="cover"
-                  source={require("../assets/temple-icon.png")}
-                />
-                <Pressable
-                  style={[styles.templeIcon, styles.iconLayout]}
-                  onPress={() => navigation.navigate("CartPage")}
-                >
-                  <Image
-                    style={styles.icon}
-                    contentFit="cover"
-                    source={require("../assets/shopping-bag-icon.png")}
-                  />
-                </Pressable>
-                <Image
-                  style={[styles.templeIcon, styles.iconLayout]}
-                  contentFit="cover"
-                  source={require("../assets/user-icon.png")}
-                />
-              </View>
+
+        {/* footer */}
+        <View style={styles.footer}>
+          <View style={styles.menu}>
+            <View style={styles.homeIconParent}>
+              <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/home-icon.png")} />
+              <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/temple-icon.png")} />
+              <Pressable onPress={() => navigation.navigate("CartPage")}>
+                <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/shopping-bag-icon.png")} />
+              </Pressable>
+              <Image style={styles.iconLayout} contentFit="cover" source={require("../assets/user-icon.png")} />
             </View>
           </View>
           <Image
-            style={[styles.footerChild, styles.childLayout]}
+            style={styles.footerChild}
             contentFit="cover"
             source={require("../assets/ellipse-3.png")}
           />
         </View>
+
+        {/* 地點設定欄位 */}
         <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
-          <Image
-            style={styles.icon}
-            contentFit="cover"
-            source={require("../assets/location-icon.png")}
-          />
+          <Image style={styles.icon} contentFit="cover" source={require("../assets/location-icon.png")} />
         </Pressable>
-        <Pressable
-          style={[styles.pressable, styles.mageeditPosition]}
-          onPress={openText1}
-        >
-          <Text style={[styles.text1, styles.textFlexBox]}>
+        <Pressable style={styles.pressable} onPress={openText1}>
+          <Text style={styles.text1}>
             <Text style={styles.txt}>
               <Text style={styles.text2}>當前位置: 高雄市鼓山區蓮海路</Text>
               <Text style={styles.text3}>70</Text>
@@ -119,113 +93,63 @@ const HomePage = () => {
             </Text>
           </Text>
         </Pressable>
-        <Pressable
-          style={[styles.mageedit, styles.mageeditPosition]}
-          onPress={openMageeditIcon}
-        >
-          <Image
-            style={styles.icon}
-            contentFit="cover"
-            source={require("../assets/mageedit.png")}
-          />
+        <Pressable style={styles.mageedit} onPress={openMageeditIcon}>
+          <Image style={styles.icon} contentFit="cover" source={require("../assets/mageedit.png")} />
         </Pressable>
-        <View style={styles.activity1Parent}>
-          <Pressable
-            style={styles.activityLayout}
+
+        {/* 顯示距離最近的宮廟處，連接資料庫(?) */}
+        <ScrollView contentContainerStyle={styles.activityContainer}>
+          <TempleDistance
+            imageSource={require("../assets/rectangle-2.png")}
+            description="左營仁濟宮 燈花供養祈福"
+            distance="11公里"
             onPress={() => navigation.navigate("HomePage1")}
-          >
-            <Image
-              style={[styles.locationIcon1, styles.childLayout]}
-              contentFit="cover"
-              source={require("../assets/location-icon1.png")}
-            />
-            <Image
-              style={[styles.activity1Child, styles.childLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-2.png")}
-            />
-            <Text style={[styles.text5, styles.textFlexBox]}>
-              <Text style={styles.txt}>
-                <Text style={styles.text6}>
-                  <Text
-                    style={styles.text7}
-                  >{`左營仁濟宮 燈花供養祈福           `}</Text>
-                  <Text style={styles.text8}>{` `}</Text>
-                </Text>
-                <Text style={styles.text8}>
-                  <Text style={styles.text10}>11公里</Text>
-                </Text>
-              </Text>
-            </Text>
-          </Pressable>
-          <Activity
-            rectangle2={require("../assets/rectangle-21.png")}
-            prop="鳳邑雷府大將廟 犒軍儀式          "
           />
-          <Activity
-            rectangle2={require("../assets/rectangle-22.png")}
-            prop="左營金鑾殿 工地動土科儀          "
+          <TempleDistance
+            imageSource={require("../assets/rectangle-21.png")}
+            description="鳳邑雷府大將廟 犒軍儀式"
+            distance=""
+            onPress={() => navigation.navigate("HomePage1")}
           />
-          <View style={[styles.activity5, styles.activityLayout]}>
-            <Image
-              style={[styles.locationIcon1, styles.childLayout]}
-              contentFit="cover"
-              source={require("../assets/location-icon1.png")}
-            />
-            <Image
-              style={[styles.activity1Child, styles.childLayout]}
-              contentFit="cover"
-              source={require("../assets/rectangle-2.png")}
-            />
-            <Text style={[styles.text5, styles.textFlexBox]}>
-              <Text style={styles.txt}>
-                <Text
-                  style={styles.text12}
-                >{`府城三山國王廟 巾山國王聖壽   `}</Text>
-                <Text style={styles.text13}>34公里</Text>
-              </Text>
-            </Text>
-          </View>
-        </View>
+          <TempleDistance
+            imageSource={require("../assets/rectangle-22.png")}
+            description="左營金鑾殿 工地動土科儀"
+            distance=""
+            onPress={() => navigation.navigate("HomePage1")}
+          />
+          <TempleDistance
+            imageSource={require("../assets/rectangle-2.png")}
+            description="府城三山國王廟 巾山國王聖壽"
+            distance="34公里"
+            onPress={() => navigation.navigate("HomePage1")}
+          />
+        </ScrollView>
       </View>
 
-      <Modal
-        animationType="fade"
-        transparent
-        visible={searchBarContainerVisible}
-      >
-        <View style={styles.searchBarContainerOverlay}>
-          <Pressable
-            style={styles.searchBarContainerBg}
-            onPress={closeSearchBarContainer}
-          />
+      <Modal animationType="fade" transparent visible={searchBarContainerVisible}>
+        <View style={styles.overlay}>
+          <Pressable style={styles.overlayBg} onPress={closeSearchBarContainer} />
           <KeyboardOverlay onClose={closeSearchBarContainer} />
         </View>
       </Modal>
 
       <Modal animationType="fade" transparent visible={locationIconVisible}>
-        <View style={styles.locationIconOverlay}>
-          <Pressable
-            style={styles.locationIconBg}
-            onPress={closeLocationIcon}
-          />
+        <View style={styles.overlay}>
+          <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />
           <AddressOverlay onClose={closeLocationIcon} />
         </View>
       </Modal>
 
       <Modal animationType="fade" transparent visible={text1Visible}>
-        <View style={styles.text1Overlay}>
-          <Pressable style={styles.text1Bg} onPress={closeText1} />
+        <View style={styles.overlay}>
+          <Pressable style={styles.overlayBg} onPress={closeText1} />
           <AddressOverlay onClose={closeText1} />
         </View>
       </Modal>
 
       <Modal animationType="fade" transparent visible={mageeditIconVisible}>
-        <View style={styles.mageeditIconOverlay}>
-          <Pressable
-            style={styles.mageeditIconBg}
-            onPress={closeMageeditIcon}
-          />
+        <View style={styles.overlay}>
+          <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
           <AddressOverlay onClose={closeMageeditIcon} />
         </View>
       </Modal>
@@ -238,55 +162,22 @@ const styles = StyleSheet.create({
     height: 60,
     width: 380,
     position: "absolute",
+    top: 127,
+    left: 25,
   },
-  menuPosition: {
-    left: 0,
+  text: {
+    left: 68,
+    fontSize: FontSize.size_6xl,
+    color: Color.colorDarkgray_100,
+    width: 300,
+    fontFamily: FontFamily.interRegular,
     top: 0,
-  },
-  textFlexBox: {
-    display: "flex",
-    textAlign: "left",
-    alignItems: "center",
-  },
-  iconLayout: {
-    height: 40,
-    width: 40,
-  },
-  menuLayout: {
-    height: 66,
-    width: 355,
     position: "absolute",
   },
-  footer1Position: {
-    left: "0%",
-    top: "0%",
-  },
-  childLayout: {
-    maxHeight: "100%",
-    maxWidth: "100%",
+  searchIcon: {
+    top: 10,
+    left: 15,
     position: "absolute",
-    overflow: "hidden",
-  },
-  mageeditPosition: {
-    top: 73,
-    position: "absolute",
-  },
-  activityLayout: {
-    height: 199,
-    width: 380,
-  },
-  searchBarContainerOverlay: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(113, 113, 113, 0.3)",
-  },
-  searchBarContainerBg: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    left: 0,
-    top: 0,
   },
   searchBarChild: {
     borderRadius: Border.br_11xl,
@@ -295,34 +186,12 @@ const styles = StyleSheet.create({
     width: 380,
     position: "absolute",
   },
-  text: {
-    left: 68,
-    fontSize: FontSize.size_6xl,
-    color: Color.colorDarkgray_100,
-    width: 300,
-    alignItems: "center",
-    fontFamily: FontFamily.interRegular,
-    top: 0,
-    display: "flex",
-    textAlign: "left",
-    height: 60,
+  footer: {
+    height: 66,
+    width: 355,
     position: "absolute",
-  },
-  searchIcon: {
-    top: 10,
-    left: 15,
-    position: "absolute",
-  },
-  searchBar: {
-    top: 127,
-    left: 25,
-  },
-  templeIcon: {
-    marginLeft: 41,
-  },
-  icon: {
-    height: "100%",
-    width: "100%",
+    top: 831,
+    left: 38,
   },
   homeIconParent: {
     marginTop: -33,
@@ -337,25 +206,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     overflow: "hidden",
   },
-  menu: {
-    left: 0,
-    top: 0,
-  },
-  footer1: {
-    width: "107.75%",
-    right: "-7.75%",
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    shadowOffset: {
-      width: 0,
-      height: 20,
-    },
-    shadowRadius: 30,
-    elevation: 30,
-    shadowOpacity: 1,
-    bottom: "0%",
-    height: "100%",
-    position: "absolute",
-  },
   footerChild: {
     height: "15.15%",
     width: "2.82%",
@@ -364,23 +214,6 @@ const styles = StyleSheet.create({
     bottom: "4.55%",
     left: "14.37%",
   },
-  footer: {
-    top: 831,
-    left: 38,
-  },
-  locationIconOverlay: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(113, 113, 113, 0.3)",
-  },
-  locationIconBg: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    left: 0,
-    top: 0,
-  },
   locationIcon: {
     left: 26,
     top: 65,
@@ -388,18 +221,19 @@ const styles = StyleSheet.create({
     height: 30,
     position: "absolute",
   },
-  text1Overlay: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(113, 113, 113, 0.3)",
-  },
-  text1Bg: {
+  pressable: {
+    left: 61,
+    top: 73,
     position: "absolute",
+  },
+  text1: {
+    color: "#898989",
+    width: 321,
+    fontSize: FontSize.size_xl,
+    height: 30,
+  },
+  txt: {
     width: "100%",
-    height: "100%",
-    left: 0,
-    top: 0,
   },
   text2: {
     fontFamily: FontFamily.robotoRegular,
@@ -407,102 +241,38 @@ const styles = StyleSheet.create({
   text3: {
     fontFamily: FontFamily.interRegular,
   },
-  txt: {
-    width: "100%",
-  },
-  text1: {
-    color: "#898989",
-    width: 321,
-    fontSize: FontSize.size_xl,
-    height: 30,
-    alignItems: "center",
-  },
-  pressable: {
-    left: 61,
-  },
-  mageeditIconOverlay: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(113, 113, 113, 0.3)",
-  },
-  mageeditIconBg: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
-    left: 0,
-    top: 0,
-  },
   mageedit: {
     left: 382,
     width: 25,
     height: 25,
-  },
-  locationIcon1: {
-    height: "15.08%",
-    width: "7.89%",
-    top: "84.92%",
-    right: "91.58%",
-    left: "0.53%",
-    bottom: "0%",
-  },
-  activity1Child: {
-    height: "80.4%",
-    right: "0%",
-    bottom: "19.6%",
-    borderRadius: Border.br_3xs,
-    opacity: 0.85,
-    left: "0%",
-    top: "0%",
-    width: "100%",
-  },
-  text7: {
-    color: Color.colorBlack,
-  },
-  text8: {
-    color: Color.colorGray_300,
-  },
-  text6: {
-    fontSize: FontSize.size_xl,
-  },
-  text10: {
-    fontSize: FontSize.size_mini,
-  },
-  text5: {
-    height: "16.08%",
-    width: "89.47%",
-    top: "83.42%",
-    left: "8.95%",
-    alignItems: "center",
-    fontFamily: FontFamily.interRegular,
+    top: 73,
     position: "absolute",
   },
-  text12: {
-    color: Color.colorBlack,
-    fontSize: FontSize.size_xl,
-  },
-  text13: {
-    fontSize: FontSize.size_mini,
-    color: Color.colorGray_300,
-  },
-  activity5: {
-    marginTop: 30,
-  },
-  activity1Parent: {
-    top: 219,
-    left: 4,
-    width: 426,
-    height: 612,
+  activityContainer: {
     alignItems: "center",
-    position: "absolute",
+    paddingVertical: 10,
+    top:'18%'
   },
-  homePage1: {
+  homePage: {
     borderRadius: Border.br_21xl,
     backgroundColor: Color.colorGray_100,
     flex: 1,
     height: 932,
     overflow: "hidden",
     width: "100%",
+  },
+  overlay: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "rgba(113, 113, 113, 0.3)",
+  },
+  overlayBg: {
+    position: "absolute",
+    width: "100%",
+    height: "100%",
+    left: 0,
+    top: 0,
   },
 });
 
