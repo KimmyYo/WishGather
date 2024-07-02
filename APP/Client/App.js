@@ -28,9 +28,12 @@ import HomePage1 from "./screens/HomePage1";
 import HomePage2 from "./screens/HomePage2";
 import HomePage3 from "./screens/HomePage3";
 import CartPage from "./screens/CartPage";
+import TempleHomePage from "./screens/TempleHomePage";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { SafeAreaView } from 'react-native-safe-area-context'; 
+// fit into every devices: https://docs.expo.dev/versions/latest/sdk/safe-area-context/
 
 const App = () => {
   const [hideSplashScreen, setHideSplashScreen] = React.useState(true);
@@ -47,12 +50,18 @@ const App = () => {
   if (!fontsLoaded && !error) {
     return null;
   }
-
+// test 
   return (
     <>
       <NavigationContainer>
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
+            
+            <Stack.Screen
+              name="TempleHomePage"
+              component={TempleHomePage}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="UserPage"
               component={UserPage}
