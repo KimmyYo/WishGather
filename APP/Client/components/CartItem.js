@@ -1,3 +1,4 @@
+{/* 顯示購物車中供品資訊的卡片 */}
 import React from "react";
 import { StyleSheet, View, Text, Pressable, Image } from "react-native";
 import { FontFamily, Border, FontSize, Color } from "../GlobalStyles";
