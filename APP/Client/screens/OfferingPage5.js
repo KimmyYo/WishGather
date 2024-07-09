@@ -1,10 +1,12 @@
 import * as React from "react";
 import { useState } from "react";
-import { StyleSheet, View, Text, Pressable, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Pressable, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import OfferingItem from "../components/OfferingItem"; // 引入新組件
 import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 const OfferingPage5 = () => {
   const navigation = useNavigation();
@@ -26,13 +28,13 @@ const OfferingPage5 = () => {
   };
 
   return (
-    <View style={styles.container}>
-
-      {/* 類別索引 */}
-      <View style={styles.categories}>
-        <Category label="點燈" />
-        <Category label="文創商品" />
-      </View>
+    <SafeAreaView style={styles.container}>
+      {/* 廟宇照片，連接資料庫處: 廟宇圖片 */}
+      <Image
+        style={styles.headerImage}
+        contentFit="cover"
+        source={require("../assets/rectangle-3.png")}
+      />
 
       {/* 顯示廟宇資訊，連接資料庫處:名稱、營業時間*/}
       <View style={styles.infoContainer}>
@@ -40,12 +42,15 @@ const OfferingPage5 = () => {
         <Text style={styles.subTitle}>06:00~21:30 營業中</Text>
       </View>
 
-      {/* 廟宇照片，連接資料庫處: 廟宇圖片 */}
-      <Image
-        style={styles.headerImage}
-        contentFit="cover"
-        source={require("../assets/rectangle-3.png")}
-      />
+      {/* 類別索引 */}
+      <ScrollView horizontal style={styles.categories} showsHorizontalScrollIndicator={false}>
+        <Category label="點燈" />
+        <Category label="文創商品" />
+        {/* 連接資料庫後可以新增類別 */}
+        <Category label="茶葉" />
+        <Category label="咖啡" />
+        <Category label="零食" />
+      </ScrollView>
 
       {/* OfferingPage專屬黑底返回鍵 */}
       <Pressable style={styles.goBackButton} onPress={() => navigation.goBack()}>
@@ -57,7 +62,7 @@ const OfferingPage5 = () => {
       </Pressable>
 
       {/* 顯示該廟宇提供之供品類別其所有內容，連接資料庫處 : imageSource、標題、金額、敘述*/}
-      <ScrollView style={styles.itemsContainer}>
+      <ScrollView vertical style={styles.itemsContainer} showVerticalScrollIndicator={true}>
         <Text style={styles.sectionTitle}>點燈</Text>
         <OfferingItem
           imageSource={require("../assets/rectangle-4.png")}
@@ -120,19 +125,19 @@ const OfferingPage5 = () => {
         />
         <Text style={styles.checkoutText}>前往結帳</Text>
       </Pressable>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.colorGray_100,
-    overflow: "hidden",
+    backgroundColor: Color.white,
+    marginTop:-50
   },
   shadowBox: {
     borderRadius: Border.br_3xs,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: Color.colorWhitesmoke_300,
     backgroundColor: Color.colorGray_100,
     justifyContent: "center",
@@ -142,9 +147,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     paddingHorizontal: Padding.p_mini,
     paddingVertical: Padding.p_3xs,
-    top: 287,
-    position: "absolute",
-    width: 430,
+    marginBottom: -300,
   },
   categoryContainer: {
     height: 50,
@@ -159,33 +162,31 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   infoContainer: {
-    top: 204,
-    height: 70,
     alignItems: "center",
     justifyContent: "center",
-    width: 430,
-    position: "absolute",
+    marginVertical: 10,
   },
   mainTitle: {
     fontSize: FontSize.size_9xl,
-    color: Color.colorBlack,
+    fontWeight: "600",
+    color: 'black',
   },
   subTitle: {
     fontSize: FontSize.size_lg,
     color: Color.colorGray_200,
+    marginTop: 5,
   },
   headerImage: {
     borderTopLeftRadius: Border.br_21xl,
     borderTopRightRadius: Border.br_21xl,
-    height: 200,
+    height: height * 0.25,
     opacity: 0.9,
-    width: 430,
-    position: "absolute",
-    top: 0,
+    width: width,
+    alignSelf: 'center',
   },
   goBackButton: {
-    left: 16,
-    top: 16,
+    left: width * 0.02,
+    top: width * 0.2,
     width: 45,
     height: 45,
     position: "absolute",
@@ -195,11 +196,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   itemsContainer: {
-    top: 370,
     paddingHorizontal: Padding.p_mini,
   },
   sectionTitle: {
-    paddingHorizontal:'2%',
+    paddingHorizontal: '2%',
     fontSize: FontSize.size_16xl,
     fontFamily: FontFamily.interRegular,
     color: Color.colorBlack,
@@ -209,9 +209,9 @@ const styles = StyleSheet.create({
     display: "flex",
   },
   goCheckoutButton: {
-    top: '90%',
+    width: width * 0.85,
+    bottom: height * 0.03,
     left: '8%',
-    width: 360,
     height: 70,
     position: "absolute",
     alignItems: "center",
