@@ -14,7 +14,7 @@ const UserPage21 = () => {
 
   useEffect(() => {
     
-    axios.get('http://192.168.1.111:3000/temples')
+    axios.get('http://192.168.1.102:3000/temples')
       .then(response => {
         setTemples(response.data);
       })
@@ -62,7 +62,7 @@ const UserPage21 = () => {
       prop={temple.NAME}
       prop1={temple.ADDRESS}
       savedStateIcon
-      propTop={200 + index * 150} // 调整间距
+      propTop={20 + index * 150} // 调整间距
       propLeft={20}
       onPressablePress={() => navigation.navigate("OfferingPage5")}
     />
