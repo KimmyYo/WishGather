@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "wireframe_(copy)",
-    // "slug": "wireframe_(copy)",
+    "slug": "wireframe_(copy)",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
