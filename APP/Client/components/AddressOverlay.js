@@ -2,6 +2,8 @@ import * as React from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { FontFamily, FontSize, Border, Color } from "../GlobalStyles";
 
+// Address Overlay Componet: 修改地址的彈出 （所有彈出都類似嗎）
+// 
 const AddressOverlay = ({ onClose }) => {
   return (
     <View style={[styles.addressOverlay, styles.addressLayout]}>

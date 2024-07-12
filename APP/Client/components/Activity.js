@@ -3,6 +3,11 @@ import { Image } from "expo-image";
 import { StyleSheet, Text, View, ImageSourcePropType } from "react-native";
 import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
 
+// Acitivity component 
+// 1. Should change the image souce to svg file 
+// 2. What is the use of <Text>?? 
+// 3. Should change the name of css 
+// Give the example output of this component
 const Activity = ({ rectangle2, prop }) => {
   return (
     <View style={styles.activity2}>
@@ -48,8 +53,8 @@ const styles = StyleSheet.create({
   },
   activity2Child: {
     height: "80.4%",
-    top: "0%",
     right: "0%",
+    top: "0%",
     bottom: "19.6%",
     left: "0%",
     borderRadius: Border.br_3xs,
