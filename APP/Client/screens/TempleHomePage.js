@@ -1,17 +1,19 @@
 import React, {useState} from 'react';
 import {Button, Text, SafeAreaView, View, StyleSheet, FlatList} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
-import Title from '../components/Title';
 import SectionHeader from '../components/SectionHeader';
 import EventCard from '../components/EventCard';
 import MatchingCard from '../components/MatchingCard';
+import TempleEventPage from './TempleEventPage';
 
 
 // TempleHomePage Screen 
 
 function TempleHomePage() {
     const insets = useSafeAreaInsets();
+	const navigation = useNavigation();
 	const events = [
 		{ id: '1', title: '正月十五', date: '2024-01-15', imageUrl: 'https://example.com/image1.jpg' },
 		{ id: '2', title: '七月十五', date: '2024-07-15', imageUrl: 'https://example.com/image2.jpg' },
@@ -34,12 +36,12 @@ function TempleHomePage() {
           paddingTop: insets.top + 100,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left + 30,
-          paddingRight: insets.right 
+          paddingRight: insets.right + 30 
         }}>  
-			<SectionHeader title="文武聖殿法會"/>
+			<SectionHeader title="文武聖殿法會" onPress={() => navigation.navigate('TempleEventPage')}/>
 			<FlatList
 					data={events}
-					renderItem={({ item }) => <EventCard event={item} />}
+					renderItem={({ item }) => <EventCard event={item} size="square" />}
 					keyExtractor={(item) => item.id}
 					horizontal
 					showsHorizontalScrollIndicator={false}

@@ -168,3 +168,41 @@ Description : 用於紀錄信眾選購之供品數量
 Props:
 ```
 
+
+
+# 說明文件
+
+## Screens 
+### TempleHomePage.js 
+廟方身份的主頁
+#### Used Components 
+1. SectionHeader
+2. EventCard 
+3. MatchingCaord
+
+### OfferingPage.js 
+做一些事情
+
+
+
+
+## Components 
+
+### Activity.js 
+
+#### Description
+`Activity.js` 組件顯示一個活動卡片，包含背景圖片、地點圖示和文本描述。
+
+#### Props
+- `rectangle2` (ImageSourcePropType): 背景圖片的來源。
+- `prop` (string): 主文本內容，通常是地點名稱或描述。
+
+#### Improvements
+1. **更改圖片來源**
+   - 建議將圖片來源更改為 SVG 文件以提高可擴展性和質量。
+
+2. **文本元素的用途**
+   - 確認 `<Text>` 元素的用途。當前它包含主文本和距離文本，可以重構為更清晰的結構。
+
+3. **CSS 名稱改進**
+   - 應重命名樣式名稱，使其更具描述性和一致性。例如，`activityContainer`, `backgroundImage`, `locationIcon` 等等。
