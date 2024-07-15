@@ -3,7 +3,7 @@ import { SafeAreaView, StyleSheet, View, ScrollView, Text, TextInput, Pressable,
 import { Image } from "expo-image";
 import AddressOverlay from "../components/AddressOverlay";
 import TempleDistance from "../components/TempleDistance";
-import Footer from "../components/Footer";
+import Footer from "../components/Footer_HomePage";
 import { useNavigation } from "@react-navigation/native";
 import { Border, Color, FontSize, FontFamily, Padding } from "../GlobalStyles";
 
@@ -14,6 +14,9 @@ const HomePage = () => {
   const [text1Visible, setText1Visible] = useState(false);
   const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
+
+  {/* 運用地圖功能顯示當前位置 */}
+  const [currentAddress, setCurrentAddress] = useState("高雄市鼓山區蓮海路70號");
   const navigation = useNavigation();
 
   const openLocationIcon = useCallback(() => {
@@ -40,6 +43,13 @@ const HomePage = () => {
     setMageeditIconVisible(false);
   }, []);
 
+  const handleAddressSubmit = useCallback((newAddress) => {
+    setCurrentAddress(newAddress);
+    setLocationIconVisible(false);
+    setText1Visible(false);
+    setMageeditIconVisible(false);
+  }, []);
+
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.homePage}>
@@ -51,11 +61,7 @@ const HomePage = () => {
           </Pressable>
 
           <Pressable style={styles.pressable} onPress={openText1}>
-            <Text style={styles.text1}>             
-                <Text style={styles.text2}>當前位置: 高雄市鼓山區蓮海路</Text>
-                <Text style={styles.text3}>70</Text>
-                <Text style={styles.text2}>號</Text>
-            </Text>
+            <Text style={styles.text1}>當前位置: {currentAddress}</Text>
           </Pressable>
 
           <Pressable style={styles.mageedit} onPress={openMageeditIcon}>
@@ -102,21 +108,21 @@ const HomePage = () => {
       <Modal animationType="fade" transparent visible={locationIconVisible}>
         <View style={styles.overlay}>
           <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />
-          <AddressOverlay onClose={closeLocationIcon} />
+          <AddressOverlay onClose={closeLocationIcon} onSubmit={handleAddressSubmit} />
         </View>
       </Modal>
 
       <Modal animationType="fade" transparent visible={text1Visible}>
         <View style={styles.overlay}>
           <Pressable style={styles.overlayBg} onPress={closeText1} />
-          <AddressOverlay onClose={closeText1} />
+          <AddressOverlay onClose={closeText1} onSubmit={handleAddressSubmit} />
         </View>
       </Modal>
 
       <Modal animationType="fade" transparent visible={mageeditIconVisible}>
         <View style={styles.overlay}>
           <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
-          <AddressOverlay onClose={closeMageeditIcon} />
+          <AddressOverlay onClose={closeMageeditIcon} onSubmit={handleAddressSubmit} />
         </View>
       </Modal>
 

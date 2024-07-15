@@ -29,7 +29,9 @@ const Footer = () => {
             <Image style={styles.icon} contentFit="cover" source={require("../assets/user-icon.png")} />
           </Pressable>
 
+          
         </View>
+        
       </View>
     </View>
   );
@@ -49,6 +51,20 @@ const styles = StyleSheet.create({
     elevation: 30,
     shadowOpacity: 1,
     zIndex: 20,
+  },
+
+  footerChild: {
+    height: 15,
+    width: 15,
+    top: "80.3%",
+    right: "82.82%",
+    bottom: "4.55%",
+    left: "14.37%",
+    maxWidth: "100%",
+    maxHeight: "100%",
+    display: "none",
+    position: "absolute",
+    overflow: "hidden",
   },
   menu: {
     width: '80%',

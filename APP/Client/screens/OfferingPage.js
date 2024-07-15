@@ -1,8 +1,10 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, Text, Pressable, Modal, Image, ScrollView } from "react-native";
+import { StyleSheet, View, Text, Pressable, Modal, Image, ScrollView, Dimensions } from "react-native";
 import OfferingItem from "../components/OfferingItem";
 import { useNavigation } from "@react-navigation/native";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 const OfferingPage = () => {
   const navigation = useNavigation();
@@ -184,16 +186,13 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   goCheckoutButton: {
-    position: "absolute",
-    bottom: 20,
-    left: "8%",
-    width: "84%",
+    width: width * 0.85,
+    bottom: height * 0.03,
+    left: '8%',
     height: 70,
-    flexDirection: "row",
+    position: "absolute",
     alignItems: "center",
     justifyContent: "center",
-    borderRadius: Border.br_xl,
-    backgroundColor: Color.colorGray_100,
   },
   checkoutImage: {
     ...StyleSheet.absoluteFillObject,
