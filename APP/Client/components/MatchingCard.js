@@ -33,17 +33,20 @@ let screenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
     card: {
+        width: screenWidth * 0.8,
+        height: 100,
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        width: screenWidth * 0.8,
-        height: 100,
-        borderColor: '#ccc',
-        borderWidth: '1px',
-        borderRadius: 8,
         backgroundColor: 'white',
-        margin: 10,
-        zIndex: 999
+        borderRadius: 10,
+        padding: 30,
+        marginVertical: 10,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 5, // This is for Android shadow
         
     },
     titlePrimary: {

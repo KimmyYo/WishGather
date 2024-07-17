@@ -30,6 +30,7 @@ import CartPage from "./screens/CartPage";
 import TempleHomePage from "./screens/TempleHomePage";
 import TempleEventPage from "./screens/TempleEventPage";
 import EditTempleInfoPage from "./screens/EditTempleInfoPage";
+import MatchingPage from "./screens/MatchingPage";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity } from "react-native";
@@ -75,6 +76,11 @@ const App = () => {
              <Stack.Screen
               name="EditTempleInfoPage"
               component={EditTempleInfoPage}
+              options={{ headerShown: false}}
+            />
+             <Stack.Screen
+              name="MatchingPage"
+              component={MatchingPage}
               options={{ headerShown: false}}
             />
             {/* <Stack.Screen

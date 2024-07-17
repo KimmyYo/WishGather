@@ -33,7 +33,7 @@ function TempleEventPage({route}){
                 justifyContent: 'start',
                 alignItems: 'start',
                 // Paddings to handle safe area
-                paddingTop: insets.top,
+                paddingTop: insets.top - 50,
                 paddingBottom: insets.bottom,
                 paddingLeft: insets.left,
                 paddingRight: insets.right
@@ -67,7 +67,6 @@ const styles = StyleSheet.create({
     flatListContainer: {
         height: screenHeight,
         width: screenWidth,
-        // padding: 30,
     },
     flatList:{
         flex: 1

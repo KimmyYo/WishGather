@@ -1,11 +1,12 @@
-import { React } from 'react'
-import { View, Text, TextInput, StyleSheet, Dimensions } from 'react-native'
-
+import { React, useState } from 'react'
+import { View, Text, TextInput, StyleSheet, Dimensions, Button } from 'react-native'
+import Ionicons from '@expo/vector-icons/Ionicons';
 function TextInputSet({ labelName, defaultValue }){
+    const [text, onChangeText] =  useState(defaultValue);
     return (
         <View style={styles.container}>
             <Text style={styles.label}>{labelName}</Text>
-            <TextInput style={styles.input}value={defaultValue}></TextInput>
+            <TextInput style={styles.input} value={text} onChangeText={onChangeText}/>
         </View>
     )
 
@@ -16,7 +17,6 @@ let screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
     container:{
         marginBottom: '5px',
-        // marginLeft: 20
     },
     label:{
         marginLeft: 10,
@@ -31,7 +31,12 @@ const styles = StyleSheet.create({
         width: screenWidth * 0.9,
         height: 70,
         margin: 12,
-        fontSize: 20
+        fontSize: 20,
+        position: 'relative'
+    },
+    icon:{
+        position: 'fixed',
+        right: 0,
     }
     
 })

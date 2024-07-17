@@ -3,17 +3,19 @@ import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable } from 'rea
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import  Dialog  from "react-native-dialog";
-import DateTimePicker from '@react-native-community/datetimepicker';
+
 import TextInputSet from '../components/TextInputSet';
 
 import PageTitle from '../components/PageTitle';
 import SetButton from '../components/SetButton';
+import DatePicker from '../components/DatePicker';
 
 function EditTempleInfoPage(){
     const navigation = useNavigation();
     const route = useRoute();
     const info = route.params.event;
     const insets = useSafeAreaInsets();
+    const [date, setDate] = useState(new Date(info.date));
 
     return (
         <SafeAreaProvider>
@@ -34,9 +36,11 @@ function EditTempleInfoPage(){
                     <Text>Back</Text>
                 </Pressable>
                 <PageTitle titleText="編輯法會資訊"></PageTitle>
+                
                 <TextInputSet labelName={'法會名稱'} defaultValue={info.title}></TextInputSet>
-                <TextInputSet labelName={'農曆日期'} defaultValue={info.date}></TextInputSet>
-                <TextInputSet labelName={'國曆日期'} defaultValue={info.date}></TextInputSet>
+                <DatePicker dateValue={info.date}labelName={"農曆日期"} />
+                <DatePicker dateValue={info.date}labelName={"國曆日期"} />
+
                 <View style={styles.buttonPosition}>
                     <SetButton 
                         btnText={'確定'} 
@@ -45,7 +49,6 @@ function EditTempleInfoPage(){
                     >
                     </SetButton>
                 </View>
-                
             </View>
         </SafeAreaProvider>
     )
@@ -53,7 +56,7 @@ function EditTempleInfoPage(){
 
 const styles = StyleSheet.create({
     buttonPosition: {
-        marginTop: 10,
+        marginTop: 30,
 
     }
 })  

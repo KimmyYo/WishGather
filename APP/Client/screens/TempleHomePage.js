@@ -47,7 +47,7 @@ function TempleHomePage() {
 					showsHorizontalScrollIndicator={false}
 					contentContainerStyle={styles.scrollView}
 			/>
-			<SectionHeader title="媒合訊息"/>
+			<SectionHeader title="媒合訊息" onPress={() => navigation.navigate('MatchingPage')}/>
 			<FlatList
 					data={matchingInformation}
 					renderItem={({ item }) => <MatchingCard infos={item} />}
