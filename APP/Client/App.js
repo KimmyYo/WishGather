@@ -57,11 +57,7 @@ const App = () => {
         {hideSplashScreen ? (
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             
-            <Stack.Screen
-              name="TempleHomePage"
-              component={TempleHomePage}
-              options={{ headerShown: false }}
-            />
+            
             <Stack.Screen
               name="UserPage"
               component={UserPage}
@@ -190,6 +186,11 @@ const App = () => {
             <Stack.Screen
               name="CartPage"
               component={CartPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="TempleHomePage"
+              component={TempleHomePage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
