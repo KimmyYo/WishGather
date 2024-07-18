@@ -3,7 +3,7 @@ import { useState } from "react";
 import { StyleSheet, View, Text, Pressable, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
-import OfferingItem from "../components/OfferingItem"; // 引入新組件
+import OfferingItem from "../components/OfferingItem"; 
 import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
@@ -29,6 +29,9 @@ const OfferingPage5 = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={styles.offeringPage5}>
+
+      
       {/* 廟宇照片，連接資料庫處: 廟宇圖片 */}
       <Image
         style={styles.headerImage}
@@ -43,7 +46,7 @@ const OfferingPage5 = () => {
       </View>
 
       {/* 類別索引 */}
-      <ScrollView horizontal style={styles.categories} showsHorizontalScrollIndicator={false}>
+      <ScrollView horizontal style={styles.categories} showsHorizontalScrollIndicator={true}>
         <Category label="點燈" />
         <Category label="文創商品" />
         {/* 連接資料庫後可以新增類別 */}
@@ -62,55 +65,62 @@ const OfferingPage5 = () => {
       </Pressable>
 
       {/* 顯示該廟宇提供之供品類別其所有內容，連接資料庫處 : imageSource、標題、金額、敘述*/}
-      <ScrollView vertical style={styles.itemsContainer} showVerticalScrollIndicator={true}>
-        <Text style={styles.sectionTitle}>點燈</Text>
-        <OfferingItem
-          imageSource={require("../assets/rectangle-4.png")}
-          title="祈福燈"
-          price="$800"
-          description="請於備註填寫祈福對象資訊"
-          onSelect={() => handleSelectOffering({ title: "祈福燈", price: 800 })}
-        />
-        <OfferingItem
-          imageSource={require("../assets/rectangle-43.png")}
-          title="光明燈"
-          price="$1000"
-          description="請於備註填寫祈福對象資訊"
-          onSelect={() => handleSelectOffering({ title: "光明燈", price: 1000 })}
-        />
-        <OfferingItem
-          imageSource={require("../assets/rectangle-44.png")}
-          title="太歲燈"
-          price="$1500"
-          description="請於備註填寫祈福對象資訊"
-          onSelect={() => handleSelectOffering({ title: "太歲燈", price: 1500 })}
-        />
-        <OfferingItem
-          imageSource={require("../assets/rectangle-45.png")}
-          title="媽祖燈"
-          price="$1500"
-          description="請於備註填寫祈福對象資訊"
-          onSelect={() => handleSelectOffering({ title: "媽祖燈", price: 1500 })}
-        />
-        <Text style={styles.sectionTitle}>文創商品</Text>
-        <OfferingItem
-          imageSource={require("../assets/rectangle-46.png")}
-          title="開運吊飾"
-          price="$120"
-          onSelect={() => handleSelectOffering({ title: "開運吊飾", price: 120 })}
-        />
-        <OfferingItem
-          imageSource={require("../assets/rectangle-47.png")}
-          title="符令壓克力鑰匙圈"
-          price="$100"
-          onSelect={() => handleSelectOffering({ title: "符令壓克力鑰匙圈", price: 100 })}
-        />
-        <OfferingItem
-          imageSource={require("../assets/rectangle-48.png")}
-          title="好運公仔五入組"
-          price="$1500"
-          onSelect={() => handleSelectOffering({ title: "好運公仔五入組", price: 1500 })}
-        />
+      <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={styles.scrollViewContent}
+        showsVerticalScrollIndicator={true} >
+
+        <View style={styles.OfferItem_container}>
+          <Text style={styles.sectionTitle}>點燈</Text>
+          <OfferingItem
+            imageSource={require("../assets/rectangle-4.png")}
+            title="祈福燈"
+            price="$800"
+            description="請於備註填寫祈福對象資訊"
+            onSelect={() => handleSelectOffering({ title: "祈福燈", price: 800 })}
+          />
+          <OfferingItem
+            imageSource={require("../assets/rectangle-43.png")}
+            title="光明燈"
+            price="$1000"
+            description="請於備註填寫祈福對象資訊"
+            onSelect={() => handleSelectOffering({ title: "光明燈", price: 1000 })}
+          />
+          <OfferingItem
+            imageSource={require("../assets/rectangle-44.png")}
+            title="太歲燈"
+            price="$1500"
+            description="請於備註填寫祈福對象資訊"
+            onSelect={() => handleSelectOffering({ title: "太歲燈", price: 1500 })}
+          />
+          <OfferingItem
+            imageSource={require("../assets/rectangle-45.png")}
+            title="媽祖燈"
+            price="$1500"
+            description="請於備註填寫祈福對象資訊"
+            onSelect={() => handleSelectOffering({ title: "媽祖燈", price: 1500 })}
+          />
+          <Text style={styles.sectionTitle}>文創商品</Text>
+          <OfferingItem
+            imageSource={require("../assets/rectangle-46.png")}
+            title="開運吊飾"
+            price="$120"
+            onSelect={() => handleSelectOffering({ title: "開運吊飾", price: 120 })}
+          />
+          <OfferingItem
+            imageSource={require("../assets/rectangle-47.png")}
+            title="符令壓克力鑰匙圈"
+            price="$100"
+            onSelect={() => handleSelectOffering({ title: "符令壓克力鑰匙圈", price: 100 })}
+          />
+          <OfferingItem
+            imageSource={require("../assets/rectangle-48.png")}
+            title="好運公仔五入組"
+            price="$1500"
+            onSelect={() => handleSelectOffering({ title: "好運公仔五入組", price: 1500 })}
+          />
+        </View>
+        
       </ScrollView>
       
       {/* 前往結帳按鈕 */}
@@ -125,6 +135,8 @@ const OfferingPage5 = () => {
         />
         <Text style={styles.checkoutText}>前往結帳</Text>
       </Pressable>
+      
+      </View>
     </SafeAreaView>
   );
 };
@@ -132,11 +144,14 @@ const OfferingPage5 = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Color.white,
-    marginTop:-50
+    backgroundColor: Color.colorWhite,
+    overflow: 'hidden',
+  },
+  offeringPage5: {
+    flex: 1,
+    backgroundColor: Color.colorWhite,
   },
   shadowBox: {
-    borderRadius: Border.br_3xs,
     borderWidth: 2,
     borderColor: Color.colorWhitesmoke_300,
     backgroundColor: Color.colorGray_100,
@@ -144,10 +159,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   categories: {
+    height:120,
     flexDirection: "row",
     paddingHorizontal: Padding.p_mini,
-    paddingVertical: Padding.p_3xs,
-    marginBottom: -300,
   },
   categoryContainer: {
     height: 50,
@@ -165,6 +179,29 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginVertical: 10,
+  },
+  goBackButton: {
+    width: 40,
+    height: 40,
+    position: "absolute",
+    alignSelf:'left',
+    margin:5,
+  },
+  goBackIcon: {
+    height: "100%",
+    width: "100%",
+  },
+  OfferItem_container:{
+    flexGrow:1,
+  },
+  scrollView:{
+    paddingTop:5,
+    marginTop:0,
+  },
+  scrollViewContent:{
+    paddingHorizontal: Padding.p_mini,
+    paddingVertical: 2,
+    alignItems: "left",
   },
   mainTitle: {
     fontSize: FontSize.size_9xl,
@@ -184,22 +221,8 @@ const styles = StyleSheet.create({
     width: width,
     alignSelf: 'center',
   },
-  goBackButton: {
-    left: width * 0.02,
-    top: width * 0.2,
-    width: 45,
-    height: 45,
-    position: "absolute",
-  },
-  goBackIcon: {
-    height: "100%",
-    width: "100%",
-  },
-  itemsContainer: {
-    paddingHorizontal: Padding.p_mini,
-  },
+
   sectionTitle: {
-    paddingHorizontal: '2%',
     fontSize: FontSize.size_16xl,
     fontFamily: FontFamily.interRegular,
     color: Color.colorBlack,
