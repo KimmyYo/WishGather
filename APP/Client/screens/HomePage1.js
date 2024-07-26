@@ -1,167 +1,151 @@
 import * as React from "react";
-import { useState } from "react";
-import { StyleSheet, View, Text, Pressable, ScrollView, SafeAreaView, Dimensions } from "react-native";
+import { useState, useEffect } from "react";
+import { StyleSheet, View, Text, Pressable, FlatList, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
-import OfferingItem from "../components/OfferingItem"; 
-import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import OfferingItem from "../components/OfferingItem"; 
+import GoBackButton_B from "../components/GoBackButton_B";
+import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
 const HomePage1 = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
-  {/*新增Category組件，用來顯示該廟宇提供甚麼類別的商品，連接資料庫處*/}
-  const Category = ({ label }) => (
-    <View style={[styles.categoryContainer, styles.shadowBox]}>
-      <Text style={styles.categoryText}>{label}</Text>
-    </View>);
+  // Offering categories
+  const categories = ["點燈", "文創商品"];
 
+  // State for selected offerings and category
   const [selectedOfferings, setSelectedOfferings] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
+  // Handler for selecting an offering
   const handleSelectOffering = (offering) => {
     setSelectedOfferings((prevOfferings) => [...prevOfferings, offering]);
   };
 
+  // Handler for checkout
   const handleCheckout = () => {
     navigation.navigate("OfferingPage", { selectedOfferings });
   };
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.homePage1}>
-        {/* 廟宇照片，連接資料庫處: 廟宇圖片 */}
-        <Image
-          style={styles.headerImage}
-          contentFit="cover"
-          source={require("../assets/rectangle-3.png")}
-        />
+  // Offerings data
+  const offerings = [
+    { id: '1', imageSource: require("../assets/rectangle-4.png"), category:"點燈", title: "祈福燈", price: "$800", description: "請於備註填寫祈福對象資訊" },
+    { id: '2', imageSource: require("../assets/rectangle-43.png"), category:"點燈", title: "光明燈", price: "$1000", description: "請於備註填寫祈福對象資訊" },
+    { id: '3', imageSource: require("../assets/rectangle-44.png"), category:"點燈", title: "太歲燈", price: "$1500", description: "請於備註填寫祈福對象資訊" },
+    { id: '4', imageSource: require("../assets/rectangle-45.png"), category:"點燈", title: "媽祖燈", price: "$1500", description: "請於備註填寫祈福對象資訊" },
+    { id: '5', imageSource: require("../assets/rectangle-46.png"), category:"文創商品", title: "開運吊飾", price: "$120" },
+    { id: '6', imageSource: require("../assets/rectangle-47.png"), category:"文創商品", title: "符令壓克力鑰匙圈", price: "$100" },
+    { id: '7', imageSource: require("../assets/rectangle-48.png"), category:"文創商品", title: "好運公仔五入組", price: "$1500" },
+  ];
 
-        {/* 顯示廟宇資訊，連接資料庫處:名稱、營業時間*/}
+  // Filtered offerings based on selected category
+  const filteredOfferings = offerings.filter(offering => offering.category === selectedCategory);
+
+  useEffect(() => {
+    console.log(`Selected Category: ${selectedCategory}`);
+    console.log('Filtered Offerings:', filteredOfferings);
+  }, [selectedCategory]);
+
+  const renderOfferingItem = ({ item }) => {
+    console.log(`Rendering Offering: ${JSON.stringify(item, null, 2)}`);
+    
+    return (
+      <OfferingItem
+        imageSource={item.imageSource}
+        title={item.title}
+        price={item.price}
+        description={item.description}
+        onSelect={() => handleSelectOffering(item)}
+      />
+    );
+  };
+
+  const renderCategoryItem = ({ item }) => (
+    <Pressable onPress={() => setSelectedCategory(item)}>
+      <View style={[styles.categoryContainer, selectedCategory === item && styles.selectedCategory]}>
+        <Text style={[styles.categoryText, selectedCategory === item && styles.selectedCategoryText]}>
+          {item}
+        </Text>
+      </View>
+    </Pressable>
+  );
+
+  return (
+    <SafeAreaProvider>
+      <View style={[styles.homePage1, { paddingTop: insets.top, paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }]}>
+        {/* Temple Image */}
+        <View>
+          <Image style={styles.headerImage} contentFit="cover" source={require("../assets/rectangle-3.png")} />
+          <GoBackButton_B/>
+        </View>
+
+        {/* Temple Title */}
         <View style={styles.infoContainer}>
           <Text style={styles.mainTitle}>大甲鎮瀾宮媽祖廟</Text>
           <Text style={styles.subTitle}>06:00~21:30 營業中</Text>
         </View>
 
-        {/* 類別索引 */}
-        <ScrollView horizontal style={styles.categories} showsHorizontalScrollIndicator={false}>
-          <Category label="點燈" />
-          <Category label="文創商品" />
-          {/* 連接資料庫後可以新增類別 */}
-          <Category label="茶葉" />
-          <Category label="咖啡" />
-          <Category label="零食" />
-        </ScrollView>
+        {/* Show Category */}
+        <FlatList
+          data={categories}
+          renderItem={renderCategoryItem}
+          keyExtractor={(item) => item}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.categories}
+        />
 
-        {/* OfferingPage專屬黑底返回鍵 */}
-        <Pressable style={styles.goBackButton} onPress={() => navigation.goBack()}>
-          <Image
-            style={styles.goBackIcon}
-            contentFit="cover"
-            source={require("../assets/go-back-button1.png")}
-          />
-        </Pressable>
+        {/* Show Offerings */}
+        <FlatList
+          data={filteredOfferings} // 使用過濾後的數據
+          renderItem={renderOfferingItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.itemsContainer}
+        />
 
-        {/* 顯示該廟宇提供之供品類別其所有內容，連接資料庫處 : imageSource、標題、金額、敘述*/}
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.itemsContainer}>
-          <Text style={styles.sectionTitle}>點燈</Text>
-          <OfferingItem
-            imageSource={require("../assets/rectangle-4.png")}
-            title="祈福燈"
-            price="$800"
-            description="請於備註填寫祈福對象資訊"
-            onSelect={() => handleSelectOffering({ title: "祈福燈", price: 800 })}
-          />
-          <OfferingItem
-            imageSource={require("../assets/rectangle-43.png")}
-            title="光明燈"
-            price="$1000"
-            description="請於備註填寫祈福對象資訊"
-            onSelect={() => handleSelectOffering({ title: "光明燈", price: 1000 })}
-          />
-          <OfferingItem
-            imageSource={require("../assets/rectangle-44.png")}
-            title="太歲燈"
-            price="$1500"
-            description="請於備註填寫祈福對象資訊"
-            onSelect={() => handleSelectOffering({ title: "太歲燈", price: 1500 })}
-          />
-          <OfferingItem
-            imageSource={require("../assets/rectangle-45.png")}
-            title="媽祖燈"
-            price="$1500"
-            description="請於備註填寫祈福對象資訊"
-            onSelect={() => handleSelectOffering({ title: "媽祖燈", price: 1500 })}
-          />
-          <Text style={styles.sectionTitle}>文創商品</Text>
-          <OfferingItem
-            imageSource={require("../assets/rectangle-46.png")}
-            title="開運吊飾"
-            price="$120"
-            onSelect={() => handleSelectOffering({ title: "開運吊飾", price: 120 })}
-          />
-          <OfferingItem
-            imageSource={require("../assets/rectangle-47.png")}
-            title="符令壓克力鑰匙圈"
-            price="$100"
-            onSelect={() => handleSelectOffering({ title: "符令壓克力鑰匙圈", price: 100 })}
-          />
-          <OfferingItem
-            imageSource={require("../assets/rectangle-48.png")}
-            title="好運公仔五入組"
-            price="$1500"
-            onSelect={() => handleSelectOffering({ title: "好運公仔五入組", price: 1500 })}
-          />
-        </ScrollView>
-        
-        </View>
-        
-        {/* 前往結帳按鈕 */}
-        <Pressable
-          style={styles.goCheckoutButton}
-          onPress={() => navigation.navigate("OfferingPage")}
-        >
-          <Image
-            style={styles.checkoutImage}
-            contentFit="cover"
-            source={require("../assets/rectangle-93.png")}
-          />
+        <Pressable style={styles.goCheckoutButton} onPress={handleCheckout}>
+          <Image style={styles.checkoutImage} contentFit="cover" source={require("../assets/rectangle-93.png")} />
           <Text style={styles.checkoutText}>前往結帳</Text>
-        </Pressable>  
-    </SafeAreaView>
+        </Pressable>
+      </View>
+    </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Color.colorGray_100,
-    overflow: 'hidden',
-  },
   homePage1: {
     flex: 1,
+    justifyContent: 'start',
+    alignItems: 'center',
     backgroundColor: Color.colorGray_100,
-    
-  },
-  shadowBox: {
-    borderRadius: Border.br_3xs,
-    borderWidth: 2,
-    borderColor: Color.colorWhitesmoke_300,
-    backgroundColor: Color.colorGray_100,
-    justifyContent: "center",
-    alignItems: "center",
   },
   categories: {
     flexDirection: "row",
-    paddingHorizontal: Padding.p_mini,
+    width: width*0.9,
+    marginHorizontal: 3,
+    marginVertical: 3,
+    paddingHorizontal: 0,
     paddingVertical: Padding.p_3xs,
-    marginBottom: -300,
   },
   categoryContainer: {
-    height: 50,
+    height: 40,
     width: 120,
     marginHorizontal: 5,
+    borderWidth: 2,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedCategory: {
+    backgroundColor:"#9D9D9D",
+  },
+  selectedCategoryText: {
+    color:"#FFFFFF",
   },
   categoryText: {
     color: Color.colorDimgray_200,
@@ -191,38 +175,12 @@ const styles = StyleSheet.create({
     width: width,
     alignSelf: 'center',
   },
-  goBackButton: {
-    left: width * 0.02,
-    top: width * 0.05,
-    width: 45,
-    height: 45,
-    position: "absolute",
-  },
-  goBackIcon: {
-    height: "100%",
-    width: "100%",
-  },
-  scrollView: {
-    height: '18%',
-    width: '100%',
-    alignSelf: 'center',
-    padding: 10,
-    zIndex: 1
-  },
   itemsContainer: {
-    width: '100%',
-    paddingVertical: 10,
-    alignItems: "center",
-  },
-  sectionTitle: {
-    paddingHorizontal: '2%',
-    fontSize: FontSize.size_16xl,
-    fontFamily: FontFamily.interRegular,
-    color: Color.colorBlack,
-    height: 70,
-    textAlign: "left",
-    alignItems: "center",
-    display: "flex",
+    position:"absolute",
+    flexDirection: 'column',
+    paddingVertical: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   goCheckoutButton: {
     width: width * 0.85,
@@ -245,4 +203,5 @@ const styles = StyleSheet.create({
     color: Color.colorWhite,
   },
 });
+
 export default HomePage1;
