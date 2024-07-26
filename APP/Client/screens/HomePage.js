@@ -1,11 +1,12 @@
 import React, { useState, useCallback } from "react";
-import { SafeAreaView, StyleSheet, View, ScrollView, Text, TextInput, Pressable, Modal, Dimensions } from "react-native";
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, TextInput, Pressable, Modal, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import AddressOverlay from "../components/AddressOverlay";
 import TempleDistance from "../components/TempleDistance";
 import Footer from "../components/Footer_HomePage";
 import { useNavigation } from "@react-navigation/native";
-import { Border, Color, FontSize, FontFamily, Padding } from "../GlobalStyles";
+import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
@@ -14,10 +15,9 @@ const HomePage = () => {
   const [text1Visible, setText1Visible] = useState(false);
   const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
-
-  {/* 運用地圖功能顯示當前位置 */}
   const [currentAddress, setCurrentAddress] = useState("高雄市鼓山區蓮海路70號");
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
   const openLocationIcon = useCallback(() => {
     setLocationIconVisible(true);
@@ -50,11 +50,27 @@ const HomePage = () => {
     setMageeditIconVisible(false);
   }, []);
 
-  return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.homePage}>
+  const temples = [
+    { id: '1', imageSource: require("../assets/rectangle-2.png"), description: "左營仁濟宮 燈花供養祈福", distance: "11公里" },
+    { id: '2', imageSource: require("../assets/rectangle-21.png"), description: "鳳邑雷府大將廟 犒軍儀式", distance: "" },
+    { id: '3', imageSource: require("../assets/rectangle-22.png"), description: "左營金鑾殿 工地動土科儀", distance: "" },
+    { id: '4', imageSource: require("../assets/rectangle-2.png"), description: "府城三山國王廟 巾山國王聖壽", distance: "34公里" },
+    // Add more temple data as needed (database)
+  ];
 
-        {/* 地點設定欄位 */}
+  return (
+    <SafeAreaProvider>
+      <View style={{
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right
+      }}>
+
+        {/* Location */}
         <View style={styles.locationContainer}>
           <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
             <Image style={styles.icon} contentFit="cover" source={require("../assets/location-icon.png")} />
@@ -69,74 +85,60 @@ const HomePage = () => {
           </Pressable>
         </View>
 
-        {/* 搜尋欄位 */}
+        {/* Search Bar */}
         <View style={styles.searchContainer}>
-          <TextInput placeholder="搜尋(Ex:左營金鑾殿)" style={styles.input}
+          <TextInput
+            placeholder="搜尋(Ex:左營金鑾殿)"
+            style={styles.input}
             value={searchText}
-            onChangeText={setSearchText} />
+            onChangeText={setSearchText}
+          />
         </View>
 
-        {/* 顯示距離最近的宮廟處，連接資料庫(?) */}
-        <ScrollView contentContainerStyle={styles.activityContainer}>
-          <TempleDistance
-            imageSource={require("../assets/rectangle-2.png")}
-            description="左營仁濟宮 燈花供養祈福"
-            distance="11公里"
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-          <TempleDistance
-            imageSource={require("../assets/rectangle-21.png")}
-            description="鳳邑雷府大將廟 犒軍儀式"
-            distance=""
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-          <TempleDistance
-            imageSource={require("../assets/rectangle-22.png")}
-            description="左營金鑾殿 工地動土科儀"
-            distance=""
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-          <TempleDistance
-            imageSource={require("../assets/rectangle-2.png")}
-            description="府城三山國王廟 巾山國王聖壽"
-            distance="34公里"
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-        </ScrollView>
+        {/* Temple */}
+        <FlatList
+          data={temples}
+          renderItem={({ item }) => (
+            <TempleDistance
+              imageSource={item.imageSource}
+              description={item.description}
+              distance={item.distance}
+              onPress={() => navigation.navigate("HomePage1")}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.activityContainer}
+        />
+
+        <Modal animationType="fade" transparent visible={locationIconVisible}>
+          <View style={styles.overlay}>
+            <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />
+            <AddressOverlay onClose={closeLocationIcon} onSubmit={handleAddressSubmit} />
+          </View>
+        </Modal>
+
+        <Modal animationType="fade" transparent visible={text1Visible}>
+          <View style={styles.overlay}>
+            <Pressable style={styles.overlayBg} onPress={closeText1} />
+            <AddressOverlay onClose={closeText1} onSubmit={handleAddressSubmit} />
+          </View>
+        </Modal>
+
+        <Modal animationType="fade" transparent visible={mageeditIconVisible}>
+          <View style={styles.overlay}>
+            <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
+            <AddressOverlay onClose={closeMageeditIcon} onSubmit={handleAddressSubmit} />
+          </View>
+        </Modal>
+
+        {/* Footer */}  
+        <Footer />
       </View>
-
-      <Modal animationType="fade" transparent visible={locationIconVisible}>
-        <View style={styles.overlay}>
-          <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />
-          <AddressOverlay onClose={closeLocationIcon} onSubmit={handleAddressSubmit} />
-        </View>
-      </Modal>
-
-      <Modal animationType="fade" transparent visible={text1Visible}>
-        <View style={styles.overlay}>
-          <Pressable style={styles.overlayBg} onPress={closeText1} />
-          <AddressOverlay onClose={closeText1} onSubmit={handleAddressSubmit} />
-        </View>
-      </Modal>
-
-      <Modal animationType="fade" transparent visible={mageeditIconVisible}>
-        <View style={styles.overlay}>
-          <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
-          <AddressOverlay onClose={closeMageeditIcon} onSubmit={handleAddressSubmit} />
-        </View>
-      </Modal>
-
-      <Footer />
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: Color.colorGray_100,
-    overflow: 'hidden',
-  },
   homePage: {
     flex: 1,
     backgroundColor: Color.colorGray_100,
@@ -155,18 +157,13 @@ const styles = StyleSheet.create({
     color: "#898989",
     fontSize: FontSize.size_xl,
   },
-  text2: {
-    width: "100%",
-    fontFamily: FontFamily.robotoRegular,
-  },
-  text3: {
-    fontFamily: FontFamily.interRegular,
-  },
   mageedit: {
     width: 25,
     height: 25,
   },
   searchContainer: {
+    width: width*0.95,
+    height:50,
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
