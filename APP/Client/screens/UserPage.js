@@ -86,9 +86,16 @@ const UserPage = () => {
         />
         <Pressable
           style={[styles.pressable, styles.pressablePosition]}
+          /* 測試註冊先切掉頁面 Ethan
           onPress={openText}
+          */
+          onPress={() => navigation.navigate("SignUp")}
         >
-          <Text style={[styles.text, styles.textFlexBox]}>登出帳戶</Text>
+          <Text style={[styles.text, styles.textFlexBox]}>
+            登出帳戶
+
+          </Text>
+          
         </Pressable>
         <Pressable
           style={[styles.pressable1, styles.pressablePosition]}
