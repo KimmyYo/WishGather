@@ -30,6 +30,7 @@ import HomePage3 from "./screens/HomePage3";
 import CartPage from "./screens/CartPage";
 import TempleHomePage from "./screens/TempleHomePage";
 import SignUp from "./screens/SignUp"
+import SignIn from "./screens/SignIn"
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native";
 
@@ -201,6 +202,13 @@ const App = () => {
               component={TempleHomePage}
               options={{ headerShown: false }}
             />
+
+<Stack.Screen
+              name="SignIn"
+              component={SignIn}
+              options={{ headerShown: false }}
+            />
+
           </Stack.Navigator>
         ) : null}
       </NavigationContainer>

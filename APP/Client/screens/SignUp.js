@@ -96,15 +96,11 @@ const SignUp = () => {
         onChangeText={setPassword}
       />
       <Button title="Register" onPress={handleRegister} />
-      
-      {/* Debug Information */}
-      <View style={styles.debugContainer}>
-        <Text>Debug Info:</Text>
-        <Text>Name: {name}</Text>
-        <Text>Phone: {phone}</Text>
-        <Text>Email: {email}</Text>
-        <Text>Password: {password.replace(/./g, '*')}</Text>
-      </View>
+
+      <Button title="測試登入連結" onPress={() => navigation.navigate("SignIn")} />
+
+  
+
     </View>
   );
 };
