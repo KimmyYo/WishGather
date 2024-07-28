@@ -4,7 +4,8 @@ import { StyleSheet, Pressable, View, Text, Modal, ScrollView, TextInput, SafeAr
 import { useNavigation } from "@react-navigation/native";
 import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
 import ProductItem from "../components/ProductItem";
-import Footer from "../components/Footer_OfferingPage";
+// import Footer from "../components/Footer_OfferingPage";
+import Footer from "../components/footer";
 
 const { width, height } = Dimensions.get('window');
 
@@ -75,7 +76,7 @@ const OfferingPage4 = () => {
           </View>
         </ScrollView>
 
-        <Footer></Footer>
+        <Footer />
 
       
       </View>
