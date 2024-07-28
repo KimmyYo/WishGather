@@ -146,7 +146,7 @@ export default function App() {
           style={styles.checkbox}
           value={isChecked}
           onValueChange={setChecked}
-          color={isChecked ? '#FF9224' : undefined}
+          color={isChecked ? '#FFA500' : undefined}
         />
         <Text style={styles.paragraph}>記住我</Text>
     </View>
@@ -202,11 +202,17 @@ const styles = StyleSheet.create({
   button: {
     width: '35%',
     height: 50,
-    backgroundColor: '#FF9224',
+    backgroundColor: '#FFA500',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
     marginVertical: 20,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
     color: '#FCFCFC',
