@@ -104,6 +104,7 @@ const SignUp = () => {
         value={password}
         onChangeText={setPassword}
       />
+
       <Pressable style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>確認送出</Text>
       </Pressable>
@@ -122,6 +123,12 @@ const SignUp = () => {
     
     </LinearGradient>
     
+
+
+  
+
+    </View>
+
   );
 };
 
