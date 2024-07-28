@@ -23,10 +23,10 @@ export default function Home({ navigation }) {
       <Text style={styles.title}>WishGather</Text>
 
       {/* Sign In/Up Button */}
-      <Pressable style={styles.button} onPress={() => navigation.navigate('Login')}>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('SignIn')}>
         <Text style={styles.buttonText}>登入</Text>
       </Pressable>
-      <Pressable style={styles.button} onPress={() => navigation.navigate('SignIn')}>
+      <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
         <Text style={styles.buttonText}>註冊</Text>
       </Pressable>
     </LinearGradient>

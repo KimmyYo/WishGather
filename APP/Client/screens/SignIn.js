@@ -124,7 +124,7 @@ export default function App() {
       style={styles.container}
     >
       <Text style={{ color: "#272727", fontSize: 35, marginBottom: 10, fontWeight: '500'}}>登入</Text>
-      <Text style={{ color: "#272727", fontSize: 25, marginBottom: 50 }}>Login</Text>
+      <Text style={{ color: "#272727", fontSize: 25, fontFamily:"Roboto", marginBottom: 50}}>Login</Text>
 
       <TextInput
         style={styles.input}

@@ -80,26 +80,26 @@ const SignUp = () => {
 
       <TextInput
         style={styles.input}
-        placeholder="Name"
+        placeholder="輸入姓名"
         value={name}
         onChangeText={setName}
       />
       <TextInput
         style={styles.input}
-        placeholder="Phone"
+        placeholder="輸入電話號碼"
         value={phone}
         onChangeText={setPhone}
       />
       <TextInput
         style={styles.input}
-        placeholder="Email"
+        placeholder="輸入電子郵件"
         value={email}
         onChangeText={setEmail}
         keyboardType="email-address"
       />
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="設定密碼"
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -136,6 +136,7 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 30,
+    fontFamily:"Roboto",
     marginBottom: 5,
   },
   input: {
@@ -151,11 +152,17 @@ const styles = StyleSheet.create({
   button: {
     width: '35%',
     height: 50,
-    backgroundColor: '#FF9224',
+    backgroundColor: '#FFA500',
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
     marginVertical: 20,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   buttonText: {
     color: '#FCFCFC',
