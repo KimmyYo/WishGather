@@ -89,7 +89,12 @@ const UserPage = () => {
           /* 測試註冊先切掉頁面 Ethan
           onPress={openText}
           */
-          onPress={() => navigation.navigate("SignUp")}
+
+          /* 測試登入先切掉頁面 Ziyi
+          onPress={openText}
+          */
+
+          onPress={() => navigation.navigate("Login")}
         >
           <Text style={[styles.text, styles.textFlexBox]}>
             登出帳戶

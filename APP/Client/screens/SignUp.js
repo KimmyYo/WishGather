@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Alert, Text } from 'react-native';
+import { View, TextInput, Pressable, StyleSheet, Alert, Text } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
+import {LinearGradient} from 'expo-linear-gradient';
 
 const SignUp = () => {
   const [name, setName] = useState('');
@@ -68,7 +69,15 @@ const SignUp = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <LinearGradient
+      colors={['#EA7500','#FFFAF4']}
+      style={styles.container}
+    >
+    
+      {/* Logo設計好可以考慮放上去 */}
+      <Text style={{color:"#272727", fontSize: 35, marginBottom: 15, fontWeight: '500'}}>註冊</Text>
+      <Text style={{color:"#272727", fontSize: 25, marginBottom: 50}}>Registration</Text>
+
       <TextInput
         style={styles.input}
         placeholder="Name"
@@ -95,13 +104,31 @@ const SignUp = () => {
         value={password}
         onChangeText={setPassword}
       />
-      <Button title="Register" onPress={handleRegister} />
 
-      <Button title="測試登入連結" onPress={() => navigation.navigate("SignIn")} />
+      <Pressable style={styles.button} onPress={handleRegister}>
+        <Text style={styles.buttonText}>確認送出</Text>
+      </Pressable>
+      
+      
+      
+      {/* Debug Information */}
+      <View style={styles.debugContainer}>
+        <Text>Debug Info:</Text>
+        <Text>Name: {name}</Text>
+        <Text>Phone: {phone}</Text>
+        <Text>Email: {email}</Text>
+        <Text>Password: {password.replace(/./g, '*')}</Text>
+      </View>
+      
+    
+    </LinearGradient>
+    
+
 
   
 
     </View>
+
   );
 };
 
@@ -109,14 +136,37 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    padding: 16,
+    alignItems: 'center',
+    padding: 20,
+    backgroundColor: '#F5F5F5',
+  },
+  title: {
+    fontSize: 30,
+    marginBottom: 5,
   },
   input: {
-    height: 40,
+    width: '90%',
+    height: 50,
+    backgroundColor:"#FFFAF4",
     borderColor: 'gray',
     borderWidth: 1,
-    marginBottom: 12,
-    paddingHorizontal: 8,
+    borderRadius: 15,
+    marginBottom: 15,
+    paddingHorizontal: 10,
+  },
+  button: {
+    width: '35%',
+    height: 50,
+    backgroundColor: '#FF9224',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 20,
+    marginVertical: 20,
+  },
+  buttonText: {
+    color: '#FCFCFC',
+    fontSize: 18, 
+    fontWeight:'500'
   },
   debugContainer: {
     marginTop: 20,
