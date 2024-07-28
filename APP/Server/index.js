@@ -175,8 +175,26 @@ function isAuthenticated(req, res, next) {
 }
 
 // Example protected route
-app.get('/profile', isAuthenticated, (req, res) => {
-    res.json({ message: 'This is a protected route', userId: req.user.userId, email: req.user.email });
+app.get('/profile', isAuthenticated, async(req, res) => {
+    try {
+        const [rows] = await db.promise().query('SELECT * FROM `信眾` WHERE id = ?', [req.user.userId]);
+
+        if (rows.length > 0) {
+            const user = rows[0];
+            res.json({
+                message: 'This is a protected route',
+                userId: user.id,
+                email: user.EAMIL,
+                name: user.NAME,
+
+            });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching user profile:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
 });
 
 

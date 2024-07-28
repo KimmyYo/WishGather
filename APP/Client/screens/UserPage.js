@@ -1,13 +1,19 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, View, Text, Modal } from "react-native";
+import { StyleSheet, Pressable, View, Text, Modal, SafeAreaView, TouchableOpacity, Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import LogoutOverlay from "../components/LogoutOverlay";
 import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'expo-status-bar';
+import axios from 'axios';
 
 const UserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
+  const [token, setToken] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const openText = useCallback(() => {
     setTextVisible(true);
@@ -17,6 +23,56 @@ const UserPage = () => {
     setTextVisible(false);
   }, []);
 
+  useEffect(() => {
+    const getTokenAndFetchProfile = async () => {
+      try {
+        const storedToken = await AsyncStorage.getItem('userToken');
+        if (storedToken) {
+          setToken(storedToken);
+          await fetchProfile(storedToken);
+        }
+      } catch (error) {
+        console.error('Error reading token or fetching profile:', error);
+        Alert.alert('Error', 'Failed to load profile');
+      }
+    };
+
+    getTokenAndFetchProfile();
+  }, []);
+
+  const fetchProfile = async (userToken) => {
+    if (!userToken) {
+      Alert.alert('Error', 'No token available');
+      return;
+    }
+    setIsLoading(true);
+    console.log('token:', userToken);
+
+    try {
+      const response = await axios.get('http://192.168.1.102:3000/profile', {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+        },
+      });
+
+      console.log('Response headers:', response.headers);
+      console.log('Profile data:', response.data);
+
+      setProfile(response.data);
+    } catch (error) {
+      console.error('Fetch profile error', error);
+      Alert.alert('Error', 'Failed to fetch profile. Please try again.');
+    }
+    setIsLoading(false);
+  };
+
+  const handleSignOut = async () => {
+    setToken(null);
+    setProfile(null);
+    await AsyncStorage.removeItem('userToken');
+    navigation.navigate('Main');
+  };
+
   return (
     <>
       <View style={styles.userPage}>
@@ -24,6 +80,9 @@ const UserPage = () => {
           <View style={styles.footer1}>
             <View style={[styles.menu, styles.menuLayout]}>
               <View style={styles.homeIconParent}>
+
+
+
                 <Pressable
                   style={[styles.homeIcon, styles.iconLayout1]}
                   onPress={() => navigation.navigate("HomePage")}
@@ -86,15 +145,9 @@ const UserPage = () => {
         />
         <Pressable
           style={[styles.pressable, styles.pressablePosition]}
-          /* 測試註冊先切掉頁面 Ethan
-          onPress={openText}
-          */
 
-          /* 測試登入先切掉頁面 Ziyi
-          onPress={openText}
-          */
 
-          onPress={() => navigation.navigate("SignIn")}
+          onPress={handleSignOut}
         >
           <Text style={[styles.text, styles.textFlexBox]}>
             登出帳戶
@@ -108,6 +161,9 @@ const UserPage = () => {
         >
           <Text style={[styles.text, styles.textFlexBox]}>服務條款</Text>
         </Pressable>
+
+
+        
         <Pressable
           style={[styles.pressable2, styles.pressablePosition]}
           onPress={() => navigation.navigate("UserPage3")}
@@ -153,10 +209,15 @@ const UserPage = () => {
             source={require("../assets/icroundlogout.png")}
           />
         </View>
+
+
         <Text style={[styles.text5, styles.textFlexBox]}>
           <Text style={styles.txt}>
-            <Text style={styles.text6}>{`小猴吱
-`}</Text>
+            <Text style={styles.text6}>
+            {profile ? profile.name || profile.email || 'User' : 'Loading...'}
+              
+              
+              </Text>
             <Text style={styles.text7}>普通會員</Text>
           </Text>
         </Text>

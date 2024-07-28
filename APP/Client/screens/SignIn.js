@@ -26,6 +26,13 @@ export default function App() {
     });
   }, []);
 
+  /*跳轉頁面*/
+  useEffect(() => {
+    if (token) {
+      navigation.replace('UserPage');
+    }
+  }, [token, navigation]);
+
   const handleSignIn = async () => {
     if (!email || !password) {
       Alert.alert('Error', 'Please enter both email and password');
@@ -99,23 +106,36 @@ export default function App() {
 
   if (token) {
     return (
-      <SafeAreaView style={styles.container}>
-        <StatusBar style="auto" />
-        <Text style={styles.title}>Welcome!</Text>
-        <TouchableOpacity style={styles.button} onPress={fetchProfile} disabled={isLoading}>
-          <Text style={styles.buttonText}>{isLoading ? 'Loading...' : 'Fetch Profile'}</Text>
-        </TouchableOpacity>
-        {profile && (
-          <View style={styles.profileContainer}>
-            <Text style={styles.profileText}>User ID: {profile.userId}</Text>
-            <Text style={styles.profileText}>Email: {profile.email}</Text>
-          </View>
-        )}
-        <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-          <Text style={styles.buttonText}>Sign Out</Text>
-        </TouchableOpacity>
-      </SafeAreaView>
-    );
+      
+    //   <SafeAreaView style={styles.container}>
+    //     <StatusBar style="auto" />
+    //     <Text style={styles.title}>登入成功! (應該直接進首頁但還在想方法
+    //       因為要先session-ethan)</Text>
+    //     <TouchableOpacity style={styles.button} onPress={fetchProfile} disabled={isLoading}>
+    //       <Text style={styles.buttonText}>{isLoading ? 'Loading...' : '登入資訊'}</Text>
+    //     </TouchableOpacity>
+    //     {profile && (
+    //       <View style={styles.profileContainer}>
+    //         <Text style={styles.profileText}>User ID: {profile.userId}</Text>
+    //         <Text style={styles.profileText}>Email: {profile.email}</Text>
+    //       </View>
+    //     )}
+
+    //     {/* <TouchableOpacity style={styles.button} onPress={navigation.navigate("UserPage")}>
+    //       <Text style={styles.buttonText}>進入首頁</Text>
+    //     </TouchableOpacity> */}
+
+    //     <TouchableOpacity style={styles.button} onPress={handleSignOut}>
+    //       <Text style={styles.buttonText}>Sign Out</Text>
+    //     </TouchableOpacity>
+    //   </SafeAreaView>
+    // );
+
+    <SafeAreaView style={styles.container}>
+    <StatusBar style="auto" />
+    <Text style={styles.title}>登入成功！正在跳轉...</Text>
+  </SafeAreaView>
+);
   }
 
   return (
@@ -156,7 +176,7 @@ export default function App() {
     </Pressable>
 
     <Pressable style={styles.button} onPress={() => navigation.navigate("SignUp")}>
-        <Text style={styles.buttonText}>註冊
+        <Text style={styles.buttonText}>前往註冊
         
         </Text>
     </Pressable>
