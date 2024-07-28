@@ -94,7 +94,7 @@ const UserPage = () => {
           onPress={openText}
           */
 
-          onPress={() => navigation.navigate("Login")}
+          onPress={() => navigation.navigate("SignIn")}
         >
           <Text style={[styles.text, styles.textFlexBox]}>
             登出帳戶

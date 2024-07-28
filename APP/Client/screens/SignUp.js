@@ -113,7 +113,7 @@ const SignUp = () => {
       
       {/* Debug Information */}
       <View style={styles.debugContainer}>
-        <Text>Debug Info:</Text>
+        <Text>(For Debug)</Text>
         <Text>Name: {name}</Text>
         <Text>Phone: {phone}</Text>
         <Text>Email: {email}</Text>
@@ -123,12 +123,6 @@ const SignUp = () => {
     
     </LinearGradient>
     
-
-
-  
-
-    </View>
-
   );
 };
 
