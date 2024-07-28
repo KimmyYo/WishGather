@@ -2,6 +2,7 @@ const Stack = createNativeStackNavigator();
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import Main from "./screens/Main";
 import UserPage from "./screens/UserPage";
 import HomePage from "./screens/HomePage";
 import KeyboardOverlay from "./components/KeyboardOverlay";
@@ -61,9 +62,14 @@ const App = () => {
     <>
       <NavigationContainer>
         {hideSplashScreen ? (
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="UserPage">
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Main">
             
-            
+            <Stack.Screen
+              name="Main"
+              component={Main}
+              options={{ headerShown: false }}
+            />
+
             <Stack.Screen
               name="UserPage"
               component={UserPage}
