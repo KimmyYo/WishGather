@@ -11,6 +11,7 @@ const app = express();
 
 app.use(cors()); // 用CORS
 app.use(bodyParser.json());
+
 const port = 3000;
 
 //連線資料庫
@@ -139,7 +140,7 @@ app.post('/signin', async(req, res) => {
 
         if (match) {
             // Create a JWT token
-            const token = jwt.sign({ userId: user.id, email: user.EMAIL },
+            const token = jwt.sign({ userId: user.pID, email: user.EMAIL },
                 JWT_SECRET, { expiresIn: '1h' }
             );
 
@@ -177,13 +178,13 @@ function isAuthenticated(req, res, next) {
 // Example protected route
 app.get('/profile', isAuthenticated, async(req, res) => {
     try {
-        const [rows] = await db.promise().query('SELECT * FROM `信眾` WHERE id = ?', [req.user.userId]);
+        const [rows] = await db.promise().query('SELECT * FROM `信眾` WHERE pID = ?', [req.user.userId]);
 
         if (rows.length > 0) {
             const user = rows[0];
             res.json({
                 message: 'This is a protected route',
-                userId: user.id,
+                userId: user.pID,
                 email: user.EAMIL,
                 name: user.NAME,
 

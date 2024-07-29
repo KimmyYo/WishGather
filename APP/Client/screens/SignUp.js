@@ -51,7 +51,7 @@ const SignUp = () => {
   );
       console.log('Registration successful:', result.data);
       Alert.alert('Success', 'User registered successfully!');
-      navigation.navigate('UserPage');
+      navigation.navigate('SignIn');
     } catch (error) {
       console.error('Registration error:', error);
       if (error.response) {

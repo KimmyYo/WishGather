@@ -1,5 +1,1 @@
-var DB = require("../../Server/index");
-
-DB.db.query(
-
-  );
+const API_URL = 'http://192.168.1.102:3000'; // API DB- 要換成自己的電腦ip(在找到上公網ip前)
