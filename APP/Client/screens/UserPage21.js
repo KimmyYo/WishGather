@@ -8,13 +8,15 @@ import Component from "../components/Component1";
 import { FontSize, FontFamily, Color, Border } from "../GlobalStyles";
 
 
+const API=require('./DBconfig')
+
 const UserPage21 = () => {
   const navigation = useNavigation();
   const [temples, setTemples] = useState([]);
 
   useEffect(() => {
     
-    axios.get('http://192.168.1.102:3000/temples')
+    axios.get(`${API}/temples`)
       .then(response => {
         setTemples(response.data);
       })

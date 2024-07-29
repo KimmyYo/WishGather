@@ -32,8 +32,6 @@ import CartPage from "./screens/CartPage";
 import TempleHomePage from "./screens/TempleHomePage";
 import SignUp from "./screens/SignUp"
 
-import Login from "./screens/Login";
-
 import SignIn from "./screens/SignIn"
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -137,11 +135,11 @@ const App = () => {
               options={{ headerShown: false }}
             />
 
-            <Stack.Screen
+            {/* <Stack.Screen
               name="Login"
               component={Login}
               options={{ headerShown: false }}
-            />
+            /> */}
             
             <Stack.Screen
               name="HomePage5"

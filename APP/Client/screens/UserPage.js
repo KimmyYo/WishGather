@@ -8,6 +8,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 import axios from 'axios';
 
+
+const API=require('./DBconfig')
+
 const UserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
@@ -49,7 +52,7 @@ const UserPage = () => {
     console.log('token:', userToken);
 
     try {
-      const response = await axios.get('http://192.168.1.102:3000/profile', {
+      const response = await axios.get(`${API}/profile`, {
         headers: {
           Authorization: `Bearer ${userToken}`,
         },
@@ -70,6 +73,7 @@ const UserPage = () => {
     setToken(null);
     setProfile(null);
     await AsyncStorage.removeItem('userToken');
+    Alert.alert('登出成功!', '歡迎再次使用');
     navigation.navigate('Main');
   };
 

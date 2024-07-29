@@ -7,7 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Checkbox from 'expo-checkbox';
 import { useNavigation } from "@react-navigation/native";
 
-const API_URL = '192.168.1.102:3000'; // Replace with your actual API URL
+const API=require('./DBconfig')
 
 export default function App() {
   const [email, setEmail] = useState('');
@@ -40,7 +40,10 @@ export default function App() {
     }
     setIsLoading(true);
 
-    const api = 'http://192.168.1.102:3000/signin';
+    
+    const api = `${API}/signin`;  //注意這邊ipipip
+
+
     const user = {
       EMAIL: email,
       PASSWORD: password,
@@ -76,32 +79,34 @@ export default function App() {
   };
 
 
-  const fetchProfile = async () => {
-    if (!token) {
-      Alert.alert('Error', 'No token available');
-      return;
-    }
-    setIsLoading(true);
-    console.log('token:', token);
+  /*原本要fetch自己 先留著 */
+
+  // const fetchProfile = async () => {
+  //   if (!token) {
+  //     Alert.alert('Error', 'No token available');
+  //     return;
+  //   }
+  //   setIsLoading(true);
+  //   console.log('token:', token);
   
-    try {
-      const response = await axios.get('http://192.168.1.102:3000/profile', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+  //   try {
+  //     const response = await axios.get('http://192.168.1.102:3000/profile', {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //     });
   
-      console.log('Response headers:', response.headers); // 打印響應頭以進行調試
-      console.log('Profile data:', response.data); // 打印響應數據以進行調試
+  //     console.log('Response headers:', response.headers); // 打印響應頭以進行調試
+  //     console.log('Profile data:', response.data); // 打印響應數據以進行調試
   
-      // 將獲取的資料設置到 `profile` 狀態中
-      setProfile(response.data);
-    } catch (error) {
-      console.error('Fetch profile error', error);
-      Alert.alert('Error', 'Failed to fetch profile. Please try again.');
-    }
-    setIsLoading(false);
-  };
+  //     // 將獲取的資料設置到 `profile` 狀態中
+  //     setProfile(response.data);
+  //   } catch (error) {
+  //     console.error('Fetch profile error', error);
+  //     Alert.alert('Error', 'Failed to fetch profile. Please try again.');
+  //   }
+  //   setIsLoading(false);
+  // };
   
 
   if (token) {
@@ -182,11 +187,11 @@ export default function App() {
     </Pressable>
       
       {/* Debug Information */}
-      <View style={styles.debugContainer}>
+      {/* <View style={styles.debugContainer}>
         <Text>(For Debug)</Text>
         <Text>Email: {email}</Text>
         <Text>Password: {password.replace(/./g, '*')}</Text>
-      </View>
+      </View> */}
     </LinearGradient>
   );
 };
