@@ -129,6 +129,32 @@ Used Components :
 Description : 歷史訂單 - 商家
 Used Components : 
 ```
+---
+### TempleHomePage.js :
+```
+Description : 廟方端首頁（包含該廟法會資訊預覽以及媒合訊息預覽）
+Used Components : EventCard (法會資訊), MatchingCard (媒合資訊)
+Todo : Adjust matching card layout
+```
+### TempleEditPage.js :
+```
+Description : 廟方端首頁（包含該廟法會資訊預覽以及媒合訊息預覽）
+Used Components : EventCard (法會資訊, rectangle), PageTitle
+Todo : Add layout with Images 
+```
+### EditTempleInfoPage.js : 
+```
+Description : 編輯法會資訊頁面
+Used Components : DatePicker (add modal to show date picker), TextInputSet (label name and read value), PageTitle
+Todo : Add Image input
+```
+### MatchingPage.js : 
+```
+Description : 媒合資訊總頁面
+Used Components : PageTitle, (Also Tab navigation)
+Todo : Finished the two tab screens layout
+```
+
 ## Components 
 ### CartItem.js :
 ```

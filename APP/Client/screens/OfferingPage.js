@@ -1,153 +1,110 @@
-import React, { useState, useCallback } from "react";
-import { StyleSheet, View, Text, Pressable, Modal, Image, ScrollView } from "react-native";
-import OfferingItem from "../components/OfferingItem";
-import { useNavigation } from "@react-navigation/native";
-import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
+import React, { useState, useCallback } from 'react';
+import { StyleSheet, View, Text, Pressable, Modal, Image, FlatList, Dimensions } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import OfferingItem from '../components/OfferingItem';
+import { useNavigation } from '@react-navigation/native';
+import { Color, FontFamily, FontSize, Border } from '../GlobalStyles';
+
+const { width, height } = Dimensions.get('window');
 
 const OfferingPage = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
-  const BoughtItem = ({ imageSource, title, description}) => (
-    <View style={styles.container}>
-      <View style={[styles.inner, styles.childPosition]} />
-      <Image
-        style={[styles.rectangleIcon, styles.iconLayout]}
-        contentFit="cover"
-        source={imageSource}
-      />
-      <View style={styles.textContainer}>
-        <Text style={styles.textTypo}>
-          <Text style={styles.title}>{`${title} `}</Text>
-          <Text style={styles.price}>{`${price}\n`}</Text>
-        </Text>
-        {description && <Text style={styles.description}>{description}</Text>}
-        <View style={styles.counterContainer}>
-          <Counter quantity={quantity} onIncrease={handleIncrease} onDecrease={handleDecrease} />
-        </View>
-      </View>
-    </View>
-  );
+
+
+  const chosenItems = [
+    { id: '1', imageSource: require('../assets/rectangle-46.png'), title: '開運吊飾', price: '$120', description: '備註：' },
+    { id: '2', imageSource: require('../assets/rectangle-43.png'), title: '光明燈', price: '$800', description: '備註：被祈福人資訊' },
+    // Add more items as needed
+  ];
 
   const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
   const [mageeditIcon1Visible, setMageeditIcon1Visible] = useState(false);
 
-  const openMageeditIcon = useCallback(() => {
-    setMageeditIconVisible(true);
-  }, []);
+  const openMageeditIcon = useCallback(() => setMageeditIconVisible(true), []);
+  const closeMageeditIcon = useCallback(() => setMageeditIconVisible(false), []);
+  const openMageeditIcon1 = useCallback(() => setMageeditIcon1Visible(true), []);
+  const closeMageeditIcon1 = useCallback(() => setMageeditIcon1Visible(false), []);
 
-  const closeMageeditIcon = useCallback(() => {
-    setMageeditIconVisible(false);
-  }, []);
-
-  const openMageeditIcon1 = useCallback(() => {
-    setMageeditIcon1Visible(true);
-  }, []);
-
-  const closeMageeditIcon1 = useCallback(() => {
-    setMageeditIcon1Visible(false);
-  }, []);
+  const renderItem = ({ item }) => (
+    <OfferingItem
+      imageSource={item.imageSource}
+      title={item.title}
+      price={item.price}
+      description={item.description}
+    />
+  );
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text_title}>訂單</Text>
+    <SafeAreaProvider>
+      <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
 
-      {/* 返回鍵 */}
-      <Pressable style={styles.crossIcon} onPress={() => navigation.goBack()}>
-        <Image
-          style={styles.icon}
-          source={require("../assets/cross-icon.png")}
-        />
-      </Pressable>
+        <View style={{ width: width * 0.8, height: 65, flexDirection: 'row', justifyContent: 'start', alignItems: 'center' }}>
+    
+            <Pressable
+              style={{ width: 45, height: 45, justifyContent: 'center', alignItems: 'center' }}
+              onPress={() => navigation.navigate("UserPage")}
+            >
+              <Image
+                style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
+                source={require("../assets/go-back-button.png")}
+              />
+            </Pressable>
 
-      <Text style={[styles.textTypo, styles.text_temple_name]}>
-        大甲鎮瀾宮媽祖廟
-      </Text>
+            <Text style={{ fontSize: 30, fontFamily: FontFamily.interSemiBold, color: Color.colorDimgray_200 }}>
+              訂單確認
+            </Text>
+    
+        </View>
 
-      {/* 選購的供品 */}
-      <ScrollView contentContainerStyle={styles.itemsContainer}>
-        <OfferingItem
-          imageSource={require("../assets/rectangle-46.png")}
-          title="開運吊飾"
-          price="$120"
-          description="備註："
+        <FlatList
+          data={chosenItems}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.itemsContainer}
         />
-        <OfferingItem
-          imageSource={require("../assets/rectangle-43.png")}
-          title="光明燈"
-          price="$800"
-          description="備註：被祈福人資訊"
-        />
-        
-        {/* 返回繼續選擇新增供品 */}
+
         <Pressable
           style={styles.addButton}
-          onPress={() => navigation.navigate("OfferingPage5")}
+          onPress={() => navigation.navigate('OfferingPage5')}
         >
-          <Image
-            style={styles.addButtonChild}
-            source={require("../assets/rectangle-12.png")}
-          />
-          <Image
-            style={styles.plusIcon}
-            source={require("../assets/plus-icon.png")}
-          />
-          <Text style={styles.text12}>新增商品</Text>
+          <Image style={styles.addButtonImage} source={require('../assets/rectangle-12.png')} />
+          <Image style={styles.plusIcon} source={require('../assets/plus-icon.png')} />
+          <Text style={styles.addButtonText}>新增商品</Text>
         </Pressable>
-      </ScrollView>
 
-      
+        <Pressable
+          style={styles.checkoutButton}
+          onPress={() => navigation.navigate('OfferingPage1')}
+        >
+          <Image style={styles.checkoutImage} source={require('../assets/rectangle-9.png')} />
+          <Text style={styles.checkoutText}>下一步</Text>
+        </Pressable>
 
-      {/* 下一步按鈕 */}
-      <Pressable
-        style={styles.goCheckoutButton}
-        onPress={() => navigation.navigate("OfferingPage1")}
-      >
-        <Image
-          style={styles.checkoutImage}
-          source={require("../assets/rectangle-9.png")}
-        />
-        <Text style={styles.checkoutText}>下一步</Text>
-      </Pressable>
+        <Text style={[styles.text, styles.paymentInfo]}>
+          <Text>宮廟名稱 : 大甲鎮瀾宮媽祖廟{'\n'}</Text>
+          <Text>共計 3 樣商品，小計 1040 元{'\n'}</Text>
+          <Text>付款方式：線上轉帳付款</Text>
+        </Text>
 
-      {/* 付款資訊 */}
-      <Text style={[styles.textTypo, styles.textContainer]}>
-        <Text style={styles.text2}>共計 3 樣商品，小計 1040 元</Text>{"\n"}
-        <Text style={styles.text2}>取貨地址：高雄市鼓山區蓮海路70號</Text>{"\n"}
-        <Text style={styles.text2}>付款方式：線上轉帳付款</Text>
-      </Text>
+        
 
-      
+        <Modal animationType="fade" transparent visible={mageeditIconVisible}>
+          <View style={styles.overlayContainer}>
+            <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
+            {/* AddressOverlay content */}
+          </View>
+        </Modal>
 
-      {/* 備註區 */}
-      <Pressable style={styles.mageedit} onPress={openMageeditIcon}>
-        <Image
-          style={styles.icon}
-          source={require("../assets/mageedit.png")}
-        />
-      </Pressable>
-      <Pressable style={styles.mageedit1} onPress={openMageeditIcon1}>
-        <Image
-          style={styles.icon}
-          source={require("../assets/mageedit.png")}
-        />
-      </Pressable>
-
-      {/* 地址Overlay */}
-      <Modal animationType="fade" transparent visible={mageeditIconVisible}>
-        <View style={styles.overlayContainer}>
-          <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
-          {/* AddressOverlay 內容 */}
-        </View>
-      </Modal>
-
-      {/* 光明燈信息Overlay */}
-      <Modal animationType="fade" transparent visible={mageeditIcon1Visible}>
-        <View style={styles.overlayContainer}>
-          <Pressable style={styles.overlayBg} onPress={closeMageeditIcon1} />
-          {/* LightInfoOverlay 內容 */}
-        </View>
-      </Modal>
-    </View>
+        <Modal animationType="fade" transparent visible={mageeditIcon1Visible}>
+          <View style={styles.overlayContainer}>
+            <Pressable style={styles.overlayBg} onPress={closeMageeditIcon1} />
+            {/* LightInfoOverlay content */}
+          </View>
+        </Modal>
+      </View>
+    </SafeAreaProvider>
   );
 };
 
@@ -156,129 +113,128 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.colorGray_100,
     paddingHorizontal: 20,
-    
   },
-  text_title: {
-    fontSize: FontSize.size_16xl,
+  title: {
+    fontSize: 30,
     fontFamily: FontFamily.interSemiBold,
     color: Color.colorDimgray_200,
-    marginTop: '15%',
-    marginBottom: 20,
+    textAlign:'center',
   },
-  text_temple_name: {
+  goBackButton: {
+    left: width * 0.001,
+    top: width * 0.001,
+    width: 45,
+    height: 45,
+    position: "absolute",
+  },
+  templeName: {
     fontSize: FontSize.size_8xl,
-    marginBottom:15
+    marginBottom: 15,
   },
   itemsContainer: {
-    width:'100%',
-    height:140,
-    
+    width: '100%',
+    paddingBottom: 70,
   },
-  crossIcon: {
-    position: "absolute",
+  backButton: {
+    position: 'absolute',
     marginTop: '15%',
     right: 15,
     width: 30,
     height: 30,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  goCheckoutButton: {
-    position: "absolute",
-    bottom: 20,
-    left: "8%",
-    width: "84%",
+  checkoutButton: {
+    width: width * 0.85,
+    bottom: height * 0.03,
+    left: '8%',
     height: 70,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    borderRadius: Border.br_xl,
-    backgroundColor: Color.colorGray_100,
+    position: 'absolute',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   checkoutImage: {
     ...StyleSheet.absoluteFillObject,
     borderRadius: Border.br_xl,
   },
   checkoutText: {
-    position: "absolute",
+    position: 'absolute',
     fontSize: FontSize.size_11xl,
-    fontWeight: "600",
+    fontWeight: '600',
     fontFamily: FontFamily.interSemiBold,
     color: Color.colorWhite,
   },
-  textTypo: {
-    width:'100%',
+  text: {
+    width: '100%',
     fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
+    fontWeight: '500',
     fontSize: FontSize.size_xl,
     color: Color.colorBlack,
   },
-  textContainer:{
-    width:'100%',
-    position:'absolute',
-    top:'65%',
-    left:'8%'
-
+  paymentInfo: {
+    position: 'absolute',
+    top: '65%',
+    left: '8%',
   },
   addButton: {
-    position: "absolute",
+    position: 'absolute',
     right: 10,
-    top:300,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
+    top: 300,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
     borderRadius: Border.br_31xl,
     backgroundColor: Color.colorGray_100,
     paddingVertical: 5,
     paddingHorizontal: 15,
   },
-  addButtonChild: {
-    ...StyleSheet.absoluteFillObject, 
+  addButtonImage: {
+    ...StyleSheet.absoluteFillObject,
   },
   plusIcon: {
     width: 20,
     height: 20,
-    marginRight: 5, 
+    marginRight: 5,
   },
-  text12: {
+  addButtonText: {
     fontSize: FontSize.size_xl,
     color: Color.colorDimgray_100,
   },
   mageedit: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 20,
     right: 20,
     width: 25,
     height: 25,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   mageedit1: {
-    position: "absolute",
+    position: 'absolute',
     top: 20,
     right: 20,
     width: 25,
     height: 25,
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   overlayContainer: {
     flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: "rgba(113, 113, 113, 0.3)",
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'rgba(113, 113, 113, 0.3)',
   },
   overlayBg: {
-    position: "absolute",
-    width: "100%",
-    height: "100%",
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
     left: 0,
     top: 0,
   },
   icon: {
-    width: "100%",
-    height: "100%",
-    resizeMode: "cover",
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
 });
 

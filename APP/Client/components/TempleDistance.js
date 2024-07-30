@@ -18,6 +18,7 @@ const TempleDistance = ({ imageSource, distance, description, onPress }) => {
       />
       <Text style={styles.text}>
         <Text style={styles.description}>{description}</Text>
+        <Text>   </Text>
         <Text style={styles.distance}>{distance}</Text>
       </Text>
     </Pressable>
@@ -26,30 +27,30 @@ const TempleDistance = ({ imageSource, distance, description, onPress }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: 199,
+    height: 200,
     width: 380,
     marginVertical: 10,
   },
   locationIcon: {
-    height: "15.08%",
-    width: "7.89%",
+    height: "15%",
+    width: "8%",
     top: "84.92%",
     left: "0.53%",
     position: "absolute",
   },
   image: {
-    height: "80.4%",
+    height: "80%",
     width: "100%",
     borderRadius: Border.br_3xs,
-    opacity: 0.85,
     position: "absolute",
   },
   text: {
-    height: "16.08%",
-    width: "89.47%",
-    top: "83.42%",
-    left: "8.95%",
+    height: "15%",
+    width: "90%",
+    top: 170,
+    left: 35,
     fontFamily: FontFamily.interRegular,
+    fontWeight : 600,
     position: "absolute",
   },
   description: {

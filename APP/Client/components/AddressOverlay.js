@@ -1,24 +1,40 @@
+{/* 用於HomePage地址設定，亦可用於OfferingPage */}
 import * as React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TextInput, Pressable } from "react-native";
 import { FontFamily, FontSize, Border, Color } from "../GlobalStyles";
 
-// Address Overlay Componet: 修改地址的彈出 （所有彈出都類似嗎）
-// 
-const AddressOverlay = ({ onClose }) => {
+const AddressOverlay = ({ onClose, onSubmit }) => {
+  const [address, setAddress] = React.useState("");
+
   return (
     <View style={[styles.addressOverlay, styles.addressLayout]}>
+
       <View style={[styles.addressOverlayChild, styles.addressLayout]} />
+      {/* 標題 */}
       <Text style={[styles.text, styles.textTypo]}>修改地址</Text>
-      <View style={styles.addressOverlayItem} />
-      <Text style={[styles.text1, styles.textTypo]}>確認</Text>
-      <Text style={styles.text2}>高雄市鼓山區蓮海路70號</Text>
+
+      {/* 地址輸入框 */}
+      <TextInput
+        style={styles.addressInput}
+        placeholder="輸入新地址"
+        value={address}
+        onChangeText={setAddress}
+      />
+
+      {/* 確認、取消按鈕，傳送至HomePage.js */}
+      <Pressable style={styles.submitButton} onPress={() => onSubmit(address)}>
+        <Text style={styles.submitButtonText}>確認</Text>
+      </Pressable>
+      <Pressable style={styles.closeButton} onPress={onClose}>
+        <Text style={styles.closeButtonText}>取消</Text>
+      </Pressable>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   addressLayout: {
-    height: 250,
+    height: 230,
     width: 300,
   },
   textTypo: {
@@ -48,32 +64,47 @@ const styles = StyleSheet.create({
     left: 104,
     color: Color.colorBlack,
   },
-  addressOverlayItem: {
+  addressInput: {
     top: 78,
     left: 15,
     borderRadius: Border.br_3xs,
     backgroundColor: Color.colorWhitesmoke_300,
     width: 270,
-    height: 110,
+    height: 60,
+    paddingHorizontal: 10,
     position: "absolute",
   },
-  text1: {
-    top: 206,
+  submitButton: {
+    top: 180,
     left: 109,
-    color: Color.colorSteelblue,
+    borderRadius: Border.br_3xs,
+    backgroundColor: Color.colorSteelblue,
     width: 83,
     height: 35,
-  },
-  text2: {
-    top: 89,
-    left: 25,
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.interRegular,
-    color: Color.colorGray_400,
-    textAlign: "left",
-    width: 234,
-    height: 54,
+    alignItems: "center",
+    justifyContent: "center",
     position: "absolute",
+  },
+  submitButtonText: {
+    color: Color.colorWhite,
+    fontSize: FontSize.size_xl,
+    fontFamily: FontFamily.interMedium,
+  },
+  closeButton: {
+    top: 180,
+    left: 204,
+    borderRadius: Border.br_3xs,
+    backgroundColor: Color.colorGray_400,
+    width: 83,
+    height: 35,
+    alignItems: "center",
+    justifyContent: "center",
+    position: "absolute",
+  },
+  closeButtonText: {
+    color: Color.colorWhite,
+    fontSize: FontSize.size_xl,
+    fontFamily: FontFamily.interMedium,
   },
   addressOverlay: {
     maxWidth: "100%",

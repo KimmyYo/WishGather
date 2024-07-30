@@ -1,4 +1,5 @@
 APP/Server/node_modules
 APP/Client/node_modules
-APP/Server/index.js
+APP/Server/config/db.js
 node_modules
+APP/Server/hash_password.js

@@ -38,7 +38,7 @@ const OfferingItem = ({ imageSource, title, price, description }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
+    height: 150,
     width: '100%',
   },
   inner: {
@@ -47,10 +47,6 @@ const styles = StyleSheet.create({
     borderStyle: "solid",
     backgroundColor: Color.colorGray_100,
     borderRadius: Border.br_3xs,
-    bottom: "0%",
-    right: "0%",
-    left: "0%",
-    top: "0%",
     height: "100%",
     position: "absolute",
     width: "100%",

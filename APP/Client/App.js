@@ -2,6 +2,7 @@ const Stack = createNativeStackNavigator();
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+import Main from "./screens/Main";
 import UserPage from "./screens/UserPage";
 import HomePage from "./screens/HomePage";
 import KeyboardOverlay from "./components/KeyboardOverlay";
@@ -32,9 +33,13 @@ import TempleEventPage from "./screens/TempleEventPage";
 import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
 import FoodScanningPage from "./screens/FoodScanningPage";
+import SignUp from "./screens/SignUp"
+
+import SignIn from "./screens/SignIn"
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, Pressable, TouchableOpacity } from "react-native";
+import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native";
+
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
@@ -62,20 +67,23 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         {hideSplashScreen ? (
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="FoodScanningPage">
-            
-
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Main">
+            <Stack.Screen
+              name="Main"
+              component={Main}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="FoodScanningPage"
               component={FoodScanningPage}
               options={{ headerShown: false }}
             />
-
             <Stack.Screen
               name="TempleHomePage"
               component={TempleHomePage}
               options={{ headerShown: false }}
             />
+
             <Stack.Screen
               name="TempleEventPage"
               component={TempleEventPage}
@@ -91,7 +99,7 @@ const App = () => {
               component={MatchingPage}
               options={{ headerShown: false}}
             />
-            {/* <Stack.Screen
+            <Stack.Screen
               name="UserPage"
               component={UserPage}
               options={{ headerShown: false }}
@@ -151,6 +159,19 @@ const App = () => {
               component={UserPage4}
               options={{ headerShown: false }}
             />
+
+            <Stack.Screen
+              name="SignUp"
+              component={SignUp}
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
+            /> 
+            
             <Stack.Screen
               name="HomePage5"
               component={HomePage5}
@@ -220,7 +241,7 @@ const App = () => {
               name="CartPage"
               component={CartPage}
               options={{ headerShown: false }}
-            /> */}
+            />
           </Stack.Navigator>
         ) : null}
       </NavigationContainer>
