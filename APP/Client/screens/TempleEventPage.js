@@ -2,10 +2,10 @@ import React, {useState} from 'react';
 import {Button, Text, SafeAreaView, View, StyleSheet, FlatList, Pressable, Dimensions} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 import EventCard from '../components/EventCard';
 import PageTitle  from '../components/PageTitle';
-import NavBar from '../components/NavBar';
 
 function TempleEventPage({route}){
     const insets = useSafeAreaInsets();
@@ -27,13 +27,12 @@ function TempleEventPage({route}){
 
     return(
         <SafeAreaProvider>
-            <NavBar/>
             <View style={{
                 flex: 1,
                 justifyContent: 'start',
                 alignItems: 'start',
                 // Paddings to handle safe area
-                paddingTop: insets.top - 50,
+                paddingTop: insets.top,
                 paddingBottom: insets.bottom,
                 paddingLeft: insets.left,
                 paddingRight: insets.right
@@ -54,7 +53,16 @@ function TempleEventPage({route}){
                         style={styles.flatList}
                     />
                 </View>
-                
+                <Pressable style={styles.addBtn} 
+                           onPress={() => 
+                                    navigation.navigate('EditTempleInfoPage', 
+                                    { 
+                                        event: { id: '12', title: '中元節', date: '2024-08-15', imageUrl: 'https://example.com/image3.jpg' },
+                                        forEdit: false
+                                    })}>
+                                    {/* should get newest id from db? after or before add succeed*/}
+                    <Ionicons name="add-outline" size={30}/>
+                </Pressable>
             </View>
         </SafeAreaProvider>
     )
@@ -76,6 +84,16 @@ const styles = StyleSheet.create({
         height: 30,
         padding: 5,
         fontSize: 50
+    },
+    addBtn:{
+        backgroundColor: "orange",
+        color: "white",
+        borderRadius: 50,
+        padding: 20,
+        // Check device 
+        position: "absolute",
+        bottom: 30,
+        right: 20,
     }
 })
 

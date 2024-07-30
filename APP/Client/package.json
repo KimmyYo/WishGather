@@ -15,6 +15,7 @@
     "@react-navigation/stack": "^6.4.0",
     "expo": "~51.0.14",
     "expo-build-properties": "^0.12.3",
+    "expo-camera": "~15.0.14",
     "expo-font": "~12.0.7",
     "expo-image": "~1.12.12",
     "expo-status-bar": "~1.12.1",
@@ -24,6 +25,8 @@
     "react-native": "^0.74.2",
     "react-native-dialog": "^9.3.0",
     "react-native-gesture-handler": "~2.16.1",
+    "react-native-maps": "1.14.0",
+    "react-native-maps-directions": "^1.9.0",
     "react-native-modal": "^13.0.1",
     "react-native-pager-view": "6.3.0",
     "react-native-paper": "^5.12.3",
@@ -33,11 +36,18 @@
     "react-native-svg": "15.2.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-ui-datepicker": "^2.0.3",
-    "react-native-vector-icons": "^10.1.0"
+    "react-native-vector-icons": "^10.1.0",
+    "react-native-vision-camera": "^4.5.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
     "tailwindcss": "^3.3.2"
   },
-  "private": true
+  "private": true,
+  "name": "Client",
+  "version": "1.0.0",
+  "scripts": {
+    "android": "expo run:android",
+    "ios": "expo run:ios"
+  }
 }

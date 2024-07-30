@@ -14,6 +14,7 @@ function EditTempleInfoPage(){
     const navigation = useNavigation();
     const route = useRoute();
     const info = route.params.event;
+    const forEdit = route.params.forEdit;
     const insets = useSafeAreaInsets();
     const [date, setDate] = useState(new Date(info.date));
 
@@ -35,7 +36,8 @@ function EditTempleInfoPage(){
                 onPress={() => navigation.navigate('TempleEventPage')}>
                     <Text>Back</Text>
                 </Pressable>
-                <PageTitle titleText="編輯法會資訊"></PageTitle>
+                
+                <PageTitle titleText={forEdit ? "編輯法會資訊" : "新增法會資訊"}></PageTitle>
                 
                 <TextInputSet labelName={'法會名稱'} defaultValue={info.title}></TextInputSet>
                 <DatePicker dateValue={info.date}labelName={"農曆日期"} />

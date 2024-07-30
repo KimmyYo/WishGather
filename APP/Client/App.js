@@ -31,6 +31,7 @@ import TempleHomePage from "./screens/TempleHomePage";
 import TempleEventPage from "./screens/TempleEventPage";
 import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
+import FoodScanningPage from "./screens/FoodScanningPage";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity } from "react-native";
@@ -61,8 +62,15 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         {hideSplashScreen ? (
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="TempleHomePage">
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="FoodScanningPage">
             
+
+            <Stack.Screen
+              name="FoodScanningPage"
+              component={FoodScanningPage}
+              options={{ headerShown: false }}
+            />
+
             <Stack.Screen
               name="TempleHomePage"
               component={TempleHomePage}

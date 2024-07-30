@@ -18,7 +18,7 @@ function MatchingPage() {
             <View
             style={{
                 paddingTop: insets.top,
-                paddingBottom: insets.bottom - 30,
+                paddingBottom: 0,
                 paddingLeft: insets.left ,
                 paddingRight: insets.right
             }}>
@@ -31,7 +31,7 @@ function MatchingPage() {
             
             <Tab.Navigator 
                 screenOptions={{
-                    tabBarLabelStyle: { fontSize: 15 },
+                    tabBarLabelStyle: { fontSize: 20, fontWeight: "semibold"},
                     tabBarIndicatorStyle: { backgroundColor: '#F6AB3A'},
             }}>
                 <Tab.Screen name="訊息" component={MatchingStatus} />

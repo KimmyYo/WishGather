@@ -57,7 +57,11 @@ function EventCard ({ event, size }){
 
     const goEdit = () => {
         swipeableRef.current?.close();
-        navigation.navigate('EditTempleInfoPage', { event: event });
+        navigation.navigate('EditTempleInfoPage', 
+                            { 
+                                event: event, 
+                                forEdit: true
+                            });
     }
 
     if(size == "square"){
