@@ -1,91 +1,94 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useMemo } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, Pressable, View, Text, Modal, ScrollView, TextInput, SafeAreaView,Dimensions } from "react-native";
+import { StyleSheet, View, TextInput, Dimensions, FlatList, Text, Pressable } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Color } from "../GlobalStyles";
 import ProductItem from "../components/ProductItem";
-// import Footer from "../components/Footer_OfferingPage";
 import Footer from "../components/footer";
+import { FontFamily, FontSize, Border } from '../GlobalStyles';
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const OfferingPage4 = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const navigation = useNavigation();
   const [searchText, setSearchText] = useState("");
+  const navigation = useNavigation();
 
+  const products = [
+    { id: '1', imageSource: require("../assets/rectangle-19.png"), title: "線上點燈" },
+    { id: '2', imageSource: require("../assets/rectangle-191.png"), title: "金紙香品" },
+    { id: '3', imageSource: require("../assets/rectangle-192.png"), title: "生鮮蔬果" },
+    { id: '4', imageSource: require("../assets/rectangle-193.png"), title: "精緻糕點" },
+    { id: '5', imageSource: require("../assets/rectangle-194.png"), title: "餅乾糖果" },
+    { id: '6', imageSource: require("../assets/rectangle-195.png"), title: "解渴飲品" },
+    { id: '7', imageSource: require("../assets/rectangle-196.png"), title: "文創周邊" },
+  ];
+
+  // Memoize filtered products to avoid unnecessary recalculations
+  const filteredProducts = useMemo(() => {
+    if (!searchText) return products;
+    return products.filter(product =>
+      product.title.toLowerCase().includes(searchText.toLowerCase())
+    );
+  }, [searchText, products]);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.productItemWrapper}>
+      <ProductItem
+        onPress={() => navigation.navigate("OfferingPage6")}
+        imageSource={item.imageSource}
+        title={item.title}
+      />
+    </View>
+  );
+
+  const noResults = searchText && filteredProducts.length === 0;
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <View style={styles.offeringPage4}>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.offeringPage4}>
+          {/* Category Title */}
+          <View style={styles.header}>
+            <Pressable style={styles.backButton} onPress={() => navigation.navigate("HomePage")}>
+              <Image style={styles.backIcon} source={require("../assets/go-back-button.png")} />
+            </Pressable>
+            <Text style={styles.headerText}>供品類別</Text>
+          </View>
 
-        {/* 搜尋欄位 */}
-        <View style={styles.searchContainer}>
-           <Image
-          style={styles.searchIcon}
-          contentFit="cover"
-          source={require("../assets/search-icon.png")}
-        />
-          <TextInput placeholder="搜尋(Ex:祭拜禮盒)" style={styles.input}
-            value={searchText}
-            onChangeText={setSearchText} />
-        </View>
-      
-
-        {/*此處先以自帶資料顯示，帶連接資料庫後再更動，目前點擊該項目product後會先統一至offeringpage6*/}
-        <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
-          <View style={styles.productItem_container}>
-            <ProductItem
-              onPress={() => navigation.navigate("OfferingPage6")}
-              imageSource={require("../assets/rectangle-19.png")}
-              title="線上點燈"
-            />
-            <ProductItem
-              onPress={() => navigation.navigate("OfferingPage6")}
-              imageSource={require("../assets/rectangle-191.png")}
-              title="金紙香品"
-            />
-            <ProductItem
-              onPress={() => navigation.navigate("OfferingPage6")}
-              imageSource={require("../assets/rectangle-192.png")}
-              title="生鮮蔬果"
-              backgroundColor="#fff"
-              fontFamily="Roboto-Regular"
-            />
-            <ProductItem
-              onPress={() => navigation.navigate("OfferingPage6")}
-              imageSource={require("../assets/rectangle-193.png")}
-              title="精緻糕點"
-            />
-            <ProductItem
-              onPress={() => navigation.navigate("OfferingPage6")}
-              imageSource={require("../assets/rectangle-194.png")}
-              title="餅乾糖果"
-            />
-            <ProductItem
-              onPress={() => navigation.navigate("OfferingPage6")}
-              imageSource={require("../assets/rectangle-195.png")}
-              title="解渴飲品"
-            />
-            <ProductItem
-              onPress={() => navigation.navigate("OfferingPage6")}
-              imageSource={require("../assets/rectangle-196.png")}
-              title="文創周邊"
-              fontFamily="Inter-Regular"
+          {/* SearchBar */}
+          <View style={styles.searchContainer}>
+            <TextInput
+              placeholder="搜尋(Ex:祭拜禮盒)"
+              style={styles.input}
+              value={searchText}
+              onChangeText={setSearchText}
             />
           </View>
-        </ScrollView>
 
-        <Footer />
+          {noResults ? (
+            <View style={styles.noResultsContainer}>
+              <Text style={styles.noResultsText}>查無此品項 ! 請重新輸入 !</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={filteredProducts}
+              renderItem={renderItem}
+              keyExtractor={item => item.id}
+              numColumns={2}
+              contentContainerStyle={styles.flatListContent}
+            />
+          )}
 
-      
-      </View>
-  </SafeAreaView>        
+          <Footer />
+        </View>
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  safeArea: {
+  container: {
     flex: 1,
     backgroundColor: Color.colorGray_100,
     overflow: 'hidden',
@@ -94,41 +97,69 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Color.colorGray_100,
   },
+  header: {
+    width: width * 0.9,
+    height: 65,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  backButton: {
+    width: 45,
+    height: 45,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  backIcon: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  headerText: {
+    fontSize: 30,
+    fontFamily: FontFamily.interSemiBold,
+    color: Color.colorDimgray_200,
+    marginLeft: 10,
+    fontWeight: '500',
+  },
   searchContainer: {
     width: width,
     paddingHorizontal: 5,
-    paddingVertical: 5,
+    paddingVertical: 10,
     alignSelf: 'center',
-    justifyContent:'center',
-    display:'flex',
-    flexDirection:'row',
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'row',
   },
   input: {
-    width: width*0.80,
+    width: width * 0.9,
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
     borderRadius: 5,
     paddingHorizontal: 10,
   },
-  searchIcon: {
-    height: 35,
-    width: 35,
+  flatListContent: {
+    paddingVertical: 10,
+    paddingBottom: 60,
   },
-  scrollView:{
-    paddingVertical:10,
-  },
-  scrollViewContent: { 
-    paddingVertical: 2,
+  productItemWrapper: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 5,
+    maxWidth: '50%', // Ensures the item occupies half of the screen width
   },
-  productItem_container: {
-    display:'flex',
-    flexWrap:'wrap',
-    flexDirection: "row",
-    paddingHorizontal:10,
-    alignContent:'center',
-    justifyContent:'center',
+  noResultsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noResultsText: {
+    fontSize: 18,
+    fontFamily: FontFamily.interRegular,
+    color: Color.colorDimgray_200,
+    textAlign: 'center',
   },
 });
 
