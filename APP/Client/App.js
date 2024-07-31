@@ -34,6 +34,7 @@ import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
 import FoodScanningPage from "./screens/FoodScanningPage";
 import SignUp from "./screens/SignUp"
+import HomePage3 from "./screens/HomePage3"
 
 import SignIn from "./screens/SignIn"
 
@@ -167,10 +168,11 @@ const App = () => {
             />
 
             <Stack.Screen
-              name="Login"
-              component={Login}
+              name="SignIn"
+              component={SignIn}
               options={{ headerShown: false }}
-            /> 
+            />
+
             
             <Stack.Screen
               name="HomePage5"
