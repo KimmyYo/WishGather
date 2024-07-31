@@ -37,7 +37,7 @@ const OfferingPage = () => {
     <SafeAreaProvider>
       <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }]}>
         <View style={styles.header}>
-          <Pressable style={styles.backButton} onPress={() => navigation.navigate("UserPage")}>
+          <Pressable style={styles.backButton} onPress={() => navigation.navigate("HomePage1")}>
             <Image style={styles.backIcon} source={require("../assets/go-back-button.png")} />
           </Pressable>
           <Text style={styles.headerText}>訂單確認</Text>
