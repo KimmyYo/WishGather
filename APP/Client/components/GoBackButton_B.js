@@ -1,14 +1,12 @@
 import React from 'react';
 import { Pressable, StyleSheet, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
-import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
-const GoBackButton_B = () => {
-  const navigation = useNavigation();
+const GoBackButton_B = ({ onPress }) => {
   return (
-    <Pressable style={styles.goBackButton} onPress={() => navigation.goBack()}>
+    <Pressable style={styles.goBackButton} onPress={onPress}>
       <Image
         style={styles.goBackIcon}
         contentFit="cover"
