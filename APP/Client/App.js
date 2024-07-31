@@ -27,6 +27,7 @@ import UserPage4 from "./screens/UserPage4";
 import OfferingPage6 from "./screens/OfferingPage6";
 import HomePage1 from "./screens/HomePage1";
 import HomePage2 from "./screens/HomePage2";
+import HomePage3 from "./screens/HomePage3";
 import CartPage from "./screens/CartPage";
 import TempleHomePage from "./screens/TempleHomePage";
 import TempleEventPage from "./screens/TempleEventPage";
@@ -34,7 +35,6 @@ import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
 import FoodScanningPage from "./screens/FoodScanningPage";
 import SignUp from "./screens/SignUp"
-
 import SignIn from "./screens/SignIn"
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -67,7 +67,12 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         {hideSplashScreen ? (
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Main">
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="TempleHomePage">
+            <Stack.Screen
+              name="TempleHomePage"
+              component={TempleHomePage}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="Main"
               component={Main}
@@ -78,11 +83,7 @@ const App = () => {
               component={FoodScanningPage}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="TempleHomePage"
-              component={TempleHomePage}
-              options={{ headerShown: false }}
-            />
+            
 
             <Stack.Screen
               name="TempleEventPage"
@@ -167,8 +168,8 @@ const App = () => {
             />
 
             <Stack.Screen
-              name="Login"
-              component={Login}
+              name="SignIn"
+              component={SignIn}
               options={{ headerShown: false }}
             /> 
             

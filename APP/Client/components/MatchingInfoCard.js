@@ -3,10 +3,10 @@ import { View, Text, Button, TouchableOpacity, Dimensions, Image, StyleSheet, Pr
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 
-function MatchingInfoCard({instituitionName, status}){
-    const { matchingStatus } = status;
+function MatchingInfoCard({infos}){
+    const { matchingStatus } = infos.MATCHING_STATUS;
     let statusText;
-    switch (status) {
+    switch (matchingStatus) {
         case "A": 
             statusText = styles.waitStatus;
             break;
@@ -24,8 +24,8 @@ function MatchingInfoCard({instituitionName, status}){
             </View>
             <View style={styles.bottomContainer}>
                 <View style={styles.infoContainer}>
-                    <Text style={styles.title}>{ instituitionName }</Text>
-                    <Text style={statusText}>媒合待確認</Text>
+                    <Text style={styles.title}>{ infos.NAME }</Text>
+                    <Text style={statusText}>{ infos.MATCHING_STATUS }</Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.button}>
