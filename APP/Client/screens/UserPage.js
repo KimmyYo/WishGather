@@ -80,7 +80,7 @@ const UserPage = () => {
   return (
     <>
       <View style={styles.userPage}>
-        <View style={[styles.footer, styles.menuLayout]}>
+        {/* <View style={[styles.footer, styles.menuLayout]}>
           <View style={styles.footer1}>
             <View style={[styles.menu, styles.menuLayout]}>
               <View style={styles.homeIconParent}>
@@ -131,7 +131,7 @@ const UserPage = () => {
             contentFit="cover"
             source={require("../assets/ellipse-3.png")}
           />
-        </View>
+        </View> */}
         <Image
           style={styles.userPageChild}
           contentFit="cover"
