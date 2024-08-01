@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CartItem from "../components/CartItem";
 import { FontFamily, Border, FontSize, Color, Padding } from "../GlobalStyles";
-import Footer from "../components/footer";
+// import Footer from "../components/footer";
 
 const { width, height } = Dimensions.get('window');
 
@@ -74,7 +74,7 @@ const CartPage = () => {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.listContainer}
         />
-        <Footer />
+        {/* <Footer /> */}
       </SafeAreaView>
     </SafeAreaProvider>
   );

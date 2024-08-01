@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Color } from "../GlobalStyles";
 import ProductItem from "../components/ProductItem";
-import Footer from "../components/footer";
+// import Footer from "../components/footer";
 import { FontFamily, FontSize, Border } from '../GlobalStyles';
 
 const { width } = Dimensions.get('window');
@@ -80,7 +80,7 @@ const OfferingPage4 = () => {
             />
           )}
 
-          <Footer />
+          {/* <Footer /> */}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

@@ -5,7 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Color, Border, FontSize, FontFamily, Padding } from "../GlobalStyles";
 import TempleCard from "../components/TempleCard";
 // import Footer from "../components/Footer_OfferingPage";
-import Footer from "../components/footer";
+// import Footer from "../components/footer";
 
 const { width, height } = Dimensions.get('window');
 
@@ -99,7 +99,7 @@ const OfferingPage6 = () => {
           </View>
         </ScrollView>
 
-        <Footer/>
+        {/* <Footer/> */}
       </View>
   </SafeAreaView>
   );
