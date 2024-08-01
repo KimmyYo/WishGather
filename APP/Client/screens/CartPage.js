@@ -1,13 +1,28 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Pressable, ScrollView, } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import CartItem from "../components/CartItem";
 import { FontFamily, Border, FontSize, Color, Padding } from "../GlobalStyles";
 import Footer from "../components/footer";
+import axios from 'axios';
+
+const API=require('./DBconfig')
 
 const CartPage = () => {
   const navigation = useNavigation();
+  const [cartItems, setCartItems] = useState([]);
+  const userId = 1; // 假設目前已登入的使用者ID為1
+
+  useEffect(() => {
+    axios.get(`${API}/test`, { params: { userId } })
+      .then(response => {
+        setCartItems(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching cart data:', error);
+      });
+  }, []);
 
   return (
     <View style={styles.cartPage}>
@@ -31,7 +46,23 @@ const CartPage = () => {
       <Text style={[styles.text1, styles.textTypo]}>購物車</Text>
     </View>
 
+
     <ScrollView contentContainerStyle={styles.scrollView} flex={1}>
+        <View style={[styles.cartPageInner, styles.cartPageInnerPosition, { flexDirection: 'column' }]}>
+          {cartItems.map((item, index) => (
+            <CartItem
+              key={index}
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={{ uri: item.IMAGE }}
+              orderTitle={`${item.templeName}\n`}
+              orderDetails={`${item.itemCount} 項商品 · NT$${item.totalAmount}`}
+            />
+          ))}
+        </View>
+      </ScrollView>
+
+
+    {/* <ScrollView contentContainerStyle={styles.scrollView} flex={1}>
       <View style={[styles.cartPageInner, styles.cartPageInnerPosition, { flexDirection: 'column' }]}>
         <CartItem
               onPress={() => navigation.navigate("OfferingPage")}
@@ -70,7 +101,7 @@ const CartPage = () => {
               orderDetails="1 項商品 · NT$300"
             />
       </View>
-    </ScrollView>
+    </ScrollView> */}
     <Footer />
     
       {/* <View style={[styles.footer, styles.menuLayout]}>
