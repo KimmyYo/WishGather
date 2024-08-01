@@ -1,12 +1,77 @@
-import * as React from "react";
-import { ScrollView, StyleSheet, View, TextInput, Text, KeyboardAvoidingView, Platform, Pressable, YellowBox } from 'react-native';
+import { ScrollView, StyleSheet, View, TextInput, Text, KeyboardAvoidingView, Platform, Pressable, YellowBox, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { FontSize, Padding, FontFamily, Color, Border } from "../GlobalStyles";
+import axios from 'axios';
+import React, { useState } from 'react';
 
-
+const API=require('./DBconfig')
 
 const UserPage4 = () => {
+
+  const [newName, setName] = useState('');
+  const [newPhone, setPhone] = useState('');
+  const [newEmail, setEmail] = useState('');
+  const [newPassword, setPassword] = useState('');
+
+  const handleRegisterUpdate = async () => {
+    console.log('Current state before submission:', { newName, newPhone, newEmail, newPassword });
+
+    if (!newName.trim()) {
+      Alert.alert('Error', 'Name is required');
+      return;
+    }
+
+    if (!newEmail.trim()) {
+      Alert.alert('Error', 'Email is required');
+      return;
+    }
+
+    if (!newPassword) {
+      Alert.alert('Error', 'Password is required');
+      return;
+    }
+
+    const api = `${API}/believersUpdate`;
+    try {
+      const user = {
+        NAME: newName.trim(),
+        PHONE: newPhone.trim(),
+        EMAIL: newEmail.trim(),
+        PASSWORD: newPassword,
+      };
+
+      console.log('User data being sent:', user);
+      console.log('User data being sent:', JSON.stringify(user));
+
+      const result = await axios.post(api, user
+        ,{
+          headers: {
+            'Content-Type': 'application/json',
+          },
+    }
+  );
+      console.log('Registration successful:', result.data);
+      Alert.alert('更新成功', '您的個資已更新!');
+      navigation.navigate('SignIn');   //修改成功前往登入頁面
+
+
+    } catch (error) {
+      console.error('Registration error:', error);
+      if (error.response) {
+        console.log('Error data:', error.response.data);
+        console.log('Error status:', error.response.status);
+        Alert.alert('Registration Failed', error.response.data.error || 'Unknown error');
+      } else if (error.request) {
+        console.log('No response received:', error.request);
+        Alert.alert('Connection Error', 'No response from server. Check your connection.');
+      } else {
+        console.log('Error', error.message);
+        Alert.alert('Error', 'An unexpected error occurred.');
+      }
+    }
+  };
+
   const navigation = useNavigation();
   return (
     
@@ -40,34 +105,53 @@ const UserPage4 = () => {
         <View style={styles.formContainer}>
             <View style={styles.inputContainer}>
               <Text style={styles.label}>姓名</Text>
-              <TextInput placeholder="姓名" style={styles.input} />
+
+              <TextInput 
+              placeholder="姓名" 
+              style={styles.input} 
+              value={newName}
+              onChangeText={setName}/>
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>電子郵件</Text>
-              <TextInput placeholder="電子郵件" style={styles.input} />
+              <TextInput
+              placeholder="電子郵件" 
+              style={styles.input} 
+              value={newEmail}
+              onChangeText={setEmail}/>
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>密碼</Text>
-              <TextInput placeholder="密碼" style={styles.input} secureTextEntry />
+              <TextInput 
+              placeholder="密碼" 
+              style={styles.input} 
+              secureTextEntry 
+              value={newPassword}
+              onChangeText={setPassword}/>
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>連絡電話</Text>
-              <TextInput placeholder="連絡電話" style={styles.input} />
+              <TextInput 
+              placeholder="連絡電話" 
+              style={styles.input}
+              value={newPhone}
+              onChangeText={setPhone}
+               />
             </View>
 
-            <View style={styles.inputContainer}>
+            {/* <View style={styles.inputContainer}>
               <Text style={styles.label}>付款方式</Text>
               <TextInput placeholder="付款方式" style={styles.input} secureTextEntry />
-            </View>
+            </View> */}
           </View>
 
           {/* 確認送出按钮 */}
           <Pressable
             style={[styles.confirmButton, styles.confirmLayout]}
-            onPress={() => navigation.navigate("OfferingPage3")}
+            onPress={handleRegisterUpdate}
           >
             <Image
               style={[styles.confirmButtonChild, styles.confirmLayout]}

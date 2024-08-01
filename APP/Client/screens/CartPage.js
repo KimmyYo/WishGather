@@ -1,16 +1,36 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, Pressable, FlatList, Dimensions } from "react-native";
+
+import React, { useEffect, useState } from "react";
+import { StyleSheet, View, Text, Pressable, ScrollView,FlatList, Dimensions } from "react-native";
+
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import CartItem from "../components/CartItem";
 import { FontFamily, Border, FontSize, Color, Padding } from "../GlobalStyles";
-// import Footer from "../components/footer";
+
+import Footer from "../components/footer";
+import axios from 'axios';
+
+const API=require('./DBconfig')
+
 
 const { width, height } = Dimensions.get('window');
 
+
 const CartPage = () => {
   const navigation = useNavigation();
+  const [cartItems, setCartItems] = useState([]);
+  const userId = 1; // 假設目前已登入的使用者ID為1
+
+  useEffect(() => {
+    axios.get(`${API}/test`, { params: { userId } })
+      .then(response => {
+        setCartItems(response.data);
+      })
+      .catch(error => {
+        console.error('Error fetching cart data:', error);
+      });
+  }, []);
 
   const [cartItems, setCartItems] = useState([
     { id: '1', imageSource: require("../assets/ellipse-6.png"), orderTitle: '大甲 鎮瀾宮媽祖廟\n', orderDetails: '3 項商品 · NT$1040' },
@@ -35,12 +55,89 @@ const CartPage = () => {
     />
   );
 
+
+      <Text style={[styles.text1, styles.textTypo]}>購物車</Text>
+    </View>
+
+
+    <ScrollView contentContainerStyle={styles.scrollView} flex={1}>
+        <View style={[styles.cartPageInner, styles.cartPageInnerPosition, { flexDirection: 'column' }]}>
+          {cartItems.map((item, index) => (
+            <CartItem
+              key={index}
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={{ uri: item.IMAGE }}
+              orderTitle={`${item.templeName}\n`}
+              orderDetails={`${item.itemCount} 項商品 · NT$${item.totalAmount}`}
+            />
+          ))}
+        </View>
+      </ScrollView>
+
+
+    {/* <ScrollView contentContainerStyle={styles.scrollView} flex={1}>
+      <View style={[styles.cartPageInner, styles.cartPageInnerPosition, { flexDirection: 'column' }]}>
+        <CartItem
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={require("../assets/ellipse-6.png")}
+              orderTitle={`大甲 鎮瀾宮媽祖廟\n`}
+              orderDetails="3 項商品 · NT$1040"
+            />
+            <CartItem
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={require("../assets/ellipse-61.png")}
+              orderTitle={`鳳邑 雷府大將廟\n`}
+              orderDetails="2 項捐贈品"
+            />
+            <CartItem
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={require("../assets/ellipse-62.png")}
+              orderTitle={`左營 金鑾殿\n`}
+              orderDetails="1 項捐贈品"
+            />
+            <CartItem
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={require("../assets/ellipse-6.png")}
+              orderTitle={`大甲 鎮瀾宮媽祖廟\n`}
+              orderDetails="1 項商品 · NT$800"
+            />
+            <CartItem
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={require("../assets/ellipse-63.png")}
+              orderTitle={`艋舺 龍山寺\n`}
+              orderDetails="2 項商品 · NT$1500"
+            />
+            <CartItem
+              onPress={() => navigation.navigate("OfferingPage")}
+              imageSource={require("../assets/ellipse-64.png")}
+              orderTitle={`台北 行天宮\n`}
+              orderDetails="1 項商品 · NT$300"
+            />
+      </View>
+    </ScrollView> */}
+    <Footer />
+    
+      {/* <View style={[styles.footer, styles.menuLayout]}>
+        <View style={[styles.menu, styles.menuLayout]}>
+          <View style={[styles.homeIconParent, styles.iconPosition]}>
+            <Pressable
+              style={styles.iconLayout}
+              onPress={() => navigation.navigate("HomePage")}
+            >
+              <Image
+                style={styles.icon}
+                contentFit="cover"
+                source={require("../assets/home-icon1.png")}
+              />
+            </Pressable>
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right', 'bottom']}>
         <View style={styles.headerContainer}>
           {/* Header */}
           <View style={styles.header}>
+
             <Pressable
               style={styles.goBackButton}
               onPress={() => navigation.navigate("OfferingPage")}
