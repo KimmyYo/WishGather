@@ -85,24 +85,30 @@ const HomePage1 = () => {
           <Text style={styles.subTitle}>營業時間 : 06:00~21:30</Text>
         </View>
 
-        {/* Show Category */}
-        <FlatList
-          data={categories}
-          renderItem={renderCategoryItem}
-          keyExtractor={(item) => item}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.categories}
-        />
 
-        {/* Show Offerings */}
-        <FlatList
-          data={currentOfferings}
-          renderItem={renderOfferingItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.itemsContainer}
-        />
+        <View style={{ width:width*0.9 ,flexDirection: "row", alignItems:"start", justifyContent: "start", paddingVertical: 10, borderBottomWidth: 1, borderColor:"#E0E0E0"}}>
+          {categories.map((category) => (
+            <Pressable key={category} onPress={() => setSelectedCategory(category)}>
+              <Text style={[styles.category, selectedCategory === category && styles.selectedCategory]}>
+                {category}
+              </Text>
+            </Pressable>
+          ))}
+        </View>
 
+        {selectedCategory === "點燈" ? (
+          <FlatList
+            data={offerings_1}
+            renderItem={renderOfferingItem}
+            keyExtractor={(item) => item.id}
+          />
+        ) : (
+          <FlatList
+            data={offerings_2}
+            renderItem={renderOfferingItem}
+            keyExtractor={(item) => item.id}
+          />
+        )}
         {/* Checkout Button */}
         <Pressable style={styles.goCheckoutButton} onPress={handleCheckout}>
           <Image style={styles.checkoutImage} contentFit="cover" source={require("../assets/rectangle-93.png")} />
@@ -119,41 +125,25 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'start',
     alignItems: 'center',
-    backgroundColor: Color.colorGray_100,
+    backgroundColor: "white",
   },
-  categories: {
-    flexDirection: "row",
-    width: width*0.9,
-    marginHorizontal: 3,
-    paddingVertical: 10,
-    paddingBottom:25,
-  },
-  categoryContainer: {
-    height: 40,
-    width: 120,
-    marginHorizontal: 5,
-    
-    borderRadius: 20,
-    justifyContent: "center",
-    alignItems: "center",
+  category: {
+    fontSize: 18,
+    color: "#6C6C6C",
+    fontWeight: "500",
+    paddingHorizontal: 15,
+    paddingVertical: 6,
+    marginLeft: width * 0.05,
   },
   selectedCategory: {
-    backgroundColor:"#FFA500",
-  },
-  selectedCategoryText: {
-    color:"#FFFFFF",
-  },
-  categoryText: {
-    color: Color.colorDimgray_200,
-    fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
-    fontSize: FontSize.size_xl,
-    textAlign: "center",
+    color: "white",
+    backgroundColor: "#FFAF60",
+    borderRadius: 15,
   },
   infoContainer: {
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 8,
+    marginVertical: 8,
   },
   mainTitle: {
     fontSize: FontSize.size_9xl,
@@ -170,12 +160,6 @@ const styles = StyleSheet.create({
     opacity: 0.9,
     width: width,
     alignSelf: 'center',
-  },
-  itemsContainer: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom:50,
   },
   goCheckoutButton: {
     width: width * 0.85,
@@ -194,7 +178,6 @@ const styles = StyleSheet.create({
     position: "absolute",
     fontSize: FontSize.size_11xl,
     fontWeight: "600",
-    fontFamily: FontFamily.interSemiBold,
     color: Color.colorWhite,
   },
 });

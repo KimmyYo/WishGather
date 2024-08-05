@@ -1,74 +1,99 @@
-import React, { useState } from "react";
-import { View, Text, Image, StyleSheet, Dimensions} from "react-native";
+// OfferingItem.js
+import React from 'react';
+import { View, Text, Image, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
-import Counter from "./Counter";  // Ensure the Counter component is correctly imported and used
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const OfferingItem = ({ imageSource, title, price, description }) => {
-  const [quantity, setQuantity] = useState(0);
+  const navigation = useNavigation();
 
-  const handleIncrease = () => setQuantity(quantity + 1);
-  const handleDecrease = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
-    }
+  const handlePress = () => {
+    navigation.navigate('ProductPage', {
+      imageSource,
+      title,
+      price,
+      description,
+    });
   };
 
   return (
     <View style={styles.container}>
-      <Image
-        style={styles.image}
-        source={imageSource}
-      />
       <View style={styles.textContainer}>
-        <Text style={styles.title}>{title}  ${price}</Text>
-        {description && <Text style={styles.description}>備註 : {description}</Text>}
-
-        <View style={{flexDirection:"row", alignItems:"baseline"}}>
-          <Text style={{fontWeight:"500"}}>購買數量 : </Text>
-          <Counter quantity={quantity} onIncrease={handleIncrease} onDecrease={handleDecrease} />
-        </View>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.price}>${price}</Text>
+        {description && <Text style={styles.description}>備注 : {description}</Text>}
       </View>
-      
+
+      <View style={styles.imageContainer}>
+        <Image style={styles.image} source={imageSource} />
+        <Pressable style={styles.addButton} onPress={handlePress}>
+          <Text style={styles.addButtonText}>+</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: width*0.9,
+    width: width * 0.95,
     height: 140,
     backgroundColor: Color.colorGray_100,
-    flexDirection: 'row',  // Ensure the layout is row if you want the image and text side by side
-    justifyContent:"flex-start",
-    alignItems:"center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
-
-    borderWidth: 1,
-    borderColor: Color.colorWhitesmoke_300,
-    borderRadius: Border.br_3xs,
-    
-    marginBottom: 10,  // Add margin bottom to separate items
+    borderBottomWidth: 1,
+    borderColor: "#E0E0E0",
+  },
+  imageContainer: {
+    position: 'relative',
   },
   image: {
-    width: 100,  // Adjust the width to fit the layout
-    height: 100,  // Adjust the height to fit the layout
+    width: 100,
+    height: 100,
     borderRadius: Border.br_8xs,
   },
+  addButton: {
+    position: 'absolute',
+    bottom: 5,
+    right: 5,
+    backgroundColor: Color.colorWhite,
+    borderRadius: Border.br_8xs,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
+  },
+  addButtonText: {
+    color: Color.colorBlack,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   textContainer: {
-    flexDirection:"column",
-    paddingLeft:10,
-    lineHeight:30,
+    flex: 1,
+    paddingLeft: 10,
   },
   title: {
     fontSize: 20,
     fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
+    fontWeight: '500',
+  },
+  price: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: "gray",
+    marginVertical: 2,
   },
   description: {
-    fontSize: 14,
-    marginBottom: 5,
+    fontSize: 12,
+    color: "gray",
+    marginTop: 5,
   },
 });
 
