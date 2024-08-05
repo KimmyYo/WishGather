@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
 
 const MatchingCard = ({infos}) => {
     const getStatusColor = (status) => {
@@ -28,18 +28,26 @@ const MatchingCard = ({infos}) => {
     );
 };
 
+let screenHeight = Dimensions.get("window").height;
+let screenWidth = Dimensions.get("window").width;
+
 const styles = StyleSheet.create({
     card: {
+        width: screenWidth * 0.8,
+        height: 100,
         flexDirection: 'row',
         justifyContent: 'space-around',
         alignItems: 'center',
-        width: '100%',
-        height: 100,
+        backgroundColor: 'white',
+        borderRadius: 10,
+        padding: 30,
+        marginVertical: 10,
         shadowColor: '#000',
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
         shadowOffset: { width: 0, height: 2 },
-        elevation: 3,
+        shadowOpacity: 0.2,
+        shadowRadius: 3,
+        elevation: 5, // This is for Android shadow
+        
     },
     titlePrimary: {
         fontSize: 20, 

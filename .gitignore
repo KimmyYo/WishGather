@@ -2,3 +2,4 @@ APP/Server/node_modules
 APP/Client/node_modules
 APP/Server/config/db.js
 node_modules
+APP/Server/hash_password.js

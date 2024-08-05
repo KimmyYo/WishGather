@@ -1,14 +1,32 @@
-import * as React from "react";
+import React, { useEffect, useState } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, View, Text, Pressable, Dimensions } from "react-native";
+import axios from 'axios';
+import { StyleSheet, Pressable, Text, View ,ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import { Border, FontFamily, FontSize, Color } from "../GlobalStyles";
+import TabBar from "../components/TabBar";
+import Component from "../components/Component1";
+import { FontSize, FontFamily, Color, Border } from "../GlobalStyles";
+import { Dimensions } from 'react-native';
+
 
 const { width, height } = Dimensions.get("window");
 
+const API=require('./DBconfig')
+
 const OfferingPage2 = () => {
   const navigation = useNavigation();
+  const [transaction, setTransaction] = useState([]);
+
+  useEffect(() => {
+    
+    axios.get(`${API}/transaction`)
+      .then(response => {
+        setTransaction(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the temples!!!', error);
+      });
+  }, []);
 
   return (
     <SafeAreaProvider>
@@ -18,6 +36,27 @@ const OfferingPage2 = () => {
           <Text style={styles.orderStatus}>訂單成立</Text>
 
           <View style={styles.infoContainer}>
+            {transaction.map((transaction, index) => (
+            <View key={index} style={styles.infoContainer}>
+              <Text style={styles.infoText}>
+                <Text style={styles.infoLabel}>宮廟名稱: </Text>
+                <Text style={styles.infoContent}>{transaction.tNO}{"\n"}</Text>
+                <Text style={styles.infoLabel}>交易時間: </Text>
+                <Text style={styles.infoContent}>{transaction.TRANSACTION_TIME}{"\n"}</Text>
+                <Text style={styles.infoLabel}>交易方式: </Text>
+                <Text style={styles.infoContent}>{transaction.TRANSACTION_METHOD}{"\n"}</Text>
+                <Text style={styles.infoLabel}>銀行代碼: </Text>
+                <Text style={styles.infoContent}>${transaction.BANK_CODE}{"\n"}</Text>
+                <Text style={styles.infoLabel}>銀行名稱: </Text>
+                <Text style={styles.infoContent}>{transaction.BANK_NAME}{"\n"}</Text>
+                <Text style={styles.infoLabel}>領取時間: </Text>
+                <Text style={styles.infoContent}>{transaction.EXPIRATION_DATE}</Text>
+              </Text>
+            </View>
+          ))}
+          </View>
+
+          {/* <View style={styles.infoContainer}>
             <Text style={styles.infoText}>
               <Text style={styles.infoLabel}>宮廟名稱: </Text>
               <Text style={styles.infoContent}>行天宮{"\n"}</Text>
@@ -32,7 +71,7 @@ const OfferingPage2 = () => {
               <Text style={styles.infoLabel}>領取時間: </Text>
               <Text style={styles.infoContent}>2024/08/05 P.M.2:50</Text>
             </Text>
-          </View>
+          </View> */}
 
           {/* Home Button */}
           <Pressable style={styles.confirmButton} onPress={() => navigation.navigate("HomePage")}>

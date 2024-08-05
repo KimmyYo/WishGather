@@ -11,6 +11,7 @@ const app = express();
 
 app.use(cors()); // 用CORS
 app.use(bodyParser.json());
+
 const port = 3000;
 
 //連線資料庫
@@ -22,6 +23,8 @@ const db = require('./config/db');
 const { queryDatabase } = require('./query/queryALL');
 
 
+
+app.get('/test', (req, res) => queryDatabase('test', res));  // 這個之後要改(CartPage.js用的)
 
 app.get('/temples', (req, res) => queryDatabase('宮廟', res));
 
@@ -56,8 +59,6 @@ app.get('/record', (req, res) => queryDatabase('記錄', res));
 app.get('/order', (req, res) => queryDatabase('訂購', res));
 
 app.get('/cooperate', (req, res) => queryDatabase('合作', res));
-
-
 
 
 
@@ -102,6 +103,51 @@ app.post('/believers', async(req, res) => {
     }
 });
 
+// 更新個資維護
+app.post('/believersUpdate', async (req, res) => {
+    const { NAME, PHONE, EMAIL, PASSWORD } = req.body;
+
+    console.log('Received update data:', req.body);
+
+    // Input validation
+    if (!NAME || !PHONE || !EMAIL || !PASSWORD) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    try {
+        // Check if user exists
+        const [existingUsers] = await db.promise().query(
+            'SELECT * FROM `信眾` WHERE PHONE = ? OR EMAIL = ?', [PHONE, EMAIL]
+        );
+
+        if (existingUsers.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const hashedPassword = await bcrypt.hash(PASSWORD, 10);
+
+        // Update user information
+        const [result] = await db.promise().query(
+            'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ? OR EMAIL = ?',
+            [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL]
+        );
+
+        console.log('User updated successfully:', result);
+
+        res.status(200).json({ message: 'User updated successfully' });
+    } catch (error) {
+        console.error('Detailed update error:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: error.message,
+            sqlMessage: error.sqlMessage,
+            sqlState: error.sqlState
+        });
+    }
+});
+
+// CartPage
+
 
 // after login -- token
 
@@ -139,7 +185,7 @@ app.post('/signin', async(req, res) => {
 
         if (match) {
             // Create a JWT token
-            const token = jwt.sign({ userId: user.id, email: user.EMAIL },
+            const token = jwt.sign({ userId: user.pID, email: user.EMAIL },
                 JWT_SECRET, { expiresIn: '1h' }
             );
 
@@ -177,13 +223,13 @@ function isAuthenticated(req, res, next) {
 // Example protected route
 app.get('/profile', isAuthenticated, async(req, res) => {
     try {
-        const [rows] = await db.promise().query('SELECT * FROM `信眾` WHERE id = ?', [req.user.userId]);
+        const [rows] = await db.promise().query('SELECT * FROM `信眾` WHERE pID = ?', [req.user.userId]);
 
         if (rows.length > 0) {
             const user = rows[0];
             res.json({
                 message: 'This is a protected route',
-                userId: user.id,
+                userId: user.pID,
                 email: user.EAMIL,
                 name: user.NAME,
 

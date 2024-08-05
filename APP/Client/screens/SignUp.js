@@ -4,6 +4,8 @@ import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import {LinearGradient} from 'expo-linear-gradient';
 
+const API=require('./DBconfig')
+
 const SignUp = () => {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
@@ -30,7 +32,7 @@ const SignUp = () => {
       return;
     }
 
-    const api = 'http://192.168.1.102:3000/believers';
+    const api = `${API}/believers`;
     try {
       const user = {
         NAME: name.trim(),
@@ -50,8 +52,10 @@ const SignUp = () => {
     }
   );
       console.log('Registration successful:', result.data);
-      Alert.alert('Success', 'User registered successfully!');
-      navigation.navigate('UserPage');
+      Alert.alert('註冊成功', '歡迎登入!');
+      navigation.navigate('SignIn');   //註冊成功前往登入頁面
+
+
     } catch (error) {
       console.error('Registration error:', error);
       if (error.response) {
@@ -112,13 +116,13 @@ const SignUp = () => {
       
       
       {/* Debug Information */}
-      <View style={styles.debugContainer}>
+      {/* <View style={styles.debugContainer}>
         <Text>(For Debug)</Text>
         <Text>Name: {name}</Text>
         <Text>Phone: {phone}</Text>
         <Text>Email: {email}</Text>
         <Text>Password: {password.replace(/./g, '*')}</Text>
-      </View>
+      </View> */}
       
     
     </LinearGradient>

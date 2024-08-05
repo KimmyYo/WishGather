@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Color, FontFamily } from "../GlobalStyles";
 import TempleCard from "../components/TempleCard";
+
 import Footer from "../components/footer";
 
 const { width } = Dimensions.get('window');
@@ -126,8 +127,6 @@ const OfferingPage6 = () => {
             />
           )}
 
-          <Footer />
-
           {/* Modal */}
           <Modal
             animationType="slide"
@@ -147,6 +146,7 @@ const OfferingPage6 = () => {
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
+
   );
 };
 

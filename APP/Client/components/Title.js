@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import { Pressable, View, Text, Image } from "react-native";
-import Svg, { Path } from 'react-native-svg';
-import rightIcon from '../assets/svgs/rightIcon.svg';
+
 
 const Title = ({titleName}) => {
     const [touched, setTouched] = useState(false);
