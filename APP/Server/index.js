@@ -6,11 +6,49 @@ const bcrypt = require('bcrypt');
 
 const jwt = require('jsonwebtoken');
 
+
+//for photo
+const multer = require('multer');
+const fs = require('fs');
+const FormData = require('form-data');
+const path = require('path');
+const axios = require('axios');
+
+
+
 var router = express.Router();
 const app = express();
 
+
+app.use(bodyParser.json({ limit: '5000mb' }));
+app.use(bodyParser.urlencoded({ limit: '5000mb', extended: true }));
+
+
 app.use(cors()); // 用CORS
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
+
+
+
+
+//for photo
+// Define storage configuration
+// const storage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//         cb(null, 'uploads/'); // Directory to store the uploaded files
+//     },
+//     filename: (req, file, cb) => {
+//         cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname)); // Rename the file
+//     }
+// });
+
+
+// const upload = multer({
+//     storage: storage,
+//     limits: { fileSize: 10 * 1024 * 1024 }  // Set the limit to 10 MB
+// });
+
+
+
 
 const port = 3000;
 
@@ -242,6 +280,110 @@ app.get('/profile', isAuthenticated, async(req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 });
+
+
+
+app.post('/upimg', async (req, res) => {
+    try {
+        const { photo } = req.body;
+
+        if (!photo) {
+            return res.status(400).send('No photo provided.');
+        }
+
+        // Decode base64 image
+        const base64Data = photo.replace(/^data:image\/png;base64,/, "");
+        const imagePath = path.join(__dirname, 'uploads', 'image.png');
+
+        // Ensure the uploads directory exists
+        if (!fs.existsSync(path.dirname(imagePath))) {
+            fs.mkdirSync(path.dirname(imagePath), { recursive: true });
+        }
+
+        fs.writeFileSync(imagePath, base64Data, 'base64');
+
+        // Process the image with the Python script
+        const result = await processImageWithPython(imagePath);
+
+        // Send response back to client
+        res.json(result);
+
+    } catch (error) {
+        console.error('Error processing image:', error);
+        res.status(500).send('Error processing image.');
+    }
+});
+
+
+const processImageWithPython = async (imagePath) => {
+    try {
+        console.log('Preparing to send image to Python server...');
+
+        const form = new FormData();
+        form.append('image_path', fs.createReadStream(imagePath));
+
+        // Log form headers and other relevant information
+        console.log('Form headers:', form.getHeaders());
+
+        const response = await axios.post('http://140.117.71.127:5000/proimg', form, {
+            headers: {
+                ...form.getHeaders()
+            }
+        });
+
+        console.log('Response from Python server:', response.data);
+
+        
+        // Count detected objects
+        const objectCounts = countDetectedObjects(response.data);
+
+        console.log('Object counts:', objectCounts);
+
+        return objectCounts;
+        
+    } catch (error) {
+        console.error('Error processing image with Python:', error.message);
+        
+        // Log additional error details
+        if (error.response) {
+            console.error('Response data:', error.response.data);
+            console.error('Response status:', error.response.status);
+            console.error('Response headers:', error.response.headers);
+        } else if (error.request) {
+            console.error('Request data:', error.request);
+        } else {
+            console.error('Error message:', error.message);
+        }
+        
+        throw error;
+    }
+};
+
+const countDetectedObjects = (response) => {
+    try {
+        // Parse the detections if needed
+        const detections = JSON.parse(response.detections);
+
+        // Initialize an object to count occurrences of each object type
+        const objectCounts = {};
+
+        // Iterate through the detections and count each object type
+        detections.forEach(detection => {
+            const objectName = detection.name;
+            if (objectCounts[objectName]) {
+                objectCounts[objectName]++;
+            } else {
+                objectCounts[objectName] = 1;
+            }
+        });
+
+        return objectCounts;
+    } catch (error) {
+        console.error('Error parsing detections:', error);
+        return {};
+    }
+};
+
 
 
 

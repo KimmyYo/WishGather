@@ -36,6 +36,8 @@ import FoodScanningPage from "./screens/FoodScanningPage";
 import SignUp from "./screens/SignUp"
 import HomePage3 from "./screens/HomePage3"
 import ProductPage from "./screens/ProductPage"
+import ScanResult from "./screens/ScanResult";
+
 
 import SignIn from "./screens/SignIn"
 
@@ -116,11 +118,21 @@ const App = () => {
               component={FoodScanningPage}
               options={{ headerShown: false }}
             />
+
+            <Stack.Screen
+              name="ScanResult"
+              component={ScanResult}
+              options={{ headerShown: false }}
+            />
+
+
             <Stack.Screen
               name="TempleHomePage"
               component={TempleHomePage}
               options={{ headerShown: false }}
             />
+
+
 
             <Stack.Screen
               name="TempleEventPage"
