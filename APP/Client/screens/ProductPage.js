@@ -2,10 +2,11 @@ import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TextInput, Pressable } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { Ionicons, AntDesign } from '@expo/vector-icons';  // Import Expo icon library
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 import Counter from "../components/Counter";
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const ProductPage = ({ route }) => {
   const insets = useSafeAreaInsets();
@@ -29,34 +30,34 @@ const ProductPage = ({ route }) => {
     <SafeAreaProvider>
       <View style={{
           flex: 1,
-          justifyContent: 'start',
-          alignItems: 'start',
+          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
           backgroundColor: "white",
-          paddingTop: insets.top + 15,
+          paddingTop: insets.top,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left,
           paddingRight: insets.right 
         }}>  
+        
         <Pressable style={styles.closeButton} onPress={() => navigation.navigate('HomePage1')}>
-          <Text style={styles.closeButtonText}>×</Text>
+          <AntDesign name="left" size={28} color="black" />
         </Pressable>
-            
-        <Image style={styles.image} contentFit="cover" source={imageSource} />
+        
+        <Image style={styles.image} source={imageSource} />
         
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>$ {price}</Text>
         {description && <Text style={styles.description}>備注 : {description}</Text>}
         
-        <View style={{width:width, borderTopWidth:1, borderColor:"#E0E0E0", marginTop: 20}}>
+        <View style={styles.remarkContainer}>
             <Text style={styles.remark}>特殊指示 : </Text>
             <TextInput
-            style={styles.remarkInput}
-            placeholder="請輸入指示..."
-            value={remark}
-            onChangeText={setRemark}
+              style={styles.remarkInput}
+              placeholder="請輸入指示..."
+              value={remark}
+              onChangeText={setRemark}
             />
         </View>
-        
 
         <View style={styles.counterContainer}>
           <Counter quantity={quantity} onIncrease={handleIncrease} onDecrease={handleDecrease} />
@@ -74,35 +75,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    padding: 20,
     backgroundColor: Color.colorWhite,
   },
   image: {
-    width: "100%",
-    height: 250,
+    width: width,
+    height: height * 0.35,
     alignSelf: 'center',
     marginBottom: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
   },
   closeButton: {
     zIndex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    borderRadius: 30,
-    width: 40,
-    height: 40,
+    borderRadius: 20,
+    width: 38,
+    height: 38,
+    padding: 5,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  closeButtonText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
   title: {
-    fontSize: 30,
-    fontWeight: '500',
+    fontSize: 24,
+    fontWeight: '600',
     marginLeft: 20,
+    marginTop: 20,
   },
   price: {
     fontSize: 20,
@@ -117,11 +111,30 @@ const styles = StyleSheet.create({
     marginLeft: 20,
     marginVertical: 5,
   },
+  remarkContainer: {
+    width: width * 0.9,
+    borderTopWidth: 1, 
+    borderColor: "#E0E0E0",
+    marginTop: 20,
+    alignSelf: 'center',
+  },
   remark: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '500',
     marginLeft: 20,
     marginVertical: 10,
+  },
+  remarkInput: {
+    width: "90%",
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    fontSize: FontSize.size_md,
+    fontFamily: FontFamily.interRegular,
+    alignSelf: 'center',
+    marginBottom: 10,
   },
   counterContainer: {
     width: width,
@@ -130,18 +143,6 @@ const styles = StyleSheet.create({
     borderColor: "#E0E0E0",
     marginTop: 20,
     paddingTop: 10,
-  },
-  remarkInput: {
-    width: width * 0.9,
-    height: 40,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: FontSize.size_md,
-    fontFamily: FontFamily.interRegular,
-    marginLeft: 20,
-    marginVertical: 5,
   },
   addToCartButton: {
     position: 'absolute',

@@ -33,9 +33,11 @@ import TempleEventPage from "./screens/TempleEventPage";
 import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
 import FoodScanningPage from "./screens/FoodScanningPage";
-import SignUp from "./screens/SignUp";
-import HomePage3 from "./screens/HomePage3";
+import SignUp from "./screens/SignUp"
+import HomePage3 from "./screens/HomePage3"
+import ProductPage from "./screens/ProductPage"
 import ScanResult from "./screens/ScanResult";
+
 
 import SignIn from "./screens/SignIn"
 
@@ -289,6 +291,11 @@ const App = () => {
             <Stack.Screen
               name="CartPage"
               component={CartPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="ProductPage"
+              component={ProductPage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
