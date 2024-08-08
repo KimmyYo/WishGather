@@ -108,7 +108,7 @@ const HomePage = () => {
           contentContainerStyle={styles.activityContainer}
         />
 
-        {/*Modal */}
+        {/*Modal - address modify*/}
         <Modal animationType="fade" transparent visible={locationIconVisible}>
           <View style={styles.overlay}>
             <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />

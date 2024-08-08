@@ -6,6 +6,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 
 import OfferingItem from "../components/OfferingItem"; 
 import GoBackButton_B from "../components/GoBackButton_B";
+import SetButton from '../components/SetButton';
 import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
@@ -88,7 +89,7 @@ const HomePage1 = () => {
 
         <View style={{ width:width*0.9 ,flexDirection: "row", alignItems:"start", justifyContent: "start", paddingVertical: 10, borderBottomWidth: 1, borderColor:"#E0E0E0"}}>
           {categories.map((category) => (
-            <Pressable key={category} onPress={() => setSelectedCategory(category)}>
+            <Pressable key={category} onPress={() => setSelectedCategory(category)} style={{borderRadius:15}}>
               <Text style={[styles.category, selectedCategory === category && styles.selectedCategory]}>
                 {category}
               </Text>
@@ -110,10 +111,9 @@ const HomePage1 = () => {
           />
         )}
         {/* Checkout Button */}
-        <Pressable style={styles.goCheckoutButton} onPress={handleCheckout}>
-          <Image style={styles.checkoutImage} contentFit="cover" source={require("../assets/rectangle-93.png")} />
-          <Text style={styles.checkoutText}>前往結帳</Text>
-        </Pressable>
+        <View style={styles.buttonContainer}>
+          <SetButton  navigateScreen ={'OfferingPage'} btnText={'前往結帳'} btnStatus={'primary'} />
+        </View>
 
       </View>
     </SafeAreaProvider>
@@ -134,10 +134,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     paddingVertical: 6,
     marginLeft: width * 0.05,
+    
   },
   selectedCategory: {
     color: "white",
-    backgroundColor: "#FFAF60",
+    backgroundColor: "#FFA042",
     borderRadius: 15,
   },
   infoContainer: {
@@ -161,24 +162,9 @@ const styles = StyleSheet.create({
     width: width,
     alignSelf: 'center',
   },
-  goCheckoutButton: {
-    width: width * 0.85,
-    bottom: height * 0.03,
-    left: '8%',
-    height: 70,
-    position: "absolute",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  checkoutImage: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: Border.br_xl,
-  },
-  checkoutText: {
-    position: "absolute",
-    fontSize: FontSize.size_11xl,
-    fontWeight: "600",
-    color: Color.colorWhite,
+  buttonContainer: {
+    marginVertical: 5,
+    alignItems: 'center',
   },
 });
 

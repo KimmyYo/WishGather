@@ -22,27 +22,34 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: "#ffffff",
     borderRadius: 15,
-
-    paddingHorizontal: 10,
+    paddingHorizontal: 5,
     paddingVertical: 5,
   },
   button: {
-    width: 36,
-    height: 36,
+    width: 30,
+    height: 30,
     borderRadius: 15,
     alignItems: 'center',
     justifyContent: 'center',
     backgroundColor: "#FFA500", // Orange color
+
+    // Shadow for iOS
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.4,
+    shadowRadius: 3.5,
+    // Shadow for Android
+    elevation: 5,
   },
   decrementButton: {
-    marginRight: 20,
+    marginRight: 15,
   },
   incrementButton: {
-    marginLeft: 20,
+    marginLeft: 15,
   },
   buttonText: {
     color: "#ffffff",
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   quantityText: {
