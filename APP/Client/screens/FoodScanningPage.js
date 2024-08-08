@@ -2,11 +2,13 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useRef } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View ,Alert} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
 
 import axios from 'axios';
 const API=require('./DBconfig')
 
 function FoodScanningPage() {
+    const navigation = useNavigation();
     const insets = useSafeAreaInsets();
     const [facing, setFacing] = useState('back');
     
@@ -57,6 +59,7 @@ function FoodScanningPage() {
 
     const sendPictureToServer = async(base64Image) => {
         // request 
+       
         console.log('Sending picture to server...');
         setIsLoading(true);
         try {
@@ -67,13 +70,15 @@ function FoodScanningPage() {
                     'Content-Type': 'application/json'
                 }
             });
-            
-            console.log('Server response received:', response.data);
-            
-            if (response.data.detected_objects) {
-                setDetectedObjects(response.data.detected_objects);
-                console.log('Detected objects set:', response.data.detected_objects);
-            }
+            console.log('Server response received:',response.data);
+
+            if (response.data) {
+              const objectCounts = response.data;
+              console.log('Server response received2:', objectCounts);
+  
+              // Navigate to the results page with object counts
+              navigation.navigate('ScanResult', { objectCounts });
+          }
         } catch (error) {
             console.error('Error sending picture to server:', error);
             Alert.alert('Error', 'Failed to process image. Please try again.');
