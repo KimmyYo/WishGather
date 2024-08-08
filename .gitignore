@@ -3,3 +3,4 @@ APP/Client/node_modules
 APP/Server/config/db.js
 node_modules
 APP/Server/hash_password.js
+APP/Client/screens/DBconfig.js
