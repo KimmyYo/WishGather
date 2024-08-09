@@ -6,6 +6,7 @@ import LogoutOverlay from "../components/LogoutOverlay";
 import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
+
 import axios from 'axios';
 
 
@@ -84,9 +85,6 @@ const UserPage = () => {
           <View style={styles.footer1}>
             <View style={[styles.menu, styles.menuLayout]}>
               <View style={styles.homeIconParent}>
-
-
-
                 <Pressable
                   style={[styles.homeIcon, styles.iconLayout1]}
                   onPress={() => navigation.navigate("HomePage")}
@@ -223,10 +221,12 @@ const UserPage = () => {
               
               </Text>
             <Text style={styles.text7}>普通會員</Text>
+
           </Text> 
         </Text> 
         <View style={[styles.footer]}>
         
+
         <Pressable
           style={[styles.mingcuterightFill, styles.mingcuterightPosition]}
           onPress={() => navigation.navigate("UserPage4")}
@@ -275,7 +275,8 @@ const UserPage = () => {
           contentFit="cover"
           source={require("../assets/ellipse-31.png")}
         />
-      </View>
+        </View>
+      
 
       <Modal animationType="fade" transparent visible={textVisible}>
         <View style={styles.textOverlay}>
@@ -382,10 +383,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   footer: {
+
     // top: 831,
     // left: 38,
     position:"absolute",
     bottom:40
+
   },
   userPageChild: {
     top: 82,
