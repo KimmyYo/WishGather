@@ -62,7 +62,7 @@ const { queryDatabase } = require('./query/queryALL');
 
 
 
-app.get('/test', (req, res) => queryDatabase('test', res));  // 這個之後要改(CartPage.js用的)
+app.get('/test', (req, res) => queryDatabase('test', res)); // 這個之後要改(CartPage.js用的)
 
 app.get('/temples', (req, res) => queryDatabase('宮廟', res));
 
@@ -142,7 +142,7 @@ app.post('/believers', async(req, res) => {
 });
 
 // 更新個資維護
-app.post('/believersUpdate', async (req, res) => {
+app.post('/believersUpdate', async(req, res) => {
     const { NAME, PHONE, EMAIL, PASSWORD } = req.body;
 
     console.log('Received update data:', req.body);
@@ -166,8 +166,7 @@ app.post('/believersUpdate', async (req, res) => {
 
         // Update user information
         const [result] = await db.promise().query(
-            'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ? OR EMAIL = ?',
-            [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL]
+            'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ? OR EMAIL = ?', [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL]
         );
 
         console.log('User updated successfully:', result);
@@ -283,7 +282,7 @@ app.get('/profile', isAuthenticated, async(req, res) => {
 
 
 
-app.post('/upimg', async (req, res) => {
+app.post('/upimg', async(req, res) => {
     try {
         const { photo } = req.body;
 
@@ -315,7 +314,7 @@ app.post('/upimg', async (req, res) => {
 });
 
 
-const processImageWithPython = async (imagePath) => {
+const processImageWithPython = async(imagePath) => {
     try {
         console.log('Preparing to send image to Python server...');
 
@@ -325,6 +324,7 @@ const processImageWithPython = async (imagePath) => {
         // Log form headers and other relevant information
         console.log('Form headers:', form.getHeaders());
 
+        //丟去 flask server
         const response = await axios.post('http://140.117.71.127:5000/proimg', form, {
             headers: {
                 ...form.getHeaders()
@@ -333,17 +333,17 @@ const processImageWithPython = async (imagePath) => {
 
         console.log('Response from Python server:', response.data);
 
-        
+
         // Count detected objects
         const objectCounts = countDetectedObjects(response.data);
 
         console.log('Object counts:', objectCounts);
 
         return objectCounts;
-        
+
     } catch (error) {
         console.error('Error processing image with Python:', error.message);
-        
+
         // Log additional error details
         if (error.response) {
             console.error('Response data:', error.response.data);
@@ -354,7 +354,7 @@ const processImageWithPython = async (imagePath) => {
         } else {
             console.error('Error message:', error.message);
         }
-        
+
         throw error;
     }
 };

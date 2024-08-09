@@ -1,18 +1,26 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, SafeAreaView, Alert ,Pressable} from 'react-native';
+
+//儲存空間用來放token(類似php session那種感覺)
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+//連線axios
+
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
 import Checkbox from 'expo-checkbox';
 import { useNavigation } from "@react-navigation/native";
 
+//把API抓進來-都固定用專案教室IP
 const API=require('./DBconfig')
 
 export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  
   const [token, setToken] = useState(null);
+
   const [profile, setProfile] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setChecked] = useState(false);
@@ -41,7 +49,7 @@ export default function App() {
     setIsLoading(true);
 
     
-    const api = `${API}/signin`;  //注意這邊ipipip
+    const api = `${API}/signin`;  
 
 
     const user = {
@@ -79,63 +87,9 @@ export default function App() {
   };
 
 
-  /*原本要fetch自己 先留著 */
-
-  // const fetchProfile = async () => {
-  //   if (!token) {
-  //     Alert.alert('Error', 'No token available');
-  //     return;
-  //   }
-  //   setIsLoading(true);
-  //   console.log('token:', token);
-  
-  //   try {
-  //     const response = await axios.get('http://192.168.1.102:3000/profile', {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //     });
-  
-  //     console.log('Response headers:', response.headers); // 打印響應頭以進行調試
-  //     console.log('Profile data:', response.data); // 打印響應數據以進行調試
-  
-  //     // 將獲取的資料設置到 `profile` 狀態中
-  //     setProfile(response.data);
-  //   } catch (error) {
-  //     console.error('Fetch profile error', error);
-  //     Alert.alert('Error', 'Failed to fetch profile. Please try again.');
-  //   }
-  //   setIsLoading(false);
-  // };
-  
-
   if (token) {
     return (
       
-    //   <SafeAreaView style={styles.container}>
-    //     <StatusBar style="auto" />
-    //     <Text style={styles.title}>登入成功! (應該直接進首頁但還在想方法
-    //       因為要先session-ethan)</Text>
-    //     <TouchableOpacity style={styles.button} onPress={fetchProfile} disabled={isLoading}>
-    //       <Text style={styles.buttonText}>{isLoading ? 'Loading...' : '登入資訊'}</Text>
-    //     </TouchableOpacity>
-    //     {profile && (
-    //       <View style={styles.profileContainer}>
-    //         <Text style={styles.profileText}>User ID: {profile.userId}</Text>
-    //         <Text style={styles.profileText}>Email: {profile.email}</Text>
-    //       </View>
-    //     )}
-
-    //     {/* <TouchableOpacity style={styles.button} onPress={navigation.navigate("UserPage")}>
-    //       <Text style={styles.buttonText}>進入首頁</Text>
-    //     </TouchableOpacity> */}
-
-    //     <TouchableOpacity style={styles.button} onPress={handleSignOut}>
-    //       <Text style={styles.buttonText}>Sign Out</Text>
-    //     </TouchableOpacity>
-    //   </SafeAreaView>
-    // );
-
     <SafeAreaView style={styles.container}>
     <StatusBar style="auto" />
     <Text style={styles.title}>登入成功！正在跳轉...</Text>
@@ -186,18 +140,9 @@ export default function App() {
         </Text>
     </Pressable>
 
-    <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
-        <Text style={styles.buttonText}>DEMO用
-        
-        </Text>
-    </Pressable>
+
       
-      {/* Debug Information */}
-      {/* <View style={styles.debugContainer}>
-        <Text>(For Debug)</Text>
-        <Text>Email: {email}</Text>
-        <Text>Password: {password.replace(/./g, '*')}</Text>
-      </View> */}
+
     </LinearGradient>
   );
 };

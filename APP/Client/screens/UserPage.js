@@ -6,21 +6,28 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import LogoutOverlay from "../components/LogoutOverlay";
 import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import { StatusBar } from 'expo-status-bar';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
 import axios from 'axios';
 
-
+//把API抓進來-都固定用專案教室IP
 const API=require('./DBconfig')
 
 const UserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
+
+  //token
   const [token, setToken] = useState(null);
+
+  //toekn完會出現在profile這個變數
   const [profile, setProfile] = useState(null);
+
+  //有沒有載入，我其實不清楚，都複製過去
   const [isLoading, setIsLoading] = useState(false);
 
   const insets = useSafeAreaInsets();
@@ -33,6 +40,8 @@ const UserPage = () => {
     setTextVisible(false);
   }, []);
 
+
+  //這裡把token從儲存叫出來看是誰登入中，會搭配下一個函式一起
   useEffect(() => {
     const getTokenAndFetchProfile = async () => {
       try {
@@ -50,6 +59,7 @@ const UserPage = () => {
     getTokenAndFetchProfile();
   }, []);
 
+  //把剛剛叫出來的toekn，拿去對應是誰，用已經寫號的後台get profile，user資料會在profile這個值
   const fetchProfile = async (userToken) => {
     if (!userToken) {
       Alert.alert('Error', 'No token available');
@@ -155,6 +165,8 @@ const UserPage = () => {
               <Text style={styles.buttonText}>登出帳戶</Text>          
             </Pressable>
           </View>
+
+
 
         </View>
         

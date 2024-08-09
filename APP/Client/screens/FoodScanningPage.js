@@ -74,7 +74,7 @@ function FoodScanningPage() {
 
             if (response.data) {
               const objectCounts = response.data;
-              console.log('Server response received2:', objectCounts);
+              
   
               // Navigate to the results page with object counts
               navigation.navigate('ScanResult', { objectCounts });

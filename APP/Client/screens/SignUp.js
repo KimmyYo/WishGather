@@ -7,6 +7,7 @@ import {LinearGradient} from 'expo-linear-gradient';
 const API=require('./DBconfig')
 
 const SignUp = () => {
+  //宣告要用到的變數
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -17,6 +18,8 @@ const SignUp = () => {
   const handleRegister = async () => {
     console.log('Current state before submission:', { name, phone, email, password });
 
+    
+    //檢查值
     if (!name.trim()) {
       Alert.alert('Error', 'Name is required');
       return;
@@ -31,7 +34,8 @@ const SignUp = () => {
       Alert.alert('Error', 'Password is required');
       return;
     }
-
+    
+    //把要輸入的table、值(取名叫user)設定
     const api = `${API}/believers`;
     try {
       const user = {
@@ -44,6 +48,7 @@ const SignUp = () => {
       console.log('User data being sent:', user);
       console.log('User data being sent:', JSON.stringify(user));
 
+      //重點是這邊，這一行會把它丟進去後端，回傳result用來看有沒有成功
       const result = await axios.post(api, user
         ,{
           headers: {
