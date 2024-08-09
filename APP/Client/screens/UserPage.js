@@ -164,6 +164,12 @@ const UserPage = () => {
               <MaterialCommunityIcons name="logout" size={24} color="#4f4f4f" />
               <Text style={styles.buttonText}>登出帳戶</Text>          
             </Pressable>
+
+            <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
+        <Text style={styles.buttonText}>DEMO用
+
+        </Text>
+    </Pressable>
           </View>
 
 
