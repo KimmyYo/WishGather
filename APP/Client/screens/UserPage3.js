@@ -54,7 +54,7 @@ const UserPage3 = () => {
           />
       </Pressable>
       
-      <Component
+      {/* <Component
         rectangle21={require("../assets/rectangle-212.png")}
         prop={`鳳邑 雷府大將廟 
 `}
@@ -62,7 +62,7 @@ const UserPage3 = () => {
 2024/04/20 · 已完成`}
         savedStateIcon={false}
         onPressablePress={() => navigation.navigate("HomePage5")}
-      />
+      /> */}
     </View>
   );
 };
