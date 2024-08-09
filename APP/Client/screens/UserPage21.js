@@ -4,7 +4,7 @@ import axios from 'axios';
 import { StyleSheet, Pressable, Text, View ,ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import TabBar from "../components/TabBar";
-import Component from "../components/Component1";
+
 import { FontSize, FontFamily, Color, Border } from "../GlobalStyles";
 
 

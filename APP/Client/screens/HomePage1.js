@@ -74,6 +74,7 @@ const HomePage1 = () => {
   return (
     <SafeAreaProvider>
       <View style={[styles.homePage1, { paddingTop: insets.top-15, paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }]}>
+        
         {/* Temple Image */}
         <View>
           <Image style={styles.headerImage} contentFit="cover" source={require("../assets/rectangle-3.png")} />
@@ -112,7 +113,7 @@ const HomePage1 = () => {
         )}
         {/* Checkout Button */}
         <View style={styles.buttonContainer}>
-          <SetButton  navigateScreen ={'OfferingPage'} btnText={'前往結帳'} btnStatus={'primary'} />
+          <SetButton   onPress={() => navigation.navigate('OfferingPage')} btnText={'前往結帳'} btnStatus={'primary'} />
         </View>
 
       </View>

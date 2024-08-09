@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, ScrollView, Image, Dimensions, TextInput } from 'react-native';
+import { StyleSheet, View, Text, Pressable, ScrollView, Image, Dimensions, TextInput, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from 'react-native-ui-datepicker';
 import { Picker } from '@react-native-picker/picker';
 import ConfirmItem from '../components/ConfirmItem';
+import ConfirmModal from '../components/ConfirmModal'; // Import ConfirmModal
 import SetButton from '../components/SetButton';
 import OrderInfo from '../components/OrderInfo';
 import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,26 +25,41 @@ const OfferingPage = () => {
 
   const [note, setNote] = useState('');
   const [pickupDate, setPickupDate] = useState(new Date());
-  const [pickupTime, setPickupTime] = useState({ hour: '06', minute: '00' }); // 初始化時間
+  const [pickupTime, setPickupTime] = useState({ hour: '06', minute: '00' }); 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
-  const [isTimePickerVisible, setTimePickerVisible] = useState(false); // 時間選擇器
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false); 
   const [paymentMethod, setPaymentMethod] = useState('現場付款');
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
+  const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
 
+  {/* Function - Show Date Picker */}
   const handleDateChange = (date) => {
     setPickupDate(date);
     setDatePickerVisible(false);
   };
-
+  {/* Function - Show Time Picker */}
   const handleTimeChange = (hour, minute) => {
     setPickupTime({ hour, minute });
     setTimePickerVisible(false);
   };
-
+ {/* Function - Payment Method */}
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
     setPaymentModalVisible(false);
   };
+
+  {/* Function - Show Confirm Modal */}
+  const handleOrderSubmit = () => {
+    setConfirmModalVisible(true);
+  };
+
+  {/* Function - Confirm and back to HomePage */}
+  const handleConfirmOrder = () => {
+    setConfirmModalVisible(false);
+    Alert.alert("訂單已送出");
+    navigation.navigate('HomePage');
+  };
+
 
   const renderOrderInfo = () => (
     <View style={styles.orderInfoContainer}>
@@ -64,7 +81,7 @@ const OfferingPage = () => {
         iconName="clock" 
         iconType="Entypo" 
         title="領取時間" 
-        value={`${pickupTime.hour}:${pickupTime.minute}`} // 顯示選擇的時間
+        value={`${pickupTime.hour}:${pickupTime.minute}`} 
         onPress={() => setTimePickerVisible(true)} // Show time picker on press
       />
       <OrderInfo
@@ -153,6 +170,13 @@ const OfferingPage = () => {
     </View>
   );
 
+  const orderDetails = {
+    eventName: "左營仁濟宮 燈花供養祈福",
+    pickupDate: pickupDate.toISOString().split('T')[0],
+    pickupTime: `${pickupTime.hour}:${pickupTime.minute}`,
+    paymentMethod: paymentMethod,
+  };
+
   return (
     <SafeAreaProvider>
       <View style={{
@@ -163,6 +187,8 @@ const OfferingPage = () => {
         paddingLeft: insets.left, 
         paddingRight: insets.right 
       }}>
+
+        {/* Go back Button */}
         <Pressable onPress={() => navigation.navigate('HomePage1')} style={styles.backButton}>
           <Image
             style={styles.goBackIcon}
@@ -204,11 +230,27 @@ const OfferingPage = () => {
           
           {/* OrderInfo */}
           {renderOrderInfo()}
+
         </ScrollView>
         
+        {/* Confirm Button */}
         <View style={styles.buttonContainer}>
-          <SetButton btnText={'送出訂單'} btnStatus={'primary'} />
+          <SetButton 
+            btnText={'送出訂單'} 
+            btnStatus={'primary'} 
+            onPress={handleOrderSubmit}
+          />
         </View>
+
+        {/* Confirmation Modal */}
+        <ConfirmModal
+            isVisible={isConfirmModalVisible}
+            onCancel={() => setConfirmModalVisible(false)}
+            onConfirm={handleConfirmOrder}
+            orderDetails={orderDetails}
+            animationType="fade" transparent
+        />
+
       </View>
     </SafeAreaProvider>
   );
@@ -289,7 +331,7 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     backgroundColor: "white",
-    borderRadius: 10,
+    borderRadius: 15,
     padding: 20,
     alignItems: "center",
     width: width * 0.8,
@@ -332,6 +374,39 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight:"bold",
     color: "white",
+  },
+  confirmationDetails: {
+    alignItems: 'flex-start',
+    marginBottom: 20,
+  },
+  confirmationText: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 5,
+  },
+  confirmationReminder: {
+    fontSize: 14,
+    color: '#555',
+    textAlign: 'center',
+    marginBottom: 20,
+  },
+  confirmationButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+  },
+  confirmButton: {
+    flex: 1,
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginHorizontal: 5,
+    borderRadius: 5,
+    backgroundColor: '#007AFF',
+  },
+  confirmButtonText: {
+    fontSize: 16,
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
