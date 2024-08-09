@@ -1,13 +1,16 @@
-import { React, useState } from 'react'
+import { React, useState, useEffect } from 'react'
 import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, TextInput, Dimensions } from 'react-native'
 import Modal from "react-native-modal";
 import DateTimePicker from 'react-native-ui-datepicker';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import Lunar from '@tony801015/chinese-lunar';
 import moment from 'moment';
 
-function DatePicker({dateValue, labelName}){
+
+function DatePicker({dateValue, labelName, isLunar}){
   const [date, setDate] = useState(new Date(dateValue));
   const [show, setShow] = useState(false);
+  const [lunarDate, setLunarDate] = useState('');
 
   const showTimepicker = () => {
     setShow(!show);
@@ -17,14 +20,28 @@ function DatePicker({dateValue, labelName}){
     setShow(false);
     setDate(new Date(selectedDate));
   }
-  const formatDate = (dateVal) => {     
-    return moment(dateVal).format("YYYY-MM-DD");
+  useEffect(() => {
+    // Update local state if prop changes
+    setLunarDate(convertSolarDateToLunarDate(formatDate(date)));
+  }, [lunarDate]);
+  const convertSolarDateToLunarDate = (date) => {
+    const gregorianDate = date;
+    const [year, month, day] = gregorianDate.split('-');
+    const lunarData = Lunar(year, month, day).getJson();
+    const lunarDateString = `${lunarData.lunarMonth}${lunarData.lunarDay}`;
+   
+    return lunarDateString;
+}
+  const formatDate = () => {     
+    var convertedDate = moment(dateValue).format("YYYY-MM-DD");
+    return convertedDate;
   };
     return(
         <>
         <View style={styles.labelContainer}><Text style={styles.label}>{labelName}</Text></View>
         <View style={styles.container}>
-          <TextInput value={formatDate(date)} style={styles.input} />
+         
+          <TextInput value={!isLunar ? formatDate(date) : lunarDate} style={styles.input} />
           <Pressable onPress={showTimepicker}><Ionicons name="calendar-number-outline" size={30} /></Pressable>
         </View>
         <Modal

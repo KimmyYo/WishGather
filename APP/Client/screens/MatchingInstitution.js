@@ -1,8 +1,10 @@
-import { React, useState } from 'react'
+import { React, useState, useEffect } from 'react'
 import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, FlatList } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import axios from 'axios';
+
 import PageTitle from '../components/PageTitle';
 import SetButton from '../components/SetButton';
 import MatchingInstituteCard from '../components/MatchingInstituteCard';
@@ -55,8 +57,29 @@ const matchingInformation = [
     }
 ];
 
+const API = require('./DBconfig');
 function MatchingInstitution() {
     const insets = useSafeAreaInsets();
+    const [swOrgData, setswOrgData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        // Replace with your API endpoint
+        axios.get(`${API}/sw_organization`)
+            .then(response => {
+                setswOrgData(response.data);
+                setLoading(false);
+            })
+            .catch(error => {
+                setError(error);
+                setLoading(false);
+            });
+    }, []);
+
+    if (loading) return <Text>Loading...</Text>;
+    if (error) return <Text>Error: {error.message}</Text>;
+
     return (
         <SafeAreaProvider>
             <View style={[styles.container, {
@@ -67,7 +90,7 @@ function MatchingInstitution() {
             }]}>
                 <View style={styles.flatListContainer}>
                     <FlatList
-                        data={matchingInformation}
+                        data={swOrgData}
                         renderItem={({ item }) => <MatchingInstituteCard institute={item} />}
                         keyExtractor={(item) => item.id}
                         style={{ flex: 1 }}

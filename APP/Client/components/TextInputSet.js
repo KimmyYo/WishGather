@@ -1,12 +1,16 @@
 import { React, useState } from 'react'
 import { View, Text, TextInput, StyleSheet, Dimensions, Button } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
-function TextInputSet({ labelName, defaultValue }){
+function TextInputSet({ labelName, defaultValue, multiLine, placeholder}){
     const [text, onChangeText] =  useState(defaultValue);
     return (
         <View style={styles.container}>
             <Text style={styles.label}>{labelName}</Text>
-            <TextInput style={styles.input} value={text} onChangeText={onChangeText}/>
+            <TextInput style={[styles.input, multiLine ? styles.multiLine : null]} 
+                       placeholder={placeholder}
+                       value={text} 
+                       onChangeText={onChangeText}  
+                       multiline={multiLine ? true : false}/>
         </View>
     )
 
@@ -33,6 +37,10 @@ const styles = StyleSheet.create({
         margin: 12,
         fontSize: 20,
         position: 'relative'
+    },
+    multiLine: {
+        height: 150,
+        paddingVertical: 20
     },
     icon:{
         position: 'fixed',

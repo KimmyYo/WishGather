@@ -3,6 +3,7 @@ import { View, Text, Image, StyleSheet, Dimensions, Animated} from 'react-native
 import { Swipeable, TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native';
 import  Dialog  from "react-native-dialog";
+import Lunar from '@tony801015/chinese-lunar';
 
 
 function getCardSize(shape){
@@ -36,10 +37,13 @@ function renderRightActions (progress, dragAnimatedValue, showDialog, goEdit, ev
       );
 }
 
+
 function EventCard ({ event, size }){
     const navigation = useNavigation();
     const [dialogVisible, setDialogVisible] = useState(false);
     const swipeableRef = useRef(null);
+    
+
 
     const showDialog = () => {
       setDialogVisible(true);
@@ -54,7 +58,16 @@ function EventCard ({ event, size }){
       swipeableRef.current?.close();
       // Add delete the event at this part
     };
+    const convertSolarDateToLunarDate = (date) => {
+        const gregorianDate = date 
+        const [year, month, day] = gregorianDate.split('-');
+        const lunarData = Lunar(year, month, day).getJson();
+        const lunarDateString = `${lunarData.lunarMonth}${lunarData.lunarDay}`;
+       
+        return lunarDateString;
+    }
 
+    
     const goEdit = () => {
         swipeableRef.current?.close();
         navigation.navigate('EditTempleInfoPage', 
@@ -68,7 +81,8 @@ function EventCard ({ event, size }){
         return (
                 <View style={[styles.card, getCardSize(size)]}>
                     <Image source={event.imageUrl} style={styles.image} />
-                    <Text style={styles.overlayText}>{event.title}</Text>
+                    <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.TIME)}</Text>
+                    
                 </View>
         );
     }
@@ -80,7 +94,7 @@ function EventCard ({ event, size }){
                     ref={swipeableRef}>
                     <View style={[styles.card, getCardSize(size)]}>
                         <Image source={event.imageUrl} style={styles.image} />
-                        <Text style={styles.overlayText}>{event.title}</Text>
+                        <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.TIME)}</Text>
                     </View>
                 </Swipeable>  
                 <Dialog.Container visible={dialogVisible}>

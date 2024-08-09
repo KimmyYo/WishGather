@@ -8,7 +8,7 @@ import Component from "../components/Component1";
 import { FontSize, FontFamily, Color, Border } from "../GlobalStyles";
 
 
-const API=require('./DBconfig')
+const API = require('./DBconfig')
 
 const UserPage21 = () => {
   const navigation = useNavigation();

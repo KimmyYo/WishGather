@@ -6,6 +6,9 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import PageTitle from '../components/PageTitle';
 import MatchingInstitution from './MatchingInstitution';
 import MatchingStatus from './MatchingStatus';
+import NavigateBack from '../components/NavigateBack';
+
+
 
 const Tab = createMaterialTopTabNavigator();
 
@@ -22,17 +25,28 @@ function MatchingPage() {
                 paddingLeft: insets.left ,
                 paddingRight: insets.right
             }}>
-                <Pressable 
-                onPress={() => navigation.navigate('TempleHomePage')}>
-                    <Text>Back</Text>
-                </Pressable>
+                
+                <NavigateBack />
                 <PageTitle titleText="媒合"></PageTitle>
+               
             </View>
             
             <Tab.Navigator 
                 screenOptions={{
-                    tabBarLabelStyle: { fontSize: 20, fontWeight: "semibold"},
-                    tabBarIndicatorStyle: { backgroundColor: '#F6AB3A'},
+                    tabBarStyle: {
+                        backgroundColor: "#f2f2f2"
+                    },
+                    tabBarLabelStyle: { 
+                        fontSize: 20, 
+                        fontWeight: "semibold",
+                    },
+                    tabBarIndicatorStyle: { 
+                        backgroundColor: '#b87006',
+                        padding: 2,
+                        width: 80,
+                        marginLeft: 60,
+                        borderRadius: 1
+                    },
             }}>
                 <Tab.Screen name="訊息" component={MatchingStatus} />
                 <Tab.Screen name="機構" component={MatchingInstitution} />
