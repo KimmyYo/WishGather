@@ -221,9 +221,12 @@ const UserPage = () => {
               
               </Text>
             <Text style={styles.text7}>普通會員</Text>
-          </Text>
-        </Text>
-        <View style={styles.footer}>
+
+          </Text> 
+        </Text> 
+        <View style={[styles.footer]}>
+        
+
         <Pressable
           style={[styles.mingcuterightFill, styles.mingcuterightPosition]}
           onPress={() => navigation.navigate("UserPage4")}
@@ -264,6 +267,9 @@ const UserPage = () => {
             source={require("../assets/mingcuterightfill.png")}
           />
         </Pressable>
+
+        </View>
+        
         <Image
           style={styles.ellipseIcon}
           contentFit="cover"
@@ -377,8 +383,12 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   footer: {
-     position: "absolute",
-     bottom: 40
+
+    // top: 831,
+    // left: 38,
+    position:"absolute",
+    bottom:40
+
   },
   userPageChild: {
     top: 82,

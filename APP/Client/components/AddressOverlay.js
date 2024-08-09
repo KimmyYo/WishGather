@@ -1,33 +1,39 @@
-{/* 用於HomePage地址設定，亦可用於OfferingPage */}
 import * as React from "react";
-import { View, StyleSheet, Text, TextInput, Pressable } from "react-native";
+import { View, StyleSheet, Text, TextInput, Pressable, Dimensions } from "react-native";
 import { FontFamily, FontSize, Border, Color } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 const AddressOverlay = ({ onClose, onSubmit }) => {
   const [address, setAddress] = React.useState("");
 
   return (
-    <View style={[styles.addressOverlay, styles.addressLayout]}>
+    <View style={styles.addressLayout}>
+      {/* Header */}
+      <View style={{ marginBottom: 10 }}>
+        <Text style={styles.headerText}>修改地址</Text>
+      </View>
 
-      <View style={[styles.addressOverlayChild, styles.addressLayout]} />
-      {/* 標題 */}
-      <Text style={[styles.text, styles.textTypo]}>修改地址</Text>
+      {/* Location input */}
+      <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+        <TextInput
+          style={styles.addressInput}
+          placeholder="請輸入地址..."
+          value={address}
+          onChangeText={setAddress}
+        />
+      </View>
 
-      {/* 地址輸入框 */}
-      <TextInput
-        style={styles.addressInput}
-        placeholder="輸入新地址"
-        value={address}
-        onChangeText={setAddress}
-      />
+      {/* Confirm / Cancel Button */}
+      <View style={styles.buttonContainer}>
+        <Pressable style={[styles.button, styles.cancelButton]} onPress={onClose}>
+          <Text style={[styles.buttonText, styles.cancelButtonText]}>取消</Text>
+        </Pressable>
 
-      {/* 確認、取消按鈕，傳送至HomePage.js */}
-      <Pressable style={styles.submitButton} onPress={() => onSubmit(address)}>
-        <Text style={styles.submitButtonText}>確認</Text>
-      </Pressable>
-      <Pressable style={styles.closeButton} onPress={onClose}>
-        <Text style={styles.closeButtonText}>取消</Text>
-      </Pressable>
+        <Pressable style={[styles.button, styles.confirmButton]} onPress={() => onSubmit(address)}>
+          <Text style={[styles.buttonText, styles.confirmButtonText]}>確認</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
@@ -35,80 +41,56 @@ const AddressOverlay = ({ onClose, onSubmit }) => {
 const styles = StyleSheet.create({
   addressLayout: {
     height: 230,
-    width: 300,
+    width: width * 0.75,
+    backgroundColor: "white",
+    borderRadius: 15,
+    paddingTop: 20,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    flexDirection: "column",
   },
-  textTypo: {
+  headerText: {
     textAlign: "center",
-    fontFamily: FontFamily.interMedium,
     fontWeight: "500",
-    fontSize: FontSize.size_4xl,
-    position: "absolute",
-  },
-  addressOverlayChild: {
-    top: 0,
-    left: 0,
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowRadius: 30,
-    elevation: 30,
-    shadowOpacity: 1,
-    borderRadius: Border.br_xl,
-    backgroundColor: Color.colorWhite,
-    position: "absolute",
-  },
-  text: {
-    top: 32,
-    left: 104,
-    color: Color.colorBlack,
+    fontSize: 24,
   },
   addressInput: {
-    top: 78,
-    left: 15,
-    borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorWhitesmoke_300,
-    width: 270,
-    height: 60,
+    width: "85%",
+    height: 100,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
     paddingHorizontal: 10,
-    position: "absolute",
+    fontSize: 14,
   },
-  submitButton: {
-    top: 180,
-    left: 109,
-    borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorSteelblue,
-    width: 83,
-    height: 35,
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    height:50,
+    marginTop: 20,
+    borderTopWidth: 0.3,
+    borderColor:"#ccc"
+  },
+  button: {
+    width: "50%",
+    height:"100%",
     alignItems: "center",
     justifyContent: "center",
-    position: "absolute",
   },
-  submitButtonText: {
-    color: Color.colorWhite,
+  confirmButton: {
+    borderLeftWidth:0.3,
+    borderColor:"#ccc",
+  },
+  buttonText: {
     fontSize: FontSize.size_xl,
     fontFamily: FontFamily.interMedium,
   },
-  closeButton: {
-    top: 180,
-    left: 204,
-    borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorGray_400,
-    width: 83,
-    height: 35,
-    alignItems: "center",
-    justifyContent: "center",
-    position: "absolute",
+  cancelButtonText: {
+    color: Color.colorSteelblue,
   },
-  closeButtonText: {
-    color: Color.colorWhite,
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.interMedium,
-  },
-  addressOverlay: {
-    maxWidth: "100%",
-    maxHeight: "100%",
+  confirmButtonText: {
+    color: Color.colorSteelblue,
   },
 });
 

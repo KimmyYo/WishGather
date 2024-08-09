@@ -7,7 +7,7 @@ import TempleDistance from "../components/TempleDistance";
 // import Footer from "../components/Footer_HomePage";
 import { useNavigation } from "@react-navigation/native";
 import { Border, Color, FontSize, FontFamily, Padding } from "../GlobalStyles";
-import Footer from "../components/footer";
+// import Footer from "../components/footer";
 
 
 const { width, height } = Dimensions.get('window');
@@ -15,7 +15,6 @@ const { width, height } = Dimensions.get('window');
 const HomePage = () => {
   const [locationIconVisible, setLocationIconVisible] = useState(false);
   const [text1Visible, setText1Visible] = useState(false);
-  const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [currentAddress, setCurrentAddress] = useState("高雄市鼓山區蓮海路70號");
   const navigation = useNavigation();
@@ -37,26 +36,17 @@ const HomePage = () => {
     setText1Visible(false);
   }, []);
 
-  const openMageeditIcon = useCallback(() => {
-    setMageeditIconVisible(true);
-  }, []);
-
-  const closeMageeditIcon = useCallback(() => {
-    setMageeditIconVisible(false);
-  }, []);
-
   const handleAddressSubmit = useCallback((newAddress) => {
     setCurrentAddress(newAddress);
     setLocationIconVisible(false);
     setText1Visible(false);
-    setMageeditIconVisible(false);
   }, []);
 
   const temples = [
-    { id: '1', imageSource: require("../assets/rectangle-2.png"), description: "左營仁濟宮 燈花供養祈福", distance: "11公里" },
-    { id: '2', imageSource: require("../assets/rectangle-21.png"), description: "鳳邑雷府大將廟 犒軍儀式", distance: "" },
-    { id: '3', imageSource: require("../assets/rectangle-22.png"), description: "左營金鑾殿 工地動土科儀", distance: "" },
-    { id: '4', imageSource: require("../assets/rectangle-2.png"), description: "府城三山國王廟 巾山國王聖壽", distance: "34公里" },
+    { id: '1', imageSource: require("../assets/rectangle-2.png"), temple: "左營仁濟宮", event: "燈花供養祈福", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+    { id: '2', imageSource: require("../assets/rectangle-21.png"), temple: "鳳邑雷府大將廟", event: "犒軍儀式", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+    { id: '3', imageSource: require("../assets/rectangle-22.png"), temple: "左營金鑾殿", event: "工地動土科儀",  date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+    { id: '4', imageSource: require("../assets/rectangle-2.png"), temple: "府城三山國王廟", event: "巾山國王聖壽", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
     // Add more temple data as needed (database)
   ];
 
@@ -64,6 +54,7 @@ const HomePage = () => {
     <SafeAreaProvider>
       <View style={{
         flex: 1,
+        backgroundColor: "white",
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: insets.top,
@@ -74,17 +65,18 @@ const HomePage = () => {
 
         {/* Location */}
         <View style={styles.locationContainer}>
-          <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
-            <Image style={styles.icon} contentFit="cover" source={require("../assets/location-icon.png")} />
-          </Pressable>
+          
+          <View style={{marginRight:10}}>
+            <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
+              <Image style={styles.icon} contentFit="cover" source={require("../assets/location.png")} />
+            </Pressable>
+          </View>
 
-          <Pressable style={styles.pressable} onPress={openText1}>
-            <Text style={styles.text1}>當前位置: {currentAddress}</Text>
-          </Pressable>
-
-          <Pressable style={styles.mageedit} onPress={openMageeditIcon}>
-            <Image style={styles.icon} contentFit="cover" source={require("../assets/mageedit.png")} />
-          </Pressable>
+          <View>
+            <Pressable style={styles.pressable} onPress={openText1}>
+              <Text style={styles.locationText}>當前位置: {currentAddress}  </Text>
+            </Pressable>
+          </View>
         </View>
 
         {/* Search Bar */}
@@ -98,13 +90,17 @@ const HomePage = () => {
         </View>
 
         {/* Temple */}
+        
         <FlatList
           data={temples}
           renderItem={({ item }) => (
             <TempleDistance
               imageSource={item.imageSource}
-              description={item.description}
+              temple={item.temple}
+              event={item.event}
               distance={item.distance}
+              date1={item.date1}
+              date2={item.date2}
               onPress={() => navigation.navigate("HomePage1")}
             />
           )}
@@ -112,6 +108,7 @@ const HomePage = () => {
           contentContainerStyle={styles.activityContainer}
         />
 
+        {/*Modal - address modify*/}
         <Modal animationType="fade" transparent visible={locationIconVisible}>
           <View style={styles.overlay}>
             <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />
@@ -126,59 +123,50 @@ const HomePage = () => {
           </View>
         </Modal>
 
-        <Modal animationType="fade" transparent visible={mageeditIconVisible}>
-          <View style={styles.overlay}>
-            <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
-            <AddressOverlay onClose={closeMageeditIcon} onSubmit={handleAddressSubmit} />
-          </View>
-        </Modal>
 
         {/* Footer */}  
-        <Footer />
+        {/* <Footer /> */}
       </View>
     </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  homePage: {
-    flex: 1,
-    backgroundColor: Color.colorGray_100,
-  },
   locationContainer: {
+    width:"90%",
+    height: 55,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
+    justifyContent: 'center',
+    // borderWidth: 1, //Test
   },
   locationIcon: {
-    width: 30,
-    height: 30,
-  },
-  text1: {
-    color: "#898989",
-    fontSize: FontSize.size_xl,
-  },
-  mageedit: {
     width: 25,
     height: 25,
   },
+  locationText: {
+    color: "#898989",
+    fontSize: 16,
+  },
   searchContainer: {
-    width: width*0.95,
+    width: width*0.90,
     height:50,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    justifyContent:"center",
+    marginBottom:10,
+    // borderWidth:1 //Test
   },
   input: {
+    width:"100%",
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 20,
     paddingHorizontal: 10,
   },
   activityContainer: {
-    paddingVertical: 10,
+    width:"90%",
     alignItems: "center",
+    paddingButtom: 80,
   },
   overlay: {
     flex: 1,

@@ -1,9 +1,13 @@
-import React, { useState, useCallback } from 'react';
-import { StyleSheet, View, Text, Pressable, Modal, Image, FlatList, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Pressable, ScrollView, Image, Dimensions, TextInput } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import OfferingItem from '../components/OfferingItem';
+import DateTimePicker from 'react-native-ui-datepicker';
+import { Picker } from '@react-native-picker/picker';
+import ConfirmItem from '../components/ConfirmItem';
+import SetButton from '../components/SetButton';
+import OrderInfo from '../components/OrderInfo';
+import Modal from 'react-native-modal';
 import { useNavigation } from '@react-navigation/native';
-import { Color, FontFamily, FontSize, Border } from '../GlobalStyles';
 
 const { width, height } = Dimensions.get('window');
 
@@ -11,230 +15,323 @@ const OfferingPage = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
-
-
   const chosenItems = [
-    { id: '1', imageSource: require('../assets/rectangle-46.png'), title: '開運吊飾', price: '$120', description: '備註：' },
-    { id: '2', imageSource: require('../assets/rectangle-43.png'), title: '光明燈', price: '$800', description: '備註：被祈福人資訊' },
+    { id: '1', imageSource: require('../assets/rectangle-46.png'), title: '開運吊飾', price: '120' },
+    { id: '2', imageSource: require('../assets/rectangle-43.png'), title: '光明燈', price: '800' },
     // Add more items as needed
   ];
 
-  const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
-  const [mageeditIcon1Visible, setMageeditIcon1Visible] = useState(false);
+  const [note, setNote] = useState('');
+  const [pickupDate, setPickupDate] = useState(new Date());
+  const [pickupTime, setPickupTime] = useState({ hour: '06', minute: '00' }); // 初始化時間
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+  const [isTimePickerVisible, setTimePickerVisible] = useState(false); // 時間選擇器
+  const [paymentMethod, setPaymentMethod] = useState('現場付款');
+  const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
 
-  const openMageeditIcon = useCallback(() => setMageeditIconVisible(true), []);
-  const closeMageeditIcon = useCallback(() => setMageeditIconVisible(false), []);
-  const openMageeditIcon1 = useCallback(() => setMageeditIcon1Visible(true), []);
-  const closeMageeditIcon1 = useCallback(() => setMageeditIcon1Visible(false), []);
+  const handleDateChange = (date) => {
+    setPickupDate(date);
+    setDatePickerVisible(false);
+  };
 
-  const renderItem = ({ item }) => (
-    <OfferingItem
-      imageSource={item.imageSource}
-      title={item.title}
-      price={item.price}
-      description={item.description}
-    />
+  const handleTimeChange = (hour, minute) => {
+    setPickupTime({ hour, minute });
+    setTimePickerVisible(false);
+  };
+
+  const handlePaymentMethodChange = (method) => {
+    setPaymentMethod(method);
+    setPaymentModalVisible(false);
+  };
+
+  const renderOrderInfo = () => (
+    <View style={styles.orderInfoContainer}>
+      <OrderInfo
+        iconName="store" 
+        iconType="MaterialIcons" 
+        title="活動名稱" 
+        value="左營仁濟宮 燈花供養祈福" 
+        onPress={() => {}} 
+      />
+      <OrderInfo
+        iconName="calendar" 
+        iconType="Entypo" 
+        title="領取日期" 
+        value={pickupDate.toISOString().split('T')[0]} 
+        onPress={() => setDatePickerVisible(true)} // Show date picker on press
+      />
+      <OrderInfo
+        iconName="clock" 
+        iconType="Entypo" 
+        title="領取時間" 
+        value={`${pickupTime.hour}:${pickupTime.minute}`} // 顯示選擇的時間
+        onPress={() => setTimePickerVisible(true)} // Show time picker on press
+      />
+      <OrderInfo
+        iconName="payment" 
+        iconType="MaterialIcons" 
+        title="付款方式" 
+        value={paymentMethod} 
+        onPress={() => setPaymentModalVisible(true)} // Show payment modal on press
+      />
+      {paymentMethod === '線上轉帳付款' && (
+        <View style={styles.paymentAccountContainer}>
+          <Text style={styles.paymentAccountText}>宮廟匯款帳號 : 72668349{"\n"}請於送出訂單後12小時之內匯款</Text>
+        </View>
+      )}
+      
+      {/* Date Picker Modal */}
+      <Modal
+        isVisible={isDatePickerVisible}
+        backdropColor={"#d0d0d0"}
+        onBackdropPress={() => setDatePickerVisible(false)}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <DateTimePicker
+            mode="single"
+            date={pickupDate}
+            onChange={params => handleDateChange(params.date)}
+            selectedItemColor={"#F6AB3A"}
+            headerButtonColor="#F6AB3A"
+          />
+        </View>
+      </Modal>
+
+      {/* Time Picker Modal */}
+      <Modal
+        isVisible={isTimePickerVisible}
+        backdropColor={"#d0d0d0"}
+        onBackdropPress={() => setTimePickerVisible(false)}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>選擇時間</Text>
+          <View style={styles.timePickerContainer}>
+            <Picker
+              selectedValue={pickupTime.hour}
+              style={styles.picker}
+              onValueChange={(itemValue) => setPickupTime(prevState => ({ ...prevState, hour: itemValue }))}
+            >
+              {Array.from({ length: 24 }, (_, i) => (
+                <Picker.Item key={i} label={`${i < 10 ? `0${i}` : i}`} value={`${i < 10 ? `0${i}` : i}`} />
+              ))}
+            </Picker>
+            <Picker
+              selectedValue={pickupTime.minute}
+              style={styles.picker}
+              onValueChange={(itemValue) => setPickupTime(prevState => ({ ...prevState, minute: itemValue }))}
+            >
+              {['00', '10', '20', '30', '40', '50'].map(minute => (
+                <Picker.Item key={minute} label={minute} value={minute} />
+              ))}
+            </Picker>
+          </View>
+          <Pressable style={styles.modalButton} onPress={() => handleTimeChange(pickupTime.hour, pickupTime.minute)}>
+            <Text style={styles.modalButtonText}>完成</Text>
+          </Pressable>
+        </View>
+      </Modal>
+
+      {/* Payment Method Modal */}
+      <Modal
+        isVisible={isPaymentModalVisible}
+        backdropColor={"#d0d0d0"}
+        onBackdropPress={() => setPaymentModalVisible(false)}
+        style={styles.modal}
+      >
+        <View style={styles.modalContent}>
+          <Text style={styles.modalTitle}>付款方式</Text>
+          <Pressable style={styles.modalOption} onPress={() => handlePaymentMethodChange('現場付款')}>
+            <Text style={styles.modalOptionText}>現場付款</Text>
+          </Pressable>
+          <Pressable style={styles.modalOption} onPress={() => handlePaymentMethodChange('線上轉帳付款')}>
+            <Text style={styles.modalOptionText}>線上轉帳付款</Text>
+          </Pressable>
+        </View>
+      </Modal>
+    </View>
   );
 
   return (
     <SafeAreaProvider>
-      <View style={[styles.container, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
-
-        <View style={{ width: width * 0.8, height: 65, flexDirection: 'row', justifyContent: 'start', alignItems: 'center' }}>
-    
-            <Pressable
-              style={{ width: 45, height: 45, justifyContent: 'center', alignItems: 'center' }}
-              onPress={() => navigation.navigate("UserPage")}
-            >
-              <Image
-                style={{ width: '100%', height: '100%', resizeMode: 'cover' }}
-                source={require("../assets/go-back-button.png")}
-              />
-            </Pressable>
-
-            <Text style={{ fontSize: 30, fontFamily: FontFamily.interSemiBold, color: Color.colorDimgray_200 }}>
-              訂單確認
-            </Text>
-    
-        </View>
-
-        <FlatList
-          data={chosenItems}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.itemsContainer}
-        />
-
-        <Pressable
-          style={styles.addButton}
-          onPress={() => navigation.navigate('OfferingPage5')}
-        >
-          <Image style={styles.addButtonImage} source={require('../assets/rectangle-12.png')} />
-          <Image style={styles.plusIcon} source={require('../assets/plus-icon.png')} />
-          <Text style={styles.addButtonText}>新增商品</Text>
+      <View style={{
+        flex: 1,
+        backgroundColor: "white",
+        paddingTop: insets.top, 
+        paddingBottom: insets.bottom, 
+        paddingLeft: insets.left, 
+        paddingRight: insets.right 
+      }}>
+        <Pressable onPress={() => navigation.navigate('HomePage1')} style={styles.backButton}>
+          <Image
+            style={styles.goBackIcon}
+            contentFit="cover"
+            source={require("../assets/left-chevron.png")}
+          />
         </Pressable>
 
-        <Pressable
-          style={styles.checkoutButton}
-          onPress={() => navigation.navigate('OfferingPage1')}
-        >
-          <Image style={styles.checkoutImage} source={require('../assets/rectangle-9.png')} />
-          <Text style={styles.checkoutText}>下一步</Text>
-        </Pressable>
-
-        <Text style={[styles.text, styles.paymentInfo]}>
-          <Text>宮廟名稱 : 大甲鎮瀾宮媽祖廟{'\n'}</Text>
-          <Text>共計 3 樣商品，小計 1040 元{'\n'}</Text>
-          <Text>付款方式：線上轉帳付款</Text>
-        </Text>
-
+        <ScrollView contentContainerStyle={styles.scrollViewContent}>
+          {/* Title */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.pageTitle}>訂單明細</Text>
+          </View>
+          {/* Item */}
+          <View style={styles.itemsContainer}>
+            {chosenItems.map((item) => (
+              <ConfirmItem key={item.id} imageSource={item.imageSource} title={item.title} price={item.price} />
+            ))}
+          </View>
+          
+          {/* Total */}
+          <View style={{width:width*0.95, paddingHorizontal:10, paddingTop: 15,justifyContent:"center", alignItems:"flex-end"}}>
+            <Text style={{fontSize:18, fontWeight:"bold", color:"#4F4F4F"}}>總計 : $920</Text>
+          </View>
+          
+          {/* Note */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.pageTitle}>新增備注</Text>
+          </View>
+          <View style={styles.noteContainer}>
+            <TextInput
+              style={styles.noteInput}
+              placeholder='請在此撰寫備註...'
+              multiline
+              value={note}
+              onChangeText={setNote}
+            />
+          </View>
+          
+          {/* OrderInfo */}
+          {renderOrderInfo()}
+        </ScrollView>
         
-
-        <Modal animationType="fade" transparent visible={mageeditIconVisible}>
-          <View style={styles.overlayContainer}>
-            <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
-            {/* AddressOverlay content */}
-          </View>
-        </Modal>
-
-        <Modal animationType="fade" transparent visible={mageeditIcon1Visible}>
-          <View style={styles.overlayContainer}>
-            <Pressable style={styles.overlayBg} onPress={closeMageeditIcon1} />
-            {/* LightInfoOverlay content */}
-          </View>
-        </Modal>
+        <View style={styles.buttonContainer}>
+          <SetButton btnText={'送出訂單'} btnStatus={'primary'} />
+        </View>
       </View>
     </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Color.colorGray_100,
-    paddingHorizontal: 20,
+  goBackIcon: {
+    width: 28,
+    height: 28,
+    marginLeft: 10,
   },
-  title: {
-    fontSize: 30,
-    fontFamily: FontFamily.interSemiBold,
-    color: Color.colorDimgray_200,
-    textAlign:'center',
+  titleContainer: {
+    width: width*0.95,
+    justifyContent: "center",
+    alignItems: 'flex-start',
+    marginTop: 10,       
+    paddingHorizontal: 10,
   },
-  goBackButton: {
-    left: width * 0.001,
-    top: width * 0.001,
-    width: 45,
-    height: 45,
-    position: "absolute",
+  pageTitle: {
+    fontSize: 26,
+    color: "#4F4F4F",
+    fontWeight: "bold",
+    textAlign: 'left',
+    marginVertical: 2,
   },
-  templeName: {
-    fontSize: FontSize.size_8xl,
-    marginBottom: 15,
+  scrollViewContent: {
+    flexGrow: 1,
+    alignItems: 'center',
   },
   itemsContainer: {
-    width: '100%',
-    paddingBottom: 70,
-  },
-  backButton: {
-    position: 'absolute',
-    marginTop: '15%',
-    right: 15,
-    width: 30,
-    height: 30,
+    width: width*0.95,
+    justifyContent: "center",
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 5,
   },
-  checkoutButton: {
-    width: width * 0.85,
-    bottom: height * 0.03,
-    left: '8%',
-    height: 70,
-    position: 'absolute',
+  noteContainer: {
+    width: width*0.95,
+    marginVertical: 2,
+    padding: 10,
+    borderRadius: 10,
+    borderBottomWidth:1,
+    borderColor: '#E0E0E0',
+  },
+  noteInput: {
+    height: 100,
+    borderColor: '#E0E0E0',
+    borderWidth: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginBottom: 5,
+    textAlignVertical: 'top',
+  },
+  orderInfoContainer: {
+    width: width*0.95,
+    justifyContent: "center",
     alignItems: 'center',
-    justifyContent: 'center',
+    marginTop: 20,
   },
-  checkoutImage: {
-    ...StyleSheet.absoluteFillObject,
-    borderRadius: Border.br_xl,
-  },
-  checkoutText: {
-    position: 'absolute',
-    fontSize: FontSize.size_11xl,
-    fontWeight: '600',
-    fontFamily: FontFamily.interSemiBold,
-    color: Color.colorWhite,
-  },
-  text: {
-    width: '100%',
-    fontFamily: FontFamily.interMedium,
-    fontWeight: '500',
-    fontSize: FontSize.size_xl,
-    color: Color.colorBlack,
-  },
-  paymentInfo: {
-    position: 'absolute',
-    top: '65%',
-    left: '8%',
-  },
-  addButton: {
-    position: 'absolute',
-    right: 10,
-    top: 300,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: Border.br_31xl,
-    backgroundColor: Color.colorGray_100,
-    paddingVertical: 5,
+  paymentAccountContainer: {
+    marginTop: 10,
     paddingHorizontal: 15,
   },
-  addButtonImage: {
-    ...StyleSheet.absoluteFillObject,
+  paymentAccountText: {
+    fontSize: 16,
+    color: "#4F4F4F",
+    textAlign: "center",
   },
-  plusIcon: {
-    width: 20,
-    height: 20,
-    marginRight: 5,
-  },
-  addButtonText: {
-    fontSize: FontSize.size_xl,
-    color: Color.colorDimgray_100,
-  },
-  mageedit: {
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
+    alignItems: 'center',
     position: 'absolute',
     bottom: 20,
-    right: 20,
-    width: 25,
-    height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
-  mageedit1: {
-    position: 'absolute',
-    top: 20,
-    right: 20,
-    width: 25,
-    height: 25,
-    alignItems: 'center',
-    justifyContent: 'center',
+  modal: {
+    justifyContent: "center",
+    alignItems: "center",
   },
-  overlayContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: 'rgba(113, 113, 113, 0.3)',
+  modalContent: {
+    backgroundColor: "white",
+    borderRadius: 10,
+    padding: 20,
+    alignItems: "center",
+    width: width * 0.8,
   },
-  overlayBg: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    left: 0,
-    top: 0,
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
-  icon: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
+  timePickerContainer: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  picker: {
+    height: 150,
+    width: 100,
+  },
+  modalButton: {
+    marginTop: 20,
+    backgroundColor: "#FFA042",
+    padding: 10,
+    borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+  },
+  modalButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
+  modalOption: {
+    marginVertical: 10,
+    padding: 10,
+    width: "80%",
+    alignItems: "center",
+    backgroundColor:"#FFA042",
+    borderRadius:20,
+  },
+  modalOptionText: {
+    fontSize: 16,
+    fontWeight:"bold",
+    color: "white",
   },
 });
 

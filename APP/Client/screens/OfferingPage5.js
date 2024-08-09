@@ -1,15 +1,39 @@
-import * as React from "react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { StyleSheet, View, Text, Pressable, ScrollView, SafeAreaView, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import OfferingItem from "../components/OfferingItem"; 
 import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
+import axios from 'axios';
 
 const { width, height } = Dimensions.get('window');
 
+const API=require('./DBconfig')
+
 const OfferingPage5 = () => {
   const navigation = useNavigation();
+  const [temples, setTemples] = useState([]);
+  const [commodity, setCommodity] = useState([]);
+
+  useEffect(() => {
+    axios.get(`${API}/temples`)
+      .then(response => {
+        setTemples(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the temples!!!', error);
+      });
+  }, []);
+
+  useEffect(() => {
+    axios.get(`${API}/commodity`)
+      .then(response => {
+        setCommodity(response.data);
+      })
+      .catch(error => {
+        console.error('There was an error fetching the commodity!!!', error);
+      });
+  }, []);
 
   {/*新增Category組件，用來顯示該廟宇提供甚麼類別的商品，連接資料庫處*/}
   const Category = ({ label }) => (
@@ -33,17 +57,33 @@ const OfferingPage5 = () => {
 
       
       {/* 廟宇照片，連接資料庫處: 廟宇圖片 */}
-      <Image
+      {/* <Image
         style={styles.headerImage}
         contentFit="cover"
         source={require("../assets/rectangle-3.png")}
-      />
+      /> */}
 
       {/* 顯示廟宇資訊，連接資料庫處:名稱、營業時間*/}
-      <View style={styles.infoContainer}>
+      {/* <View style={styles.infoContainer}>
         <Text style={styles.mainTitle}>大甲鎮瀾宮媽祖廟</Text>
         <Text style={styles.subTitle}>06:00~21:30 營業中</Text>
-      </View>
+      </View> */}
+
+
+    <View style={styles.infoContainer}>
+      {temples.map((temple, index) => (
+        <View key={temple.id || index} style={styles.templeContainer}>
+          <Image
+            style={styles.headerImage}
+            contentFit="cover"
+            source={temple.IMAGE} 
+          />
+          <Text style={styles.mainTitle}>{temple.NAME}</Text>
+          <Text style={styles.subTitle}>{temple.ADDRESS}</Text>
+        </View>
+      ))}
+    </View>
+
 
       {/* 類別索引 */}
       <ScrollView horizontal style={styles.categories} showsHorizontalScrollIndicator={true}>
@@ -66,6 +106,26 @@ const OfferingPage5 = () => {
 
       {/* 顯示該廟宇提供之供品類別其所有內容，連接資料庫處 : imageSource、標題、金額、敘述*/}
       <ScrollView 
+        style={styles.scrollView} 
+        contentContainerStyle={styles.scrollViewContent}
+        showsVerticalScrollIndicator={true}
+      >
+          {commodity.map((item, index) => (
+            <View key={item.mID || index} style={styles.OfferItem_container}>
+              <Text style={styles.sectionTitle}>{item.NAME}</Text>
+              <OfferingItem
+                source={typeof item.IMAGE === 'string' ? { uri: item.IMAGE } : item.IMAGE}
+                title={item.NAME}
+                price={`$${item.PRICE}`}
+                description={item.DESCRIPTION}
+                onSelect={() => handleSelectOffering({ title: item.NAME, price: item.PRICE })}
+              />
+            </View>
+          ))}
+      </ScrollView>
+
+
+      {/* <ScrollView 
         style={styles.scrollView} 
         contentContainerStyle={styles.scrollViewContent}
         showsVerticalScrollIndicator={true} >
@@ -121,7 +181,7 @@ const OfferingPage5 = () => {
           />
         </View>
         
-      </ScrollView>
+      </ScrollView> */}
       
       {/* 前往結帳按鈕 */}
       <Pressable
