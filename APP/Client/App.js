@@ -5,13 +5,11 @@ import { useFonts } from "expo-font";
 import Main from "./screens/Main";
 import UserPage from "./screens/UserPage";
 import HomePage from "./screens/HomePage";
-import KeyboardOverlay from "./components/KeyboardOverlay";
 import AddressOverlay from "./components/AddressOverlay";
 import HomePage4 from "./screens/HomePage4";
 import LogoutOverlay from "./components/LogoutOverlay";
 import UserPage1 from "./screens/UserPage1";
 import OfferingPage from "./screens/OfferingPage";
-import LightInfoOverlay from "./components/LightInfoOverlay";
 import UserPage2 from "./screens/UserPage2";
 import UserPage3 from "./screens/UserPage3";
 import HomePage5 from "./screens/HomePage5";
@@ -160,11 +158,6 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="KeyboardOverlay"
-              component={KeyboardOverlay}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
               name="AddressOverlay"
               component={AddressOverlay}
               options={{ headerShown: false }}
@@ -187,11 +180,6 @@ const App = () => {
             <Stack.Screen
               name="OfferingPage"
               component={OfferingPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="LightInfoOverlay"
-              component={LightInfoOverlay}
               options={{ headerShown: false }}
             />
             <Stack.Screen

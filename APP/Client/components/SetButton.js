@@ -9,11 +9,11 @@ function getBtnStatus(status){
     else if (status == "normal") return styles.normal
     else if (status == "cancel") return styles.cancel
 }
-function SetButton({btnText, btnStatus, navigateScreen}){
+function SetButton({btnText, btnStatus, onPress}){
     const navigation = useNavigation();
     // status 
     return (
-        <Pressable onPress={() => navigation.navigate(navigateScreen)}>
+        <Pressable onPress={onPress}>
             <View style={[styles.card, getBtnStatus(btnStatus)]}>
                 <Text style={styles.text}>{ btnText }</Text>
             </View>
