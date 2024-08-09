@@ -34,14 +34,13 @@ import TempleEventPage from "./screens/TempleEventPage";
 import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
 import FoodScanningPage from "./screens/FoodScanningPage";
-import SignUp from "./screens/SignUp"
+import SignUp from "./screens/SignUp";
 
-import HomePage3 from "./screens/HomePage3"
-import ProductPage from "./screens/ProductPage"
+import ProductPage from "./screens/ProductPage";
 import ScanResult from "./screens/ScanResult";
 
 
-import SignIn from "./screens/SignIn"
+import SignIn from "./screens/SignIn";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native";
