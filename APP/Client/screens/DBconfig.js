@@ -1,5 +1,3 @@
-var DB = require("../../Server/index");
+const API = 'http://140.117.71.127:3000'; // API
 
-DB.db.query(
-
-  );
+module.exports = API;

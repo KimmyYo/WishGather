@@ -1,64 +1,92 @@
 import React from 'react';
-import { StyleSheet, View, Text, Pressable } from 'react-native';
+import { StyleSheet, View, Text, Pressable, Dimensions } from 'react-native';
 import { Image } from "expo-image";
+import { LinearGradient } from 'expo-linear-gradient';
 import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
 
-const TempleDistance = ({ imageSource, distance, description, onPress }) => {
+const { width, height } = Dimensions.get('window');
+
+const TempleDistance = ({ imageSource, date1, date2, temple, event, onPress }) => {
   return (
-    <Pressable style={styles.container} onPress={onPress}>
-      <Image
-        style={styles.locationIcon}
-        contentFit="cover"
-        source={require("../assets/location-icon1.png")}
-      />
-      <Image
-        style={styles.image}
-        contentFit="cover"
-        source={imageSource}
-      />
-      <Text style={styles.text}>
-        <Text style={styles.description}>{description}</Text>
-        <Text style={styles.distance}>{distance}</Text>
-      </Text>
+    <Pressable onPress={onPress}>
+      <View style={styles.container}>
+        <View style={styles.imageContainer}>
+          <Image
+            style={styles.image}
+            contentFit="cover"
+            source={imageSource}
+          />
+          <LinearGradient
+            colors={['#FF9224', 'rgba(255, 255, 255, 0.1)']}
+            start={[0, 0]} // 漸層起點
+            end={[1, 0]}   // 漸層終點
+            style={styles.linearGradient}
+          />
+          <View style={styles.textContainer}>
+            <Text style={styles.temple}>{temple}</Text>
+            <Text style={styles.event}>{event}</Text>
+          </View>
+        </View>
+        <View style={styles.dateContainer}>
+          <Text style={styles.dateText}>{date1} | {date2}</Text>
+        </View>
+      </View>
     </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 199,
-    width: 380,
-    marginVertical: 10,
+    height: 200,
+    width: width * 0.9,
+    marginBottom: 10,
+    overflow: 'hidden',
+    backgroundColor: "#FFFFFF",
   },
-  locationIcon: {
-    height: "15.08%",
-    width: "7.89%",
-    top: "84.92%",
-    left: "0.53%",
-    position: "absolute",
+  imageContainer: {
+    height: 160,
+    shadowColor: "black",
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.5,
+    shadowRadius: 3,
+    elevation: 3,
+    position: 'relative',
   },
   image: {
-    height: "80.4%",
+    height: "100%",
     width: "100%",
-    borderRadius: Border.br_3xs,
-    opacity: 0.85,
-    position: "absolute",
+    borderRadius: 15,
+    opacity: 0.7,
   },
-  text: {
-    height: "16.08%",
-    width: "89.47%",
-    top: "83.42%",
-    left: "8.95%",
-    fontFamily: FontFamily.interRegular,
-    position: "absolute",
+  linearGradient: {
+    position: 'absolute',
+    height: "100%",
+    width: "100%",
+    borderRadius: 15,
   },
-  description: {
-    color: Color.colorBlack,
-    fontSize: FontSize.size_xl,
+  textContainer: {
+    position: 'absolute',
+    top: 70,
+    left: 10,
   },
-  distance: {
-    fontSize: FontSize.size_mini,
-    color: Color.colorGray_300,
+  temple: {
+    color: "white",
+    fontSize: 30,
+    fontWeight: "900",
+    marginBottom: 5,
+  },
+  event: {
+    color: "white",
+    fontSize: 20,
+    fontWeight: "500",
+  },
+  dateContainer: {
+    paddingVertical: 8,
+    paddingHorizontal: 5,
+  },
+  dateText: {
+    color: Color.colorGray_500,
+    fontSize: 16,
   },
 });
 

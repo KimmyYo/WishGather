@@ -1,86 +1,74 @@
-import React from "react";
-import { Pressable, View, Text, Image, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { Pressable, View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
 
-const TempleCard = ({ imageSource, title, distance, savedStateSource, onPress }) => (
-  <Pressable style={styles.container} onPress={onPress}>
-    <View style={styles.child} />
-    <Image style={[styles.image, styles.imageLayout]} source={imageSource} />
-    <Text style={[styles.text, styles.textFlexBox]}>
-      <Text style={styles.title}>{title}</Text>
-      <Text style={styles.distance}>{distance}</Text>
-    </Text>
-    <Image style={[styles.savedStateIcon, styles.savedIconPosition]} source={savedStateSource} />
-  </Pressable>
-);
+const { width } = Dimensions.get('window');
+
+const TempleCard = ({ imageSource, title, distance, onPress, onSave }) => {
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSavePress = () => {
+    const newSaveState = !isSaved;
+    setIsSaved(newSaveState);
+    onSave(newSaveState); // Call the onSave function with the new save state
+  };
+
+  return (
+    <Pressable style={styles.container} onPress={onPress}>
+      <Image style={styles.image} source={imageSource} />
+      <View style={styles.textContainer}>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.distance}>{distance}</Text>
+      </View>
+      <Pressable style={styles.savedStateIcon} onPress={handleSavePress}>
+        <Image
+          style={styles.savedStateIcon}
+          source={isSaved ? require("../assets/saved-state.png") : require("../assets/saved-state1.png")}
+        />
+      </Pressable>
+    </Pressable>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
-    height: 110,
-    width: 420,
-  },
-  child: {
-    height: "109.09%",
-    top: "0%",
-    right: "0%",
-    bottom: "-9.09%",
-    left: "0%",
-    borderStyle: "solid",
-    borderColor: Color.colorDarkgray_100,
-    borderBottomWidth: 1,
-    borderRadius: Border.br_8xs,
-    position: "absolute",
-    width: "100%",
-    backgroundColor: Color.colorWhite,
+    width: width * 0.9,
+    height: 140,
+    backgroundColor: Color.colorGray_100,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: Color.colorWhitesmoke_300,
+    borderRadius: Border.br_3xs,
+    marginBottom: 10,
+    position: 'relative',
   },
   image: {
-    width: "28.21%",
-    right: "68.98%",
-    left: "2.81%",
-    bottom: "6.73%",
-    top: "6.91%",
-    height: "86.36%",
-    maxHeight: "100%",
-    maxWidth: "100%",
+    width: 100,
+    height: 100,
     borderRadius: Border.br_8xs,
   },
-  text: {
-    width: "60.02%",
-    fontFamily: FontFamily.interRegular,
-    left: "35.12%",
-    top: "13.91%",
-    height: "85.91%",
-    textAlign: "left",
+  textContainer: {
+    flex: 1,
+    paddingLeft: 10,
+    justifyContent: 'center',
   },
   title: {
-    fontSize: FontSize.size_8xl,
-    color: Color.colorBlack,
+    fontSize: FontSize.size_4xl,
+    fontFamily: FontFamily.interMedium,
+    fontWeight: '500',
   },
   distance: {
     fontSize: FontSize.size_xl,
     color: Color.colorGray_400,
   },
   savedStateIcon: {
-    width: "8.98%",
-    right: "3.83%",
-    left: "87.19%",
-    bottom: "7.27%",
-    top: "57.73%",
-    height: "35%",
-    maxHeight: "100%",
-    maxWidth: "100%",
-    position: "absolute",
-    overflow: "hidden",
-  },
-  imageLayout: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-    position: "absolute",
-    overflow: "hidden",
-  },
-  textFlexBox: {
-    textAlign: "left",
-    position: "absolute",
+    width: 40,
+    height: 40,
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 });
 

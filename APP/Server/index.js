@@ -102,12 +102,16 @@ app.get('/cooperate', (req, res) => queryDatabase('合作', res));
 
 //Signup route
 app.post('/believers', async(req, res) => {
+
     const { NAME, PHONE, EMAIL, PASSWORD, ROLE } = req.body;
+
 
     console.log('Received signup data:', req.body);
 
     // Input validation
+
     if (!NAME || !PHONE || !EMAIL || !PASSWORD || !ROLE) {
+
         return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -124,7 +128,9 @@ app.post('/believers', async(req, res) => {
 
         // Insert new user
         const [result] = await db.promise().query(
+
             'INSERT INTO `信眾` (NAME, PHONE, EMAIL, PASSWORD, ROLE) VALUES (?, ?, ?, ?, ?)', [NAME, PHONE, EMAIL, hashedPassword, ROLE]
+
         );
 
         console.log('User inserted successfully:', result);
@@ -143,12 +149,16 @@ app.post('/believers', async(req, res) => {
 
 // 更新個資維護
 app.post('/believersUpdate', async(req, res) => {
+
     const { NAME, PHONE, EMAIL, PASSWORD, ROLE } = req.body;
+
 
     console.log('Received update data:', req.body);
 
     // Input validation
+
     if (!NAME || !PHONE || !EMAIL || !PASSWORD || !ROLE) {
+
         return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -166,7 +176,9 @@ app.post('/believersUpdate', async(req, res) => {
 
         // Update user information
         const [result] = await db.promise().query(
+
             'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ?  EMAIL = ? OR ROLE = ?', [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL, ROLE]
+
         );
 
         console.log('User updated successfully:', result);
@@ -269,7 +281,9 @@ app.get('/profile', isAuthenticated, async(req, res) => {
                 userId: user.pID,
                 email: user.EAMIL,
                 name: user.NAME,
+
                 role : user.ROLE,
+
             });
         } else {
             res.status(404).json({ message: 'User not found' });

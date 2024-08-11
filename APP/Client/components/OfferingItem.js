@@ -1,36 +1,36 @@
-import React, { useState } from "react";
-import { View, Text, Image, StyleSheet } from "react-native";
+// OfferingItem.js
+import React from 'react';
+import { View, Text, Image, StyleSheet, Pressable, Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
-import Counter from "./Counter";  // 引入 Counter 組件
 
+const { width } = Dimensions.get('window');
 
 const OfferingItem = ({ imageSource, title, price, description }) => {
-  const [quantity, setQuantity] = useState(0);
+  const navigation = useNavigation();
 
-  const handleIncrease = () => setQuantity(quantity + 1);
-  const handleDecrease = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
-    }
+  const handlePress = () => {
+    navigation.navigate('ProductPage', {
+      imageSource,
+      title,
+      price,
+      description,
+    });
   };
 
   return (
     <View style={styles.container}>
-      <View style={[styles.inner, styles.childPosition]} />
-      <Image
-        style={[styles.rectangleIcon, styles.iconLayout]}
-        contentFit="cover"
-        source={imageSource}
-      />
       <View style={styles.textContainer}>
-        <Text style={styles.textTypo}>
-          <Text style={styles.title}>{`${title} `}</Text>
-          <Text style={styles.price}>{`${price}\n`}</Text>
-        </Text>
-        {description && <Text style={styles.description}>{description}</Text>}
-        <View style={styles.counterContainer}>
-          <Counter quantity={quantity} onIncrease={handleIncrease} onDecrease={handleDecrease} />
-        </View>
+        <Text style={styles.title}>{title}</Text>
+        <Text style={styles.price}>${price}</Text>
+        {description && <Text style={styles.description}>備注 : {description}</Text>}
+      </View>
+
+      <View style={styles.imageContainer}>
+        <Image style={styles.image} source={imageSource} />
+        <Pressable style={styles.addButton} onPress={handlePress}>
+          <Text style={styles.addButtonText}>+</Text>
+        </Pressable>
       </View>
     </View>
   );
@@ -38,60 +38,63 @@ const OfferingItem = ({ imageSource, title, price, description }) => {
 
 const styles = StyleSheet.create({
   container: {
-    height: '100%',
-    width: '100%',
-  },
-  inner: {
-    borderWidth: 2,
-    borderColor: Color.colorWhitesmoke_300,
-    borderStyle: "solid",
+    width: width * 0.95,
+    height: 140,
     backgroundColor: Color.colorGray_100,
-    borderRadius: Border.br_3xs,
-    bottom: "0%",
-    right: "0%",
-    left: "0%",
-    top: "0%",
-    height: "100%",
-    position: "absolute",
-    width: "100%",
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+    borderBottomWidth: 1,
+    borderColor: "#E0E0E0",
   },
-  iconLayout: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-    position: "absolute",
-    overflow: "hidden",
+  imageContainer: {
+    position: 'relative',
   },
-  rectangleIcon: {
-    height: "80%",
-    width: "27.91%",
-    top: "10%",
-    right: "4.19%",
-    bottom: "10%",
-    left: "67.91%",
+  image: {
+    width: 100,
+    height: 100,
     borderRadius: Border.br_8xs,
   },
-  textContainer: {
+  addButton: {
     position: 'absolute',
-    top: "5%",
-    left: "3.72%",
-    width: "62.79%",
+    bottom: 5,
+    right: 5,
+    backgroundColor: "white",
+    borderRadius: 15,
+    width: 30,
+    height: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+
+    shadowColor: 'black',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 3,
   },
-  textTypo: {
-    fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
+  addButtonText: {
+    color: Color.colorBlack,
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  textContainer: {
+    flex: 1,
+    paddingLeft: 10,
   },
   title: {
-    fontSize: FontSize.size_6xl,
+    fontSize: 20,
+    fontFamily: FontFamily.interMedium,
+    fontWeight: '500',
   },
   price: {
-    fontSize: FontSize.size_xl,
+    fontSize: 16,
+    fontWeight: '500',
+    color: "gray",
+    marginVertical: 2,
   },
   description: {
-    fontSize: FontSize.size_mini,
-    marginBottom: 5,  // 添加 marginBottom 來確保 description 和 counter 之間有間距
-  },
-  counterContainer: {
-    marginBottom: 10,
+    fontSize: 12,
+    color: "gray",
+    marginTop: 5,
   },
 });
 

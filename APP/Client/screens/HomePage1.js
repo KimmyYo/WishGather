@@ -1,528 +1,171 @@
-import * as React from "react";
-import { Text, StyleSheet, View, Pressable } from "react-native";
-import { Image } from "expo-image";
-import { useNavigation } from "@react-navigation/native";
-import { Color, FontFamily, FontSize, Border, Padding } from "../GlobalStyles";
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, Pressable, FlatList, Dimensions } from 'react-native';
+import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+
+import OfferingItem from "../components/OfferingItem"; 
+import GoBackButton_B from "../components/GoBackButton_B";
+import SetButton from '../components/SetButton';
+import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
+
+const { width, height } = Dimensions.get('window');
 
 const HomePage1 = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+
+  // Offering categories
+  const categories = ["點燈", "文創商品"];
+
+  // State for selected offerings and category
+  const [selectedOfferings, setSelectedOfferings] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState(categories[0]);
+
+  // Handler for selecting an offering
+  const handleSelectOffering = (offering) => {
+    setSelectedOfferings((prevOfferings) => [...prevOfferings, offering]);
+  };
+
+  // Handler for checkout
+  const handleCheckout = () => {
+    navigation.navigate("OfferingPage", { selectedOfferings });
+  };
+
+  // Offerings data
+  const offerings_1 = [
+    { id: '1', imageSource: require("../assets/rectangle-4.png"), title: "祈福燈", price: "800", description: "請於備註填寫祈福對象資訊" },
+    { id: '2', imageSource: require("../assets/rectangle-43.png"), title: "光明燈", price: "1000", description: "請於備註填寫祈福對象資訊" },
+    { id: '3', imageSource: require("../assets/rectangle-44.png"), title: "太歲燈", price: "1500", description: "請於備註填寫祈福對象資訊" },
+    { id: '4', imageSource: require("../assets/rectangle-45.png"), title: "媽祖燈", price: "1500", description: "請於備註填寫祈福對象資訊" },
+  ];
+
+  const offerings_2 = [
+    { id: '1', imageSource: require("../assets/rectangle-46.png"), title: "開運吊飾", price: "120", description:"無"},
+    { id: '2', imageSource: require("../assets/rectangle-47.png"), title: "符令壓克力鑰匙圈", price: "100", description:"無" },
+    { id: '3', imageSource: require("../assets/rectangle-48.png"), title: "好運公仔五入組", price: "1500", description:"無" },  
+  ];
+
+  const renderOfferingItem = ({ item }) => {
+    return (
+      <OfferingItem
+        imageSource={item.imageSource}
+        title={item.title}
+        price={item.price}
+        description={item.description}
+        onSelect={() => handleSelectOffering(item)}
+      />
+    );
+  };
+
+  const renderCategoryItem = ({ item }) => (
+    <Pressable onPress={() => setSelectedCategory(item)}>
+      <View style={[styles.categoryContainer, selectedCategory === item && styles.selectedCategory]}>
+        <Text style={[styles.categoryText, selectedCategory === item && styles.selectedCategoryText]}>
+          {item}
+        </Text>
+      </View>
+    </Pressable>
+  );
+
+  // Determine which offerings to show based on the selected category
+  const currentOfferings = selectedCategory === "點燈" ? offerings_1 : offerings_2;
 
   return (
-    <View style={styles.homePage2}>
-      <View style={styles.parent}>
-        <Text style={styles.text}>{` 糕點 `}</Text>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-49.png")}
-          />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`紅龜粿
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
+    <SafeAreaProvider>
+      <View style={[styles.homePage1, { paddingTop: insets.top-15, paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }]}>
+        
+        {/* Temple Image */}
+        <View>
+          <Image style={styles.headerImage} contentFit="cover" source={require("../assets/rectangle-3.png")} />
+          <GoBackButton_B onPress={() => navigation.navigate("HomePage")} />
         </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-410.png")}
-          />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`發粿
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
+
+        {/* Temple Title */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.mainTitle}>大甲鎮瀾宮媽祖廟</Text>
+          <Text style={styles.subTitle}>營業時間 : 06:00~21:30</Text>
         </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-412.png")}
-          />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`壽桃
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
+
+
+        <View style={{ width:width*0.9 ,flexDirection: "row", alignItems:"start", justifyContent: "start", paddingVertical: 10, borderBottomWidth: 1, borderColor:"#E0E0E0"}}>
+          {categories.map((category) => (
+            <Pressable key={category} onPress={() => setSelectedCategory(category)} style={{borderRadius:15}}>
+              <Text style={[styles.category, selectedCategory === category && styles.selectedCategory]}>
+                {category}
+              </Text>
+            </Pressable>
+          ))}
         </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
+
+        {selectedCategory === "點燈" ? (
+          <FlatList
+            data={offerings_1}
+            renderItem={renderOfferingItem}
+            keyExtractor={(item) => item.id}
           />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-413.png")}
+        ) : (
+          <FlatList
+            data={offerings_2}
+            renderItem={renderOfferingItem}
+            keyExtractor={(item) => item.id}
           />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`草仔粿
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
+        )}
+        {/* Checkout Button */}
+        <View style={styles.buttonContainer}>
+          <SetButton   onPress={() => navigation.navigate('OfferingPage')} btnText={'前往結帳'} btnStatus={'primary'} />
         </View>
-        <Text style={styles.text}> 水果</Text>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-414.png")}
-          />
-          <Text style={[styles.text14, styles.textTypo1]}>{`蘋果
-`}</Text>
-        </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-415.png")}
-          />
-          <Text style={[styles.text14, styles.textTypo1]}>{`香蕉
-`}</Text>
-        </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-416.png")}
-          />
-          <Text style={[styles.text14, styles.textTypo1]}>鳳梨</Text>
-        </View>
-        <Text style={styles.text}> 餅乾</Text>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-417.png")}
-          />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`可樂果豌豆酥
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
-        </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-418.png")}
-          />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`多力多滋玉米脆餅
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
-        </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-419.png")}
-          />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`樂事洋芋片
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
-        </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-420.png")}
-          />
-          <Text style={[styles.text1, styles.textTypo1]}>
-            <Text style={styles.text2}>{`孔雀餅乾
-`}</Text>
-            <Text style={styles.text3}>注意：本產品可能含有小麥或麩質成分</Text>
-          </Text>
-        </View>
-        <Text style={styles.text}> 飲料</Text>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-421.png")}
-          />
-          <Text style={[styles.text14, styles.textTypo1]}>{`波蜜果菜汁
-`}</Text>
-        </View>
-        <View style={styles.view}>
-          <View style={[styles.child, styles.childPosition]} />
-          <Image
-            style={[styles.counterIcon, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/counter3.png")}
-          />
-          <Image
-            style={[styles.item, styles.itemLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-422.png")}
-          />
-          <Text style={[styles.text14, styles.textTypo1]}>可口可樂</Text>
-        </View>
+
       </View>
-      <View style={styles.view13}>
-        <View style={styles.viewLayout}>
-          <View style={[styles.child22, styles.childPosition]} />
-          <Text style={[styles.text33, styles.textFlexBox]}>糕點</Text>
-        </View>
-        <View style={[styles.view15, styles.viewLayout]}>
-          <View style={[styles.child22, styles.childPosition]} />
-          <Text style={[styles.text33, styles.textFlexBox]}>水果</Text>
-        </View>
-        <View style={[styles.view15, styles.viewLayout]}>
-          <View style={[styles.child22, styles.childPosition]} />
-          <Text style={[styles.text33, styles.textFlexBox]}>餅乾</Text>
-        </View>
-        <View style={[styles.view15, styles.viewLayout]}>
-          <View style={[styles.child22, styles.childPosition]} />
-          <Text style={[styles.text33, styles.textFlexBox]}>飲料</Text>
-        </View>
-      </View>
-      <Text style={[styles.text37, styles.text37Position]}>
-        <Text style={styles.txt}>
-          <Text style={[styles.text38, styles.textTypo]}>{`左營 仁濟宮
-`}</Text>
-          <Text style={styles.text39}>
-            <Text style={[styles.text40, styles.textTypo1]}>24小時營業</Text>
-            <Text style={styles.text41}>
-              <Text style={styles.text42}>{` `}</Text>
-              <Text style={styles.text43}>營業中</Text>
-            </Text>
-          </Text>
-        </Text>
-      </Text>
-      <Image
-        style={[styles.homePage2Child, styles.text37Position]}
-        contentFit="cover"
-        source={require("../assets/rectangle-38.png")}
-      />
-      <Pressable
-        style={styles.goBackButton}
-        onPress={() => navigation.navigate("HomePage")}
-      >
-        <Image
-          style={styles.iconLayout}
-          contentFit="cover"
-          source={require("../assets/go-back-button1.png")}
-        />
-      </Pressable>
-      <Pressable
-        style={[styles.goCheckout, styles.text44Layout]}
-        onPress={() => navigation.navigate("HomePage2")}
-      >
-        <Pressable
-          style={[styles.wrapper, styles.text44Layout]}
-          onPress={() => navigation.navigate("HomePage2")}
-        >
-          <Image
-            style={[styles.icon1, styles.iconLayout]}
-            contentFit="cover"
-            source={require("../assets/rectangle-92.png")}
-          />
-        </Pressable>
-        <Text style={[styles.text44, styles.text44Layout]}>前往結帳</Text>
-      </Pressable>
-    </View>
+    </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  childPosition: {
-    borderColor: Color.colorWhitesmoke_300,
-    borderStyle: "solid",
-    bottom: "0%",
-    right: "0%",
-    left: "0%",
-    top: "0%",
-    height: "100%",
-    position: "absolute",
-    width: "100%",
-    backgroundColor: Color.colorGray_100,
-  },
-  itemLayout: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-    position: "absolute",
-    overflow: "hidden",
-  },
-  textTypo1: {
-    fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
-  },
-  textFlexBox: {
-    justifyContent: "center",
-    textAlign: "center",
-    alignItems: "center",
-    display: "flex",
-  },
-  viewLayout: {
-    height: 50,
-    width: 120,
-  },
-  text37Position: {
-    left: 1,
-    width: 430,
-    position: "absolute",
-  },
-  textTypo: {
-    fontFamily: FontFamily.interSemiBold,
-    fontWeight: "600",
-  },
-  text44Layout: {
-    width: 360,
-    height: 70,
-    position: "absolute",
-  },
-  iconLayout: {
-    height: "100%",
-    width: "100%",
-  },
-  text: {
-    fontSize: FontSize.size_16xl,
-    fontFamily: FontFamily.interRegular,
-    height: 70,
-    alignItems: "center",
-    display: "flex",
-    textAlign: "left",
-    color: Color.colorBlack,
-    width: 430,
-  },
-  child: {
-    borderWidth: 1,
-  },
-  counterIcon: {
-    height: "26.67%",
-    width: "32.56%",
-    top: "57.33%",
-    right: "63.72%",
-    bottom: "16%",
-    left: "3.72%",
-    maxWidth: "100%",
-  },
-  item: {
-    height: "80%",
-    width: "27.91%",
-    top: "10%",
-    right: "4.19%",
-    bottom: "10%",
-    left: "67.91%",
-    borderRadius: Border.br_8xs,
-  },
-  text2: {
-    fontSize: FontSize.size_6xl,
-  },
-  text3: {
-    fontSize: FontSize.size_mini,
-  },
-  text1: {
-    top: "12%",
-    width: "62.79%",
-    height: "66.67%",
-    fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
-    left: "3.72%",
-    textAlign: "left",
-    color: Color.colorBlack,
-    position: "absolute",
-  },
-  view: {
-    height: 150,
-    width: 430,
-  },
-  text14: {
-    fontSize: FontSize.size_6xl,
-    top: "12%",
-    width: "62.79%",
-    height: "66.67%",
-    fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
-    left: "3.72%",
-    textAlign: "left",
-    color: Color.colorBlack,
-    position: "absolute",
-  },
-  parent: {
-    top: 359,
-    height: 573,
-    width: 430,
-    left: 0,
-    position: "absolute",
-  },
-  child22: {
-    borderRadius: Border.br_3xs,
-    borderWidth: 3,
-  },
-  text33: {
-    fontSize: FontSize.size_xl,
-    color: Color.colorDimgray_200,
-    fontFamily: FontFamily.interMedium,
-    fontWeight: "500",
-    left: "0%",
-    top: "0%",
-    justifyContent: "center",
-    height: "100%",
-    position: "absolute",
-    width: "100%",
-  },
-  view15: {
-    marginLeft: 10,
-  },
-  view13: {
-    top: 287,
-    left: -2,
-    flexDirection: "row",
-    paddingHorizontal: Padding.p_mini,
-    paddingVertical: Padding.p_3xs,
-    width: 430,
-    position: "absolute",
-  },
-  text38: {
-    fontSize: FontSize.size_9xl,
-    color: Color.colorBlack,
-  },
-  text40: {
-    color: Color.colorGray_200,
-  },
-  text42: {
-    color: Color.colorBlack,
-  },
-  text43: {
-    color: Color.colorLimegreen,
-  },
-  text41: {
-    fontWeight: "200",
-    fontFamily: FontFamily.interExtraLight,
-  },
-  text39: {
-    fontSize: FontSize.size_lg,
-  },
-  txt: {
-    width: "100%",
-  },
-  text37: {
-    top: 204,
-    textAlign: "center",
-    left: 1,
-    height: 70,
-    alignItems: "center",
-    display: "flex",
-  },
-  homePage2Child: {
-    borderTopLeftRadius: Border.br_21xl,
-    borderTopRightRadius: Border.br_21xl,
-    height: 200,
-    opacity: 0.9,
-    top: 0,
-  },
-  goBackButton: {
-    left: 16,
-    top: 16,
-    width: 45,
-    height: 45,
-    position: "absolute",
-  },
-  icon1: {
-    borderRadius: Border.br_xl,
-  },
-  wrapper: {
-    top: 0,
-    left: 0,
-  },
-  text44: {
-    fontSize: FontSize.size_11xl,
-    color: Color.colorWhite,
-    top: 0,
-    fontFamily: FontFamily.interSemiBold,
-    fontWeight: "600",
-    justifyContent: "center",
-    textAlign: "center",
-    alignItems: "center",
-    display: "flex",
-    left: 0,
-  },
-  goCheckout: {
-    top: 828,
-    left: 33,
-  },
-  homePage2: {
-    borderRadius: Border.br_21xl,
+  homePage1: {
     flex: 1,
-    height: 932,
-    overflow: "hidden",
-    backgroundColor: Color.colorGray_100,
-    width: "100%",
+    justifyContent: 'start',
+    alignItems: 'center',
+    backgroundColor: "white",
+  },
+  category: {
+    fontSize: 18,
+    color: "#6C6C6C",
+    fontWeight: "500",
+    paddingHorizontal: 15,
+    paddingVertical: 6,
+    marginLeft: width * 0.05,
+    
+  },
+  selectedCategory: {
+    color: "white",
+    backgroundColor: "#FFA042",
+    borderRadius: 15,
+  },
+  infoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 8,
+  },
+  mainTitle: {
+    fontSize: FontSize.size_9xl,
+    fontWeight: "600",
+    color: 'black',
+  },
+  subTitle: {
+    fontSize: FontSize.size_lg,
+    color: Color.colorGray_200,
+    marginTop: 5,
+  },
+  headerImage: {
+    height: height * 0.25,
+    opacity: 0.9,
+    width: width,
+    alignSelf: 'center',
+  },
+  buttonContainer: {
+    marginVertical: 5,
+    alignItems: 'center',
   },
 });
 

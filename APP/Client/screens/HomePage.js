@@ -1,27 +1,24 @@
 import React, { useState, useCallback } from "react";
-import { StyleSheet, View, ScrollView, Text, TextInput, KeyboardAvoidingView, Platform, Pressable, Modal } from "react-native";
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, Text, TextInput, Pressable, Modal, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Image } from "expo-image";
-import KeyboardOverlay from "../components/KeyboardOverlay";
 import AddressOverlay from "../components/AddressOverlay";
 import TempleDistance from "../components/TempleDistance";
+// import Footer from "../components/Footer_HomePage";
 import { useNavigation } from "@react-navigation/native";
 import { Border, Color, FontSize, FontFamily, Padding } from "../GlobalStyles";
+// import Footer from "../components/footer";
+
+
+const { width, height } = Dimensions.get('window');
 
 const HomePage = () => {
-  const [searchBarContainerVisible, setSearchBarContainerVisible] = useState(false);
   const [locationIconVisible, setLocationIconVisible] = useState(false);
   const [text1Visible, setText1Visible] = useState(false);
-  const [mageeditIconVisible, setMageeditIconVisible] = useState(false);
-  const [searchText, setSearchText] = useState(""); {/* 紀錄搜尋內容 */}
+  const [searchText, setSearchText] = useState("");
+  const [currentAddress, setCurrentAddress] = useState("高雄市鼓山區蓮海路70號");
   const navigation = useNavigation();
-
-  const openSearchBarContainer = useCallback(() => {
-    setSearchBarContainerVisible(true);
-  }, []);
-
-  const closeSearchBarContainer = useCallback(() => {
-    setSearchBarContainerVisible(false);
-  }, []);
+  const insets = useSafeAreaInsets();
 
   const openLocationIcon = useCallback(() => {
     setLocationIconVisible(true);
@@ -39,296 +36,137 @@ const HomePage = () => {
     setText1Visible(false);
   }, []);
 
-  const openMageeditIcon = useCallback(() => {
-    setMageeditIconVisible(true);
+  const handleAddressSubmit = useCallback((newAddress) => {
+    setCurrentAddress(newAddress);
+    setLocationIconVisible(false);
+    setText1Visible(false);
   }, []);
 
-  const closeMageeditIcon = useCallback(() => {
-    setMageeditIconVisible(false);
-  }, []);
+  const temples = [
+    { id: '1', imageSource: require("../assets/rectangle-2.png"), temple: "左營仁濟宮", event: "燈花供養祈福", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+    { id: '2', imageSource: require("../assets/rectangle-21.png"), temple: "鳳邑雷府大將廟", event: "犒軍儀式", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+    { id: '3', imageSource: require("../assets/rectangle-22.png"), temple: "左營金鑾殿", event: "工地動土科儀",  date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+    { id: '4', imageSource: require("../assets/rectangle-2.png"), temple: "府城三山國王廟", event: "巾山國王聖壽", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+    // Add more temple data as needed (database)
+  ];
 
   return (
-    <>
-      <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "ios" ? "padding" : "height"}></KeyboardAvoidingView>
+    <SafeAreaProvider>
+      <View style={{
+        flex: 1,
+        backgroundColor: "white",
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right
+      }}>
 
-       <View style={styles.homePage} keyboardShouldPersistTaps="handled">
-
-        {/* 地點設定欄位 */}
-        <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
-          <Image style={styles.icon} contentFit="cover" source={require("../assets/location-icon.png")} />
-        </Pressable>
-
-        <Pressable style={styles.pressable} onPress={openText1}>
-          <Text style={styles.text1}>
-            <Text style={styles.txt}>
-              <Text style={styles.text2}>當前位置: 高雄市鼓山區蓮海路</Text>
-              <Text style={styles.text3}>70</Text>
-              <Text style={styles.text2}>號</Text>
-            </Text>
-          </Text>
-        </Pressable>
-
-        <Pressable style={styles.mageedit} onPress={openMageeditIcon}>
-          <Image style={styles.icon} contentFit="cover" source={require("../assets/mageedit.png")} />
-        </Pressable>
-
-        {/* 搜尋欄位 */}
-        <View style={[styles.inputContainer, styles.searchLayout] }>
-              <TextInput placeholder="搜尋" style={styles.input}
-                value={searchText}
-                onChangeText={setSearchText} />
-        </View>
-      
-
-        {/* 顯示距離最近的宮廟處，連接資料庫(?) */}
-        <ScrollView contentContainerStyle={styles.activityContainer}>
-          <TempleDistance
-            imageSource={require("../assets/rectangle-2.png")}
-            description="左營仁濟宮 燈花供養祈福"
-            distance="11公里"
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-          <TempleDistance
-            imageSource={require("../assets/rectangle-21.png")}
-            description="鳳邑雷府大將廟 犒軍儀式"
-            distance=""
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-          <TempleDistance
-            imageSource={require("../assets/rectangle-22.png")}
-            description="左營金鑾殿 工地動土科儀"
-            distance=""
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-          <TempleDistance
-            imageSource={require("../assets/rectangle-2.png")}
-            description="府城三山國王廟 巾山國王聖壽"
-            distance="34公里"
-            onPress={() => navigation.navigate("HomePage1")}
-          />
-        </ScrollView>
-      </View>
-
-      <Modal animationType="fade" transparent visible={searchBarContainerVisible}>
-        <View style={styles.overlay}>
-          <Pressable style={styles.overlayBg} onPress={closeSearchBarContainer} />
-          <KeyboardOverlay onClose={closeSearchBarContainer} />
-        </View>
-      </Modal>
-
-      <Modal animationType="fade" transparent visible={locationIconVisible}>
-        <View style={styles.overlay}>
-          <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />
-          <AddressOverlay onClose={closeLocationIcon} />
-        </View>
-      </Modal>
-
-      <Modal animationType="fade" transparent visible={text1Visible}>
-        <View style={styles.overlay}>
-          <Pressable style={styles.overlayBg} onPress={closeText1} />
-          <AddressOverlay onClose={closeText1} />
-        </View>
-      </Modal>
-
-      <Modal animationType="fade" transparent visible={mageeditIconVisible}>
-        <View style={styles.overlay}>
-          <Pressable style={styles.overlayBg} onPress={closeMageeditIcon} />
-          <AddressOverlay onClose={closeMageeditIcon} />
-        </View>
-      </Modal>
-
-      {/* footer */}
-      <View style={[styles.footer, styles.menuLayout]}>
-        <View style={[styles.menu, styles.menuLayout]}>
-          <View style={styles.homeIconParent}>
-            <Pressable
-              style={styles.iconLayout}
-              onPress={() => navigation.navigate("HomePage")}
-            >
-              <Image
-                style={styles.icon}
-                contentFit="cover"
-                source={require("../assets/home-icon.png")}
-              />
+        {/* Location */}
+        <View style={styles.locationContainer}>
+          
+          <View style={{marginRight:10}}>
+            <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
+              <Image style={styles.icon} contentFit="cover" source={require("../assets/location.png")} />
             </Pressable>
-            <Pressable
-              style={[styles.templeIcon, styles.iconLayout]}
-              onPress={() => navigation.navigate("OfferingPage4")}
-            >
-              <Image
-                style={styles.icon}
-                contentFit="cover"
-                source={require("../assets/temple-icon.png")}
-              />
-            </Pressable>
+          </View>
 
-            <Pressable
-              style={[styles.templeIcon, styles.iconLayout]}
-              onPress={() => navigation.navigate("CartPage")}
-            >
-              <Image
-              style={[styles.icon, styles.iconLayout]}
-              contentFit="cover"
-              source={require("../assets/shopping-bag-icon.png")}
-            />
-            </Pressable>
-
-            <Pressable
-              style={[styles.templeIcon, styles.iconLayout]}
-              onPress={() => navigation.navigate("UserPage")}
-            >
-              <Image
-                style={styles.icon}
-                contentFit="cover"
-                source={require("../assets/user-icon.png")}
-              />
+          <View>
+            <Pressable style={styles.pressable} onPress={openText1}>
+              <Text style={styles.locationText}>當前位置: {currentAddress}  </Text>
             </Pressable>
           </View>
         </View>
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="搜尋(Ex:左營金鑾殿)"
+            style={styles.input}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
+
+        {/* Temple */}
+        
+        <FlatList
+          data={temples}
+          renderItem={({ item }) => (
+            <TempleDistance
+              imageSource={item.imageSource}
+              temple={item.temple}
+              event={item.event}
+              distance={item.distance}
+              date1={item.date1}
+              date2={item.date2}
+              onPress={() => navigation.navigate("HomePage1")}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.activityContainer}
+        />
+
+        {/*Modal - address modify*/}
+        <Modal animationType="fade" transparent visible={locationIconVisible}>
+          <View style={styles.overlay}>
+            <Pressable style={styles.overlayBg} onPress={closeLocationIcon} />
+            <AddressOverlay onClose={closeLocationIcon} onSubmit={handleAddressSubmit} />
+          </View>
+        </Modal>
+
+        <Modal animationType="fade" transparent visible={text1Visible}>
+          <View style={styles.overlay}>
+            <Pressable style={styles.overlayBg} onPress={closeText1} />
+            <AddressOverlay onClose={closeText1} onSubmit={handleAddressSubmit} />
+          </View>
+        </Modal>
+
+
+        {/* Footer */}  
+        {/* <Footer /> */}
       </View>
-    </>
+    </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  
-  pressable:{
-    width:'100%',
+  locationContainer: {
+    width:"90%",
+    height: 55,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    // borderWidth: 1, //Test
   },
-  searchLayout: {
-    height: 60,
-    width: 380,
-    position: "absolute",
-    top: 127,
-    left: 25,
+  locationIcon: {
+    width: 25,
+    height: 25,
+  },
+  locationText: {
+    color: "#898989",
+    fontSize: 16,
+  },
+  searchContainer: {
+    width: width*0.90,
+    height:50,
+    justifyContent:"center",
+    marginBottom:10,
+    // borderWidth:1 //Test
   },
   input: {
+    width:"100%",
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
-    zIndex:3,
-  },
-  text: {
-    left: 68,
-    fontSize: FontSize.size_6xl,
-    color: Color.colorDarkgray_100,
-    width: 300,
-    fontFamily: FontFamily.interRegular,
-    top: 0,
-    position: "absolute",
-  },
- 
-  menu: {
-    width: 355,
-    left: 0,
-    top: 0,
-  },
-  menuLayout: {
-    height: 66,
-    position: "absolute",
-  },
-  iconLayout: {
-    height: 40,
-    width: 40,
-  },
-  templeIcon: {
-    marginLeft: 41,
-  },
-  menuPosition: {
-    left: 0,
-    top: 0,
-  },
-  itemLayout: {
-    maxHeight: "100%",
-    maxWidth: "100%",
-    position: "absolute",
-    overflow: "hidden",
-  },
-  footer: {
-    top: 831,
-    left: 38,
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    shadowOffset: {
-      width: 0,
-      height: 20,
-    },
-    shadowRadius: 30,
-    elevation: 30,
-    shadowOpacity: 1,
-    width: 383,
-    zIndex: 20,
-  },
-  homeIconParent: {
-    marginTop: -33,
-    marginLeft: -177.5,
-    top: "50%",
-    left: "50%",
-    borderRadius: Border.br_31xl,
-    backgroundColor: Color.colorWhitesmoke_100,
-    flexDirection: "row",
-    paddingHorizontal: Padding.p_17xl,
-    paddingVertical: Padding.p_smi,
-    position: "absolute",
-    overflow: "hidden",
-  },
-  footerChild: {
-    height: "15.15%",
-    width: "2.82%",
-    top: "80.3%",
-    right: "82.82%",
-    bottom: "4.55%",
-    left: "14.37%",
-  },
-  icon:{
-    width:'100%',
-    height:'100%',
-  },
-  locationIcon: {
-    left: 26,
-    top: 65,
-    width: 30,
-    height: 30,
-    position: "absolute",
-  },
-  text1: {
-    color: "#898989",
-    width: 321,
-    height: 30,
-    fontSize: FontSize.size_xl,
-    textAlign: 'center',
-    position:'absolute',
-    top: 70,
-    left:'15%'
-  },
-  txt: {
-    width: "100%",
-  },
-  text2: {
-    fontFamily: FontFamily.robotoRegular,
-  },
-  text3: {
-    fontFamily: FontFamily.interRegular,
-  },
-  mageedit: {
-    left: 382,
-    width: 25,
-    height: 25,
-    top: 73,
-    position: "absolute",
+    borderRadius: 20,
+    paddingHorizontal: 10,
   },
   activityContainer: {
+    width:"90%",
     alignItems: "center",
-    paddingVertical: 10,
-    top:'18%'
-  },
-  homePage: {
-    borderRadius: Border.br_21xl,
-    backgroundColor: Color.colorGray_100,
-    flex: 1,
-    height: 932,
-    overflow: "hidden",
-    width: "100%",
+    paddingButtom: 80,
   },
   overlay: {
     flex: 1,
@@ -342,6 +180,10 @@ const styles = StyleSheet.create({
     height: "100%",
     left: 0,
     top: 0,
+  },
+  icon: {
+    width: '100%',
+    height: '100%',
   },
 });
 

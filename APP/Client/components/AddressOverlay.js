@@ -1,83 +1,96 @@
 import * as React from "react";
-import { View, StyleSheet, Text } from "react-native";
+import { View, StyleSheet, Text, TextInput, Pressable, Dimensions } from "react-native";
 import { FontFamily, FontSize, Border, Color } from "../GlobalStyles";
 
-// Address Overlay Componet: 修改地址的彈出 （所有彈出都類似嗎）
-// 
-const AddressOverlay = ({ onClose }) => {
+const { width, height } = Dimensions.get('window');
+
+const AddressOverlay = ({ onClose, onSubmit }) => {
+  const [address, setAddress] = React.useState("");
+
   return (
-    <View style={[styles.addressOverlay, styles.addressLayout]}>
-      <View style={[styles.addressOverlayChild, styles.addressLayout]} />
-      <Text style={[styles.text, styles.textTypo]}>修改地址</Text>
-      <View style={styles.addressOverlayItem} />
-      <Text style={[styles.text1, styles.textTypo]}>確認</Text>
-      <Text style={styles.text2}>高雄市鼓山區蓮海路70號</Text>
+    <View style={styles.addressLayout}>
+      {/* Header */}
+      <View style={{ marginBottom: 10 }}>
+        <Text style={styles.headerText}>修改地址</Text>
+      </View>
+
+      {/* Location input */}
+      <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
+        <TextInput
+          style={styles.addressInput}
+          placeholder="請輸入地址..."
+          value={address}
+          onChangeText={setAddress}
+        />
+      </View>
+
+      {/* Confirm / Cancel Button */}
+      <View style={styles.buttonContainer}>
+        <Pressable style={[styles.button, styles.cancelButton]} onPress={onClose}>
+          <Text style={[styles.buttonText, styles.cancelButtonText]}>取消</Text>
+        </Pressable>
+
+        <Pressable style={[styles.button, styles.confirmButton]} onPress={() => onSubmit(address)}>
+          <Text style={[styles.buttonText, styles.confirmButtonText]}>確認</Text>
+        </Pressable>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   addressLayout: {
-    height: 250,
-    width: 300,
+    height: 230,
+    width: width * 0.75,
+    backgroundColor: "white",
+    borderRadius: 15,
+    paddingTop: 20,
+    justifyContent: "flex-start",
+    alignItems: "center",
+    flexDirection: "column",
   },
-  textTypo: {
+  headerText: {
     textAlign: "center",
-    fontFamily: FontFamily.interMedium,
     fontWeight: "500",
-    fontSize: FontSize.size_4xl,
-    position: "absolute",
+    fontSize: 24,
   },
-  addressOverlayChild: {
-    top: 0,
-    left: 0,
-    shadowColor: "rgba(0, 0, 0, 0.25)",
-    shadowOffset: {
-      width: 0,
-      height: 10,
-    },
-    shadowRadius: 30,
-    elevation: 30,
-    shadowOpacity: 1,
-    borderRadius: Border.br_xl,
-    backgroundColor: Color.colorWhite,
-    position: "absolute",
+  addressInput: {
+    width: "85%",
+    height: 100,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    paddingHorizontal: 10,
+    fontSize: 14,
   },
-  text: {
-    top: 32,
-    left: 104,
-    color: Color.colorBlack,
+  buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    width: "100%",
+    height:50,
+    marginTop: 20,
+    borderTopWidth: 0.3,
+    borderColor:"#ccc"
   },
-  addressOverlayItem: {
-    top: 78,
-    left: 15,
-    borderRadius: Border.br_3xs,
-    backgroundColor: Color.colorWhitesmoke_300,
-    width: 270,
-    height: 110,
-    position: "absolute",
+  button: {
+    width: "50%",
+    height:"100%",
+    alignItems: "center",
+    justifyContent: "center",
   },
-  text1: {
-    top: 206,
-    left: 109,
-    color: Color.colorSteelblue,
-    width: 83,
-    height: 35,
+  confirmButton: {
+    borderLeftWidth:0.3,
+    borderColor:"#ccc",
   },
-  text2: {
-    top: 89,
-    left: 25,
+  buttonText: {
     fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.interRegular,
-    color: Color.colorGray_400,
-    textAlign: "left",
-    width: 234,
-    height: 54,
-    position: "absolute",
+    fontFamily: FontFamily.interMedium,
   },
-  addressOverlay: {
-    maxWidth: "100%",
-    maxHeight: "100%",
+  cancelButtonText: {
+    color: Color.colorSteelblue,
+  },
+  confirmButtonText: {
+    color: Color.colorSteelblue,
   },
 });
 

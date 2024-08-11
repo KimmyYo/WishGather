@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { StyleSheet, Pressable, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import TabBar from "../components/TabBar";
-import Component from "../components/Component1";
+
 import { FontFamily, FontSize, Color, Border } from "../GlobalStyles";
 
 const UserPage3 = () => {
@@ -54,7 +54,7 @@ const UserPage3 = () => {
           />
       </Pressable>
       
-      <Component
+      {/* <Component
         rectangle21={require("../assets/rectangle-212.png")}
         prop={`鳳邑 雷府大將廟 
 `}
@@ -62,7 +62,7 @@ const UserPage3 = () => {
 2024/04/20 · 已完成`}
         savedStateIcon={false}
         onPressablePress={() => navigation.navigate("HomePage5")}
-      />
+      /> */}
     </View>
   );
 };
