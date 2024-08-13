@@ -16,7 +16,6 @@ import HomePage5 from "./screens/HomePage5";
 import OfferingPage1 from "./screens/OfferingPage1";
 import OfferingPage2 from "./screens/OfferingPage2";
 import OfferingPage3 from "./screens/OfferingPage3";
-import UserPage21 from "./screens/UserPage21";
 import OfferingPage4 from "./screens/OfferingPage4";
 import OfferingPage5 from "./screens/OfferingPage5";
 import UserPage31 from "./screens/UserPage31";
@@ -245,11 +244,6 @@ const App = () => {
             <Stack.Screen
               name="OfferingPage3"
               component={OfferingPage3}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="UserPage21"
-              component={UserPage21}
               options={{ headerShown: false }}
             />
             <Stack.Screen

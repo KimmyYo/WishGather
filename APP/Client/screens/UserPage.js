@@ -151,10 +151,10 @@ const UserPage = () => {
 
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("UserPage21")}
+              onPress={() => navigation.navigate("UserPage2")}
             >
               <MaterialCommunityIcons name="heart" size={24} color="#4f4f4f" />
-              <Text style={styles.buttonText}>收藏清單</Text>
+              <Text style={styles.buttonText}>我的收藏</Text>
             </Pressable>
             
             <Pressable
