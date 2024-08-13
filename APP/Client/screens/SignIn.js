@@ -17,11 +17,9 @@ const API=require('./DBconfig')
 export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   
   const [token, setToken] = useState(null);
-
-  const [profile, setProfile] = useState(null);
+  const [role, setRole] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setChecked] = useState(false);
   const navigation = useNavigation();
@@ -34,10 +32,32 @@ export default function App() {
     });
   }, []);
 
-  /*跳轉頁面*/
   useEffect(() => {
     if (token) {
-      navigation.replace('UserPage');
+      // 這裡應該根據token獲取用戶角色
+      axios.get(`${API}/profile`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then(response => {
+        const { role } = response.data;
+        setRole(role);
+        // 根據角色導航
+        if (role === '信眾') {
+          navigation.replace('UserPage');
+        } else if (role === '社福') {
+          navigation.replace('Charity');
+        } else if (role === '廟方') {
+          navigation.replace('Temple');
+        } else {
+          console.error('Unknown role:', role);
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching profile', error);
+        Alert.alert('Error', 'Failed to fetch user profile.');
+      });
     }
   }, [token, navigation]);
 
@@ -48,9 +68,7 @@ export default function App() {
     }
     setIsLoading(true);
 
-    
     const api = `${API}/signin`;  
-
 
     const user = {
       EMAIL: email,
@@ -82,19 +100,17 @@ export default function App() {
 
   const handleSignOut = async () => {
     setToken(null);
-    setProfile(null);
+    setRole(null);
     await AsyncStorage.removeItem('userToken');
   };
 
-
-  if (token) {
+  if (token && role) {
     return (
-      
-    <SafeAreaView style={styles.container}>
-    <StatusBar style="auto" />
-    <Text style={styles.title}>登入成功！正在跳轉...</Text>
-  </SafeAreaView>
-);
+      <SafeAreaView style={styles.container}>
+        <StatusBar style="auto" />
+        <Text style={styles.title}>登入成功！正在跳轉...</Text>
+      </SafeAreaView>
+    );
   }
 
   return (
@@ -135,14 +151,8 @@ export default function App() {
     </Pressable>
 
     <Pressable style={styles.button} onPress={() => navigation.navigate("SignUp")}>
-        <Text style={styles.buttonText}>前往註冊
-        
-        </Text>
+        <Text style={styles.buttonText}>前往註冊</Text>
     </Pressable>
-
-
-      
-
     </LinearGradient>
   );
 };
@@ -183,7 +193,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderRadius: 20,
     marginVertical: 20,
-
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,

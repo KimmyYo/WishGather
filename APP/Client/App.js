@@ -39,6 +39,8 @@ import ScanResult from "./screens/ScanResult";
 
 
 import SignIn from "./screens/SignIn";
+import Charity from './screens/Charity';
+import Temple from './screens/Temple.js'; 
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native";
@@ -215,7 +217,16 @@ const App = () => {
               options={{ headerShown: false }}
             />
 
-            
+            <Stack.Screen
+              name="Charity"
+              component={Charity}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Temple"
+              component={Temple}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="HomePage5"
               component={HomePage5}

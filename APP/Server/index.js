@@ -203,44 +203,49 @@ app.post('/believersUpdate', async(req, res) => {
 const JWT_SECRET = 'hfMIS'; // Replace with a real secret key
 
 // sign-in route
-app.post('/signin', async(req, res) => {
+// sign-in route
+app.post('/signin', async (req, res) => {
     const { EMAIL, PASSWORD } = req.body;
 
-    console.log('Received signup data:', req.body);
+    console.log('Received sign-in data:', req.body);
 
     if (!EMAIL || !PASSWORD) {
         return res.status(400).json({ error: 'Email and password are required' });
-
     }
 
     try {
         const [users] = await db.promise().query(
             'SELECT * FROM `信眾` WHERE EMAIL = ?', [EMAIL]
         );
-        console.log('data:', users.length);
+        console.log('Database query result:', users);
 
-        if (users.length == 0) {
+        if (users.length === 0) {
             return res.status(401).json({ error: 'Invalid email' });
         }
 
         const user = users[0]; // Get the first (and should be only) user
-        console.log('user:', users[0]);
+        console.log('User object:', user);
 
-        console.log('user.PASSWORD:', user.PASSWORD);
-        console.log('PASSWORD:', PASSWORD);
+        if (!user.ROLE) {
+            console.error('Error: ROLE is undefined for this user');
+            return res.status(400).json({ error: 'Role is undefined for this user' });
+        }
 
-        // Now compare the provided password with the stored hash
+        // Compare the provided password with the stored hash
         const match = await bcrypt.compare(PASSWORD, user.PASSWORD);
 
         if (match) {
-            // Create a JWT token
-            const token = jwt.sign({ userId: user.pID, email: user.EMAIL },
-                JWT_SECRET, { expiresIn: '1h' }
+            // Create a JWT token, including the ROLE in the token
+            const token = jwt.sign(
+                { userId: user.pID, email: user.EMAIL, role: user.ROLE }, // Ensure role is included
+                JWT_SECRET,
+                { expiresIn: '1h' }
             );
 
-            res.json({ message: 'Signed in successfully', token });
+            // Return the token and the role
+            res.json({ message: 'Signed in successfully', token, role: user.ROLE });
         } else {
-            res.status(401).json({ error: 'Invalid  password' });
+            res.status(401).json({ error: 'Invalid password' });
         }
     } catch (error) {
         console.error('Error during signin:', error);
