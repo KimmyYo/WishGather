@@ -62,7 +62,7 @@ const { queryDatabase } = require('./query/queryALL');
 
 
 
-app.get('/test', (req, res) => queryDatabase('test', res));  // 這個之後要改(CartPage.js用的)
+app.get('/test', (req, res) => queryDatabase('test', res)); // 這個之後要改(CartPage.js用的)
 
 app.get('/temples', (req, res) => queryDatabase('宮廟', res));
 
@@ -102,12 +102,16 @@ app.get('/cooperate', (req, res) => queryDatabase('合作', res));
 
 //Signup route
 app.post('/believers', async(req, res) => {
-    const { NAME, PHONE, EMAIL, PASSWORD } = req.body;
+
+    const { NAME, PHONE, EMAIL, PASSWORD, ROLE } = req.body;
+
 
     console.log('Received signup data:', req.body);
 
     // Input validation
-    if (!NAME || !PHONE || !EMAIL || !PASSWORD) {
+
+    if (!NAME || !PHONE || !EMAIL || !PASSWORD || !ROLE) {
+
         return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -124,7 +128,9 @@ app.post('/believers', async(req, res) => {
 
         // Insert new user
         const [result] = await db.promise().query(
-            'INSERT INTO `信眾` (NAME, PHONE, EMAIL, PASSWORD) VALUES (?, ?, ?, ?)', [NAME, PHONE, EMAIL, hashedPassword]
+
+            'INSERT INTO `信眾` (NAME, PHONE, EMAIL, PASSWORD, ROLE) VALUES (?, ?, ?, ?, ?)', [NAME, PHONE, EMAIL, hashedPassword, ROLE]
+
         );
 
         console.log('User inserted successfully:', result);
@@ -142,13 +148,17 @@ app.post('/believers', async(req, res) => {
 });
 
 // 更新個資維護
-app.post('/believersUpdate', async (req, res) => {
-    const { NAME, PHONE, EMAIL, PASSWORD } = req.body;
+app.post('/believersUpdate', async(req, res) => {
+
+    const { NAME, PHONE, EMAIL, PASSWORD, ROLE } = req.body;
+
 
     console.log('Received update data:', req.body);
 
     // Input validation
-    if (!NAME || !PHONE || !EMAIL || !PASSWORD) {
+
+    if (!NAME || !PHONE || !EMAIL || !PASSWORD || !ROLE) {
+
         return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -166,8 +176,9 @@ app.post('/believersUpdate', async (req, res) => {
 
         // Update user information
         const [result] = await db.promise().query(
-            'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ? OR EMAIL = ?',
-            [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL]
+
+            'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ?  EMAIL = ? OR ROLE = ?', [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL, ROLE]
+
         );
 
         console.log('User updated successfully:', result);
@@ -192,44 +203,49 @@ app.post('/believersUpdate', async (req, res) => {
 const JWT_SECRET = 'hfMIS'; // Replace with a real secret key
 
 // sign-in route
-app.post('/signin', async(req, res) => {
+// sign-in route
+app.post('/signin', async (req, res) => {
     const { EMAIL, PASSWORD } = req.body;
 
-    console.log('Received signup data:', req.body);
+    console.log('Received sign-in data:', req.body);
 
     if (!EMAIL || !PASSWORD) {
         return res.status(400).json({ error: 'Email and password are required' });
-
     }
 
     try {
         const [users] = await db.promise().query(
             'SELECT * FROM `信眾` WHERE EMAIL = ?', [EMAIL]
         );
-        console.log('data:', users.length);
+        console.log('Database query result:', users);
 
-        if (users.length == 0) {
+        if (users.length === 0) {
             return res.status(401).json({ error: 'Invalid email' });
         }
 
         const user = users[0]; // Get the first (and should be only) user
-        console.log('user:', users[0]);
+        console.log('User object:', user);
 
-        console.log('user.PASSWORD:', user.PASSWORD);
-        console.log('PASSWORD:', PASSWORD);
+        if (!user.ROLE) {
+            console.error('Error: ROLE is undefined for this user');
+            return res.status(400).json({ error: 'Role is undefined for this user' });
+        }
 
-        // Now compare the provided password with the stored hash
+        // Compare the provided password with the stored hash
         const match = await bcrypt.compare(PASSWORD, user.PASSWORD);
 
         if (match) {
-            // Create a JWT token
-            const token = jwt.sign({ userId: user.pID, email: user.EMAIL },
-                JWT_SECRET, { expiresIn: '1h' }
+            // Create a JWT token, including the ROLE in the token
+            const token = jwt.sign(
+                { userId: user.pID, email: user.EMAIL, role: user.ROLE }, // Ensure role is included
+                JWT_SECRET,
+                { expiresIn: '1h' }
             );
 
-            res.json({ message: 'Signed in successfully', token });
+            // Return the token and the role
+            res.json({ message: 'Signed in successfully', token, role: user.ROLE });
         } else {
-            res.status(401).json({ error: 'Invalid  password' });
+            res.status(401).json({ error: 'Invalid password' });
         }
     } catch (error) {
         console.error('Error during signin:', error);
@@ -271,6 +287,8 @@ app.get('/profile', isAuthenticated, async(req, res) => {
                 email: user.EAMIL,
                 name: user.NAME,
 
+                role : user.ROLE,
+
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -283,7 +301,7 @@ app.get('/profile', isAuthenticated, async(req, res) => {
 
 
 
-app.post('/upimg', async (req, res) => {
+app.post('/upimg', async(req, res) => {
     try {
         const { photo } = req.body;
 
@@ -315,7 +333,7 @@ app.post('/upimg', async (req, res) => {
 });
 
 
-const processImageWithPython = async (imagePath) => {
+const processImageWithPython = async(imagePath) => {
     try {
         console.log('Preparing to send image to Python server...');
 
@@ -325,6 +343,7 @@ const processImageWithPython = async (imagePath) => {
         // Log form headers and other relevant information
         console.log('Form headers:', form.getHeaders());
 
+        //丟去 flask server
         const response = await axios.post('http://140.117.71.127:5000/proimg', form, {
             headers: {
                 ...form.getHeaders()
@@ -333,17 +352,17 @@ const processImageWithPython = async (imagePath) => {
 
         console.log('Response from Python server:', response.data);
 
-        
+
         // Count detected objects
         const objectCounts = countDetectedObjects(response.data);
 
         console.log('Object counts:', objectCounts);
 
         return objectCounts;
-        
+
     } catch (error) {
         console.error('Error processing image with Python:', error.message);
-        
+
         // Log additional error details
         if (error.response) {
             console.error('Response data:', error.response.data);
@@ -354,7 +373,7 @@ const processImageWithPython = async (imagePath) => {
         } else {
             console.error('Error message:', error.message);
         }
-        
+
         throw error;
     }
 };
