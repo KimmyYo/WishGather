@@ -46,42 +46,6 @@ import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native
 
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
-const Tab = createBottomTabNavigator();
-const TabNavigator = () => {
-  return (
-    <Tab.Navigator
-      screenOptions={({ route }) => ({
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-
-          if (route.name === 'HomePage') {
-            iconName = 'home-outline';
-          } else if (route.name === 'OfferingPage') {
-            return <MaterialIcons name="temple-buddhist" size={size} color={color} />;
-          } else if (route.name === 'CartPage') {
-            iconName = 'cart-outline';
-          } else if (route.name === 'UserPage') {
-            iconName = 'person-outline';
-          }
-
-          return <Ionicons name={iconName} size={size} color={color} />;
-        },
-        tabBarActiveTintColor: '#CCCCCC',
-        tabBarInactiveTintColor: '#D97F30',
-        headerShown: false,
-        tabBarShowLabel: false,
-      })}
-      initialRouteName="UserPage">
-      <Tab.Screen name="HomePage" component={HomePage} options={{tabBarIcon: ({color}) => <Ionicons name="home-outline" size={40} color={color} />,}}/>
-      <Tab.Screen name="OfferingPage" component={OfferingPage4} options={{tabBarIcon: ({color}) => <MaterialIcons name="temple-buddhist" size={40} color={color}/>,}}/>
-      <Tab.Screen name="CartPage" component={CartPage} options={{tabBarIcon: ({color}) => <Ionicons name="cart-outline" size={40} color={color}/>,}}/>
-      <Tab.Screen name="UserPage" component={UserPage} options={{tabBarIcon: ({color}) => <Ionicons name="person-outline" size={40} color={color}/>,}}/>
-    </Tab.Navigator>
-  );
-};
 
 // fit into every devices: https://docs.expo.dev/versions/latest/sdk/safe-area-context/
 
@@ -108,7 +72,7 @@ const App = () => {
         {hideSplashScreen ? (
 
           <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Main">
-            <Stack.Screen name="MainTabs" component={TabNavigator} />
+            
 
             <Stack.Screen
               name="Main"
