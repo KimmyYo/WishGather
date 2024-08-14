@@ -12,12 +12,22 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
+import HomePage from './HomePage';
+import OfferingPage4 from './OfferingPage4';
+import CartPage from './CartPage';
+
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+const Tab = createBottomTabNavigator();
+
+
 import axios from 'axios';
 
 //把API抓進來-都固定用專案教室IP
 const API=require('./DBconfig')
 
-const UserPage = () => {
+const UserPageContent = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
 
@@ -186,6 +196,57 @@ const UserPage = () => {
       </SafeAreaProvider>
       
     </>
+  );
+};
+
+const UserPage = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="首頁"
+      screenOptions={{
+        tabBarLabelPosition: "below-icon",
+        tabBarShowLabel: true,
+        tabBarActiveTintColor: "#D97F30",
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen
+        name="宮廟資訊"
+        component={HomePage}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="home-outline" size={40} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="訂購"
+        component={OfferingPage4}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="temple-buddhist" size={40} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="購物車"
+        component={CartPage}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="cart-outline" size={40} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="首頁"
+        component={UserPageContent}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person-outline" size={40} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 
