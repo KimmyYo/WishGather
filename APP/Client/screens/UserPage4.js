@@ -35,7 +35,7 @@ const UserPage4 = () => {
     }
 
     if (!newPassword) {
-      Alert.alert('Error', 'Password is required');
+      Alert.alert('Error', 'Password is required ');
       return;
     }
 

@@ -166,10 +166,9 @@ const UserPage = () => {
             </Pressable>
 
             <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
-        <Text style={styles.buttonText}>DEMO用
-
-        </Text>
-    </Pressable>
+            <Text style={styles.buttonText}>DEMO用
+            </Text>
+            </Pressable>
           </View>
 
 
