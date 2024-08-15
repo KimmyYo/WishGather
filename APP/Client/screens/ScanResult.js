@@ -78,10 +78,16 @@ const ScanResult = ({ route }) => {
             setNewItemCount('');
         }
     };
+
+    const handleDeleteItem = (index) => {
+        const updatedItems = items.filter((_, i) => i !== index);
+        setItems(updatedItems);
+    };
+
     const handleSubmit = async () => {
         try {
             const submitData = {
-                userId: profile.userId, // 確保你有方法獲取當前用戶ID
+                userId: profile.userId,
                 items: items.map(item => ({
                     name: item.name,
                     count: item.count
@@ -89,7 +95,8 @@ const ScanResult = ({ route }) => {
             };
     
             await axios.post(`${API}/submitScanResult`, submitData);
-            Alert.alert('Success', 'Data submitted successfully!');
+            Alert.alert('Success', '物品上傳成功!謝謝!');
+            navigation.navigate('SubmissionResult', { items: submitData.items });
         } catch (error) {
             console.error('Error submitting data:', error);
             Alert.alert('Error', 'Failed to submit data. Please try again.');
@@ -108,6 +115,9 @@ const ScanResult = ({ route }) => {
                         onChangeText={(newCount) => handleCountChange(index, newCount)}
                         keyboardType="numeric"
                     />
+                    <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteItem(index)}>
+                        <Text style={styles.buttonText}>刪除</Text>
+                    </TouchableOpacity>
                 </View>
             ))}
             <View style={styles.addItemContainer}>
@@ -174,6 +184,12 @@ const styles = StyleSheet.create({
     },
     addButton: {
         backgroundColor: '#4CAF50',
+        padding: 10,
+        borderRadius: 5,
+        marginLeft: 10,
+    },
+    deleteButton: {
+        backgroundColor: '#f44336',
         padding: 10,
         borderRadius: 5,
         marginLeft: 10,

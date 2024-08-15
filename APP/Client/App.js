@@ -40,6 +40,7 @@ import ScanResult from "./screens/ScanResult";
 import SignIn from "./screens/SignIn";
 import Charity from './screens/Charity';
 import Temple from './screens/Temple.js'; 
+import SubmissionResult from './screens/SubmissionResult.js'
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native";
@@ -89,6 +90,12 @@ const App = () => {
             <Stack.Screen
               name="ScanResult"
               component={ScanResult}
+              options={{ headerShown: false }}
+            />
+
+<Stack.Screen
+              name="SubmissionResult"
+              component={SubmissionResult}
               options={{ headerShown: false }}
             />
 
