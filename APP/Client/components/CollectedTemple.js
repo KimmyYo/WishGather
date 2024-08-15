@@ -1,7 +1,7 @@
 import React from "react";
 import { StyleSheet, View, Text, Pressable, Dimensions } from "react-native";
 import { Image } from "expo-image";
-import { Color, Border, FontSize, FontFamily } from "../GlobalStyles";
+
 
 const { width } = Dimensions.get('window');
 
@@ -22,7 +22,7 @@ const CollectedTemple = ({
           />
         </View>
         
-        <View>
+        <View >
           <Text style={styles.textContainer}>
             <Text style={styles.templeName}>{templeName}{'\n'}</Text>
             <Text style={styles.address}>{address}</Text>
@@ -38,7 +38,6 @@ const styles = StyleSheet.create({
     width: width * 0.95,
     height: 120,
     flexDirection: 'row',
-    justifyContent: 'space-around',
     alignSelf: 'center',
     alignItems: 'center',
     borderColor: '#ccc',

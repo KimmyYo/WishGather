@@ -4,9 +4,9 @@ import { View, Text, TextInput, Pressable, Modal, StyleSheet, FlatList, Dimensio
 import { Image } from "expo-image";
 import AddressOverlay from "../components/AddressOverlay";
 import TempleDistance from "../components/TempleDistance";
-// import Footer from "../components/Footer_HomePage";
+
 import { useNavigation } from "@react-navigation/native";
-import { Border, Color, FontSize, FontFamily, Padding } from "../GlobalStyles";
+
 // import Footer from "../components/footer";
 
 

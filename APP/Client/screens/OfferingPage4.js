@@ -1,43 +1,82 @@
 import React, { useState, useMemo } from "react";
 import { Image } from "expo-image";
-import { StyleSheet, View, TextInput, Dimensions, FlatList, Text, Pressable } from "react-native";
+import { StyleSheet, View, TextInput, Dimensions, FlatList, Text } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
-import { Color } from "../GlobalStyles";
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
+
+import GoBackButton1 from "../components/GoBackButton1";
 import ProductItem from "../components/ProductItem";
-// import Footer from "../components/footer";
-import { FontFamily, FontSize, Border } from '../GlobalStyles';
 
 const { width } = Dimensions.get('window');
 
 const OfferingPage4 = () => {
   const [searchText, setSearchText] = useState("");
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
 
-  const products = [
-    { id: '1', imageSource: require("../assets/rectangle-19.png"), title: "線上點燈" },
-    { id: '2', imageSource: require("../assets/rectangle-191.png"), title: "金紙香品" },
-    { id: '3', imageSource: require("../assets/rectangle-192.png"), title: "生鮮蔬果" },
-    { id: '4', imageSource: require("../assets/rectangle-193.png"), title: "精緻糕點" },
-    { id: '5', imageSource: require("../assets/rectangle-194.png"), title: "餅乾糖果" },
-    { id: '6', imageSource: require("../assets/rectangle-195.png"), title: "解渴飲品" },
-    { id: '7', imageSource: require("../assets/rectangle-196.png"), title: "文創周邊" },
+  const productsByCategory = [
+    {
+      title: "經典祭拜供品",
+      data: [
+        { id: '1', imageSource: require("../assets/rectangle-19.png"), title: "蠟燭"},
+        { id: '2', imageSource: require("../assets/rectangle-191.png"), title: "金紙"},
+        { id: '3', imageSource: require("../assets/rectangle-193.png"), title: "發糕"},
+
+      ],
+    },
+    {
+      title: "有效期商品",
+      data: [
+        { id: '4', imageSource: require("../assets/rectangle-192.png"), title: "蔬果"},
+        { id: '5', imageSource: require("../assets/rectangle-194.png"), title: "祭拜禮盒(零食)"},
+        { id: '6', imageSource: require("../assets/rectangle-195.png"), title: "飲料" },
+      ],
+    },
+    {
+      title: "文創商品",
+      data: [
+        { id: '7', imageSource: require("../assets/rectangle-196.png"), title: "祈福御守"},
+      ],
+    },
   ];
 
-  // Memoize filtered products to avoid unnecessary recalculations
   const filteredProducts = useMemo(() => {
-    if (!searchText) return products;
-    return products.filter(product =>
-      product.title.toLowerCase().includes(searchText.toLowerCase())
-    );
-  }, [searchText, products]);
+    if (!searchText) return productsByCategory;
 
-  const renderItem = ({ item }) => (
-    <View style={styles.productItemWrapper}>
-      <ProductItem
-        onPress={() => navigation.navigate("OfferingPage6")}
-        imageSource={item.imageSource}
-        title={item.title}
+    return productsByCategory.map(category => {
+      const filteredData = category.data.filter(item =>
+        item.title.toLowerCase().includes(searchText.toLowerCase())
+      );
+
+      if (filteredData.length > 0) {
+        return { ...category, data: filteredData };
+      }
+
+      return null;
+    }).filter(Boolean);
+  }, [searchText, productsByCategory]);
+
+  const renderCategory = ({ item }) => (
+    <View style={styles.categoryContainer}>
+      <View style={styles.categoryTitleContainer}>
+        <MaterialCommunityIcons name="basket" size={22} color="orange" style={styles.categoryIcon} />
+        <Text style={styles.categoryTitle}>{item.title}</Text>
+      </View>
+      <FlatList
+        data={item.data}
+        keyExtractor={(product) => product.id}
+        renderItem={({ item }) => (
+          <View style={styles.productItemWrapper}>
+            <ProductItem
+              destination="OfferingPage6"
+              imageSource={item.imageSource}
+              title={item.title}
+            />
+          </View>
+        )}
+        horizontal
+        showsHorizontalScrollIndicator={false}
       />
     </View>
   );
@@ -46,86 +85,73 @@ const OfferingPage4 = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.offeringPage4}>
-          {/* Category Title */}
-          <View style={styles.header}>
-            <Pressable style={styles.backButton} onPress={() => navigation.navigate("HomePage")}>
-              <Image style={styles.backIcon} source={require("../assets/go-back-button.png")} />
-            </Pressable>
-            <Text style={styles.headerText}>供品類別</Text>
-          </View>
+      <View style={{
+        flex: 1,
+        backgroundColor: "white",
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right
+      }}>
+        <GoBackButton1 destination="UserPage" />
 
-          {/* SearchBar */}
-          <View style={styles.searchContainer}>
-            <TextInput
-              placeholder="搜尋(Ex:祭拜禮盒)"
-              style={styles.input}
-              value={searchText}
-              onChangeText={setSearchText}
-            />
-          </View>
-
-          {noResults ? (
-            <View style={styles.noResultsContainer}>
-              <Text style={styles.noResultsText}>查無此品項 ! 請重新輸入 !</Text>
-            </View>
-          ) : (
-            <FlatList
-              data={filteredProducts}
-              renderItem={renderItem}
-              keyExtractor={item => item.id}
-              numColumns={2}
-              contentContainerStyle={styles.flatListContent}
-            />
-          )}
-
-          {/* <Footer /> */}
+        {/* Title */}
+        <View style={styles.titleContainer}>
+          <MaterialCommunityIcons name="food" size={28} color="orange" style={styles.icon} />
+          <Text style={styles.pageTitle}>供品類別</Text>
         </View>
-      </SafeAreaView>
+
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="搜尋(Ex:祭拜禮盒)"
+            style={styles.input}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
+
+        {noResults ? (
+          <View style={styles.noResultsContainer}>
+            <Text style={styles.noResultsText}>查無此品項 ! 請重新輸入 !</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredProducts}
+            keyExtractor={(item, index) => item.title + index}
+            renderItem={renderCategory}
+            contentContainerStyle={styles.flatListContent}
+          />
+        )}
+      </View>
     </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Color.colorGray_100,
-    overflow: 'hidden',
-  },
-  offeringPage4: {
-    flex: 1,
-    backgroundColor: Color.colorGray_100,
-  },
-  header: {
-    width: width * 0.9,
-    height: 65,
+  titleContainer: {
+    width: width * 0.95,
     flexDirection: 'row',
+    justifyContent: "center",
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+    marginBottom: 15,
   },
-  backButton: {
-    width: 45,
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
+  icon: {
+    marginRight: 10,
   },
-  backIcon: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  headerText: {
-    fontSize: 30,
-    fontFamily: FontFamily.interSemiBold,
-    color: Color.colorDimgray_200,
-    marginLeft: 10,
-    fontWeight: '500',
+  pageTitle: {
+    fontSize: 28,
+    color: "#4F4F4F",
+    fontWeight: "bold",
+    textAlign: 'left',
+    marginBottom: 2,
   },
   searchContainer: {
     width: width,
     paddingHorizontal: 5,
-    paddingVertical: 10,
+    paddingBottom: 8,
     alignSelf: 'center',
     justifyContent: 'center',
     display: 'flex',
@@ -139,16 +165,32 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
   },
+  categoryContainer: {
+    width: width * 0.95,
+    justifyContent: 'flex-start',
+    alignItems: 'start',
+    alignSelf: 'center',
+  },
+  categoryTitleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 10,
+  },
+  categoryIcon: {
+    marginRight: 8,
+  },
+  categoryTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4F4F4F',
+  },
   flatListContent: {
-    paddingVertical: 10,
     paddingBottom: 60,
   },
   productItemWrapper: {
-    flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingVertical: 5,
-    maxWidth: '50%', // Ensures the item occupies half of the screen width
+    paddingHorizontal: 5,
   },
   noResultsContainer: {
     flex: 1,
@@ -157,8 +199,7 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     fontSize: 18,
-    fontFamily: FontFamily.interRegular,
-    color: Color.colorDimgray_200,
+    color: 'gray',
     textAlign: 'center',
   },
 });

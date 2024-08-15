@@ -2,16 +2,18 @@ import React, { useState, useMemo } from "react";
 import { Image } from "expo-image";
 import { StyleSheet, Pressable, View, Text, FlatList, SafeAreaView, Dimensions, TextInput, Modal, TouchableOpacity } from "react-native";
 import { useNavigation } from "@react-navigation/native";
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Color, FontFamily } from "../GlobalStyles";
 import TempleCard from "../components/TempleCard";
 
+import GoBackButton1 from "../components/GoBackButton1";
 import Footer from "../components/footer";
 
 const { width } = Dimensions.get('window');
 
 const OfferingPage6 = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
@@ -21,49 +23,49 @@ const OfferingPage6 = () => {
       id: '1',
       imageSource: require("../assets/rectangle-214.png"),
       title: '大甲 鎮瀾宮媽祖廟',
-      distance: "222公里",
+      distance: "台中市大甲區順天路158號",
     },
     {
       id: '2',
       imageSource: require("../assets/rectangle-215.png"),
       title: '左營 仁濟宮',
-      distance: "11公里",
+      distance: "高雄市左營區左營新路17號",
     },
     {
       id: '3',
       imageSource: require("../assets/rectangle-216.png"),
       title: '鳳邑 雷府大將廟',
-      distance: "12公里",
+      distance: "高雄市鳳山區五甲一路732號",
     },
     {
       id: '4',
       imageSource: require("../assets/rectangle-217.png"),
       title: '左營 金鑾殿',
-      distance: "12公里",
+      distance: "高雄市左營區蓮潭路141號五樓",
     },
     {
       id: '5',
       imageSource: require("../assets/rectangle-218.png"),
       title: '朝元宮 鐵路媽祖',
-      distance: "8.2公里",
+      distance: "高雄市三民區鐵道二街1號",
     },
     {
       id: '6',
       imageSource: require("../assets/rectangle-219.png"),
       title: '東照山 關帝廟',
-      distance: "24公里",
+      distance: "高雄市大樹區忠義路1號",
     },
     {
       id: '7',
       imageSource: require("../assets/rectangle-2110.png"),
       title: '府城 三山國王廟',
-      distance: "34公里",
+      distance: "台南市北區西門路三段100號",
     },
     {
       id: '8',
       imageSource: require("../assets/rectangle-2111.png"),
       title: '車城 福安宮',
-      distance: "82公里",
+      distance: "屏東縣車城鄉福安路51號",
     }
   ];
 
@@ -92,15 +94,20 @@ const OfferingPage6 = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.offeringPage6}>
+        <View style={{
+          flex: 1,
+          backgroundColor: "white",
+          paddingTop: insets.top,
+          paddingBottom: insets.bottom,
+          paddingLeft: insets.left,
+          paddingRight: insets.right
+        }}>
+           <GoBackButton1 destination="OfferingPage4" />
 
           {/* Header */}
-          <View style={styles.header}>
-              <Pressable style={styles.backButton} onPress={() => navigation.navigate("HomePage")}>
-                <Image style={styles.backIcon} source={require("../assets/go-back-button.png")} />
-              </Pressable>
-              <Text style={styles.headerText}>線上點燈</Text>
+          {/* Title */}
+          <View style={styles.titleContainer}>
+            <Text style={styles.pageTitle}>供品類別 : 蠟燭</Text>
           </View>
 
           {/* Search Bar */}
@@ -129,67 +136,50 @@ const OfferingPage6 = () => {
 
           {/* Modal */}
           <Modal
-            animationType="slide"
+            animationType="fade"
             transparent={true}
             visible={modalVisible}
             onRequestClose={() => setModalVisible(false)}
           >
             <View style={styles.modalOverlay}>
+
               <View style={styles.modalContainer}>
                 <Text style={styles.modalText}>{modalMessage}</Text>
                 <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
                   <Text style={styles.closeButtonText}>✕</Text>
                 </TouchableOpacity>
               </View>
+              
             </View>
           </Modal>
         </View>
-      </SafeAreaView>
+      
     </SafeAreaProvider>
 
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: Color.colorWhite,
-    overflow: 'hidden',
-  },
-  offeringPage6: {
-    flex: 1,
-    backgroundColor: Color.colorWhite,
-    justifyContent: 'space-between',
-  },
-  header: {
-    width: width * 0.9,
-    height: 65,
+  titleContainer: {
+    width: width * 0.95,
     flexDirection: 'row',
+    justifyContent: "center",
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+    marginBottom: 15,
   },
-  backButton: {
-    width: 45,
-    height: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  backIcon: {
-    width: '100%',
-    height: '100%',
-    resizeMode: 'cover',
-  },
-  headerText: {
-    fontSize: 30,
-    fontFamily: FontFamily.interSemiBold,
-    color: Color.colorDimgray_200,
-    marginLeft: 10,
-    fontWeight: '500',
+  pageTitle: {
+    fontSize: 28,
+    color: "#4F4F4F",
+    fontWeight: "bold",
+    textAlign: 'left',
+    marginBottom: 2,
   },
   searchContainer: {
     width: width,
     paddingHorizontal: 5,
-    paddingVertical: 10,
+    paddingBottom: 8,
     alignSelf: 'center',
     justifyContent: 'center',
     display: 'flex',
@@ -226,17 +216,18 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContainer: {
-    width: 300,
+    width: 250,
+    height: 100,
     padding: 20,
     backgroundColor: 'white',
     borderRadius: 10,
+    justifyContent:'center',
     alignItems: 'center',
   },
   modalText: {
-    fontSize: 18,
-    fontFamily: FontFamily.interRegular,
-    color: Color.colorDimgray_200,
-    marginBottom: 20,
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#4F4F4F',
   },
   closeButton: {
     position: 'absolute',
