@@ -141,6 +141,11 @@ const ScanResult = ({ route }) => {
             <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                 <Text style={styles.buttonText}>送出</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity style={styles.rescanButton} onPress={() => navigation.navigate("FoodScanningPage")}>
+                <Text style={styles.buttonText}>重新掃描?</Text>
+            </TouchableOpacity>
+
         </ScrollView>
     );
 };
@@ -197,6 +202,15 @@ const styles = StyleSheet.create({
     submitButton: {
         backgroundColor: '#2196F3',
         padding: 15,
+        borderRadius: 5,
+        alignItems: 'center',
+        width: '100%',
+    },
+    rescanButton: {
+        backgroundColor: '#FFA042',
+        padding: 15,
+        paddingTop:20,
+        marginTop:20,
         borderRadius: 5,
         alignItems: 'center',
         width: '100%',
