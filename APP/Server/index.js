@@ -149,16 +149,12 @@ app.post('/believers', async(req, res) => {
 
 // 更新個資維護
 app.post('/believersUpdate', async(req, res) => {
-
-    const { NAME, PHONE, EMAIL, PASSWORD, ROLE } = req.body;
-
+    const { NAME, PHONE, EMAIL, PASSWORD } = req.body;
 
     console.log('Received update data:', req.body);
 
     // Input validation
-
-    if (!NAME || !PHONE || !EMAIL || !PASSWORD || !ROLE) {
-
+    if (!NAME || !PHONE || !EMAIL || !PASSWORD) {
         return res.status(400).json({ error: 'All fields are required' });
     }
 
@@ -176,9 +172,7 @@ app.post('/believersUpdate', async(req, res) => {
 
         // Update user information
         const [result] = await db.promise().query(
-
-            'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ?  EMAIL = ? OR ROLE = ?', [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL, ROLE]
-
+            'UPDATE `信眾` SET NAME = ?, PHONE = ?, EMAIL = ?, PASSWORD = ? WHERE PHONE = ? OR EMAIL = ?', [NAME, PHONE, EMAIL, hashedPassword, PHONE, EMAIL]
         );
 
         console.log('User updated successfully:', result);
@@ -204,7 +198,7 @@ const JWT_SECRET = 'hfMIS'; // Replace with a real secret key
 
 // sign-in route
 // sign-in route
-app.post('/signin', async (req, res) => {
+app.post('/signin', async(req, res) => {
     const { EMAIL, PASSWORD } = req.body;
 
     console.log('Received sign-in data:', req.body);
@@ -219,7 +213,7 @@ app.post('/signin', async (req, res) => {
         );
         console.log('Database query result:', users);
 
-        if (users.length === 0) {
+        if (users.length == 0) {
             return res.status(401).json({ error: 'Invalid email' });
         }
 
@@ -227,22 +221,19 @@ app.post('/signin', async (req, res) => {
         console.log('User object:', user);
 
         if (!user.ROLE) {
-            console.error('Error: ROLE is undefined for this user');
             return res.status(400).json({ error: 'Role is undefined for this user' });
         }
 
-        // Compare the provided password with the stored hash
+        // Now compare the provided password with the stored hash
         const match = await bcrypt.compare(PASSWORD, user.PASSWORD);
 
         if (match) {
-            // Create a JWT token, including the ROLE in the token
-            const token = jwt.sign(
-                { userId: user.pID, email: user.EMAIL, role: user.ROLE }, // Ensure role is included
-                JWT_SECRET,
-                { expiresIn: '1h' }
+            // Create a JWT token
+            const token = jwt.sign({ userId: user.pID, email: user.EMAIL, role: user.ROLE }, // Include the role in the token
+                JWT_SECRET, { expiresIn: '1h' }
             );
 
-            // Return the token and the role
+            // Return the token and role
             res.json({ message: 'Signed in successfully', token, role: user.ROLE });
         } else {
             res.status(401).json({ error: 'Invalid password' });
@@ -252,6 +243,7 @@ app.post('/signin', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+
 
 
 
@@ -284,10 +276,12 @@ app.get('/profile', isAuthenticated, async(req, res) => {
             res.json({
                 message: 'This is a protected route',
                 userId: user.pID,
-                email: user.EAMIL,
+                email: user.EMAIL,
                 name: user.NAME,
+                phone: user.PHONE,
+                password: user.PASSWORD,
 
-                role : user.ROLE,
+                role: user.ROLE,
 
             });
         } else {
@@ -344,7 +338,7 @@ const processImageWithPython = async(imagePath) => {
         console.log('Form headers:', form.getHeaders());
 
         //丟去 flask server
-        const response = await axios.post('http://140.117.71.127:5000/proimg', form, {
+        const response = await axios.post('http://140.117.71.183:5000/proimg', form, {
             headers: {
                 ...form.getHeaders()
             }
@@ -404,6 +398,54 @@ const countDetectedObjects = (response) => {
 };
 
 
+//Scanresult -Ethan正在改你可以跳別的的梅關西// Submit scan result route
+app.post('/submitScanResult', async(req, res) => {
+    const { userId, items } = req.body;
+
+    console.log('Received scan result data:', req.body);
+
+    // Input validation
+    if (!userId || !items || !Array.isArray(items) || items.length === 0) {
+        return res.status(400).json({ error: 'Invalid input. User ID and non-empty items array are required' });
+    }
+
+    try {
+        // Check if user exists
+        const [existingUsers] = await db.promise().query(
+            'SELECT * FROM 信眾 WHERE pID = ?', [userId]
+        );
+
+        if (existingUsers.length === 0) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Insert new scan result
+        const [scanResult] = await db.promise().query(
+            'INSERT INTO ScanResults (user_id) VALUES (?)', [userId]
+        );
+
+        const scanResultId = scanResult.insertId;
+
+        // Insert scan items
+        for (const item of items) {
+            await db.promise().query(
+                'INSERT INTO ScanItems (scan_result_id, item_name, item_count) VALUES (?, ?, ?)', [scanResultId, item.name, item.count]
+            );
+        }
+
+        console.log('Scan result inserted successfully:', scanResult);
+
+        res.status(201).json({ message: 'Scan result submitted successfully', scanResultId: scanResultId });
+    } catch (error) {
+        console.error('Detailed scan result submission error:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            details: error.message,
+            sqlMessage: error.sqlMessage,
+            sqlState: error.sqlState
+        });
+    }
+});
 
 
 // 開給全部
