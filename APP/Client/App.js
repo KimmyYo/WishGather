@@ -5,11 +5,13 @@ import { useFonts } from "expo-font";
 import Main from "./screens/Main";
 import UserPage from "./screens/UserPage";
 import HomePage from "./screens/HomePage";
-import AddressOverlay from "./components/AddressOverlay";
+// import KeyboardOverlay from "./components/KeyboardOverlay";
+// import AddressOverlay from "./components/AddressOverlay";
 import HomePage4 from "./screens/HomePage4";
-import LogoutOverlay from "./components/LogoutOverlay";
+// import LogoutOverlay from "./components/LogoutOverlay";
 import UserPage1 from "./screens/UserPage1";
 import OfferingPage from "./screens/OfferingPage";
+// import LightInfoOverlay from "./components/LightInfoOverlay";
 import UserPage2 from "./screens/UserPage2";
 import UserPage3 from "./screens/UserPage3";
 import HomePage5 from "./screens/HomePage5";
@@ -31,15 +33,8 @@ import TempleEventPage from "./screens/TempleEventPage";
 import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
 import FoodScanningPage from "./screens/FoodScanningPage";
-import SignUp from "./screens/SignUp";
-
-import ProductPage from "./screens/ProductPage";
-import ScanResult from "./screens/ScanResult";
-
-
-import SignIn from "./screens/SignIn";
-import Charity from './screens/Charity';
-import Temple from './screens/Temple.js'; 
+import SignUp from "./screens/SignUp"
+import SignIn from "./screens/SignIn"
 import SubmissionResult from './screens/SubmissionResult.js'
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -47,6 +42,7 @@ import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native
 
 import { SafeAreaView } from 'react-native-safe-area-context'; 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
+
 
 // fit into every devices: https://docs.expo.dev/versions/latest/sdk/safe-area-context/
 
@@ -71,10 +67,12 @@ const App = () => {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <NavigationContainer>
         {hideSplashScreen ? (
-
-          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Main">
-            
-
+          <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="TempleHomePage">
+            <Stack.Screen
+              name="TempleHomePage"
+              component={TempleHomePage}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="Main"
               component={Main}
@@ -85,29 +83,7 @@ const App = () => {
               component={FoodScanningPage}
               options={{ headerShown: false }}
             />
-
-
-            <Stack.Screen
-              name="ScanResult"
-              component={ScanResult}
-              options={{ headerShown: false }}
-            />
-
-<Stack.Screen
-              name="SubmissionResult"
-              component={SubmissionResult}
-              options={{ headerShown: false }}
-            />
-
-
-            <Stack.Screen
-              name="TempleHomePage"
-              component={TempleHomePage}
-              options={{ headerShown: false }}
-            />
-
-
-
+            
 
             <Stack.Screen
               name="TempleEventPage"
@@ -134,21 +110,26 @@ const App = () => {
               component={HomePage}
               options={{ headerShown: false }}
             />
+            {/* <Stack.Screen
+              name="KeyboardOverlay"
+              component={KeyboardOverlay}
+              options={{ headerShown: false }}
+            />
             <Stack.Screen
               name="AddressOverlay"
               component={AddressOverlay}
               options={{ headerShown: false }}
-            />
+            /> */}
             <Stack.Screen
               name="HomePage4"
               component={HomePage4}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
+            {/* <Stack.Screen
               name="LogoutOverlay"
               component={LogoutOverlay}
               options={{ headerShown: false }}
-            />
+            /> */}
             <Stack.Screen
               name="UserPage1"
               component={UserPage1}
@@ -159,6 +140,11 @@ const App = () => {
               component={OfferingPage}
               options={{ headerShown: false }}
             />
+            {/* <Stack.Screen
+              name="LightInfoOverlay"
+              component={LightInfoOverlay}
+              options={{ headerShown: false }}
+            /> */}
             <Stack.Screen
               name="UserPage2"
               component={UserPage2}
@@ -185,18 +171,8 @@ const App = () => {
               name="SignIn"
               component={SignIn}
               options={{ headerShown: false }}
-            />
-
-            <Stack.Screen
-              name="Charity"
-              component={Charity}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Temple"
-              component={Temple}
-              options={{ headerShown: false }}
-            />
+            /> 
+            
             <Stack.Screen
               name="HomePage5"
               component={HomePage5}
@@ -260,11 +236,6 @@ const App = () => {
             <Stack.Screen
               name="CartPage"
               component={CartPage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="ProductPage"
-              component={ProductPage}
               options={{ headerShown: false }}
             />
           </Stack.Navigator>
