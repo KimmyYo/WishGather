@@ -25,12 +25,12 @@ function renderRightActions (progress, dragAnimatedValue, showDialog, goEdit, ev
         <View style={styles.swipedRow}>
           <Animated.View style={[styles.behindButton, { opacity }, styles.editBackgroundColor]}>
             <TouchableOpacity onPress={goEdit}>
-              <Text style={styles.behindButtonText}>Edit</Text>
+              <Text style={styles.behindButtonText}>編輯</Text>
             </TouchableOpacity>
           </Animated.View>
           <Animated.View style={[styles.behindButton, { opacity }, styles.deleteBackgroundColor]}>
             <TouchableOpacity onPress={showDialog}>
-              <Text style={styles.behindButtonText}>Delete</Text>
+              <Text style={styles.behindButtonText}>刪除</Text>
             </TouchableOpacity>
           </Animated.View>
         </View>
@@ -146,8 +146,8 @@ const styles = StyleSheet.create({
     overlayText: {
         position: 'absolute',
         bottom: 10,
-        left: 10,
-        color: '#000',
+        left: 15,
+        color: '#4F4F4F',
         fontSize: 18,
         fontWeight: 'bold',
     },

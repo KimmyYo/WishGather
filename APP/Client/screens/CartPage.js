@@ -43,7 +43,7 @@ const CartPage = () => {
         flex: 1,
         backgroundColor: "white",
         paddingTop: insets.top,
-        paddingBottom: insets.bottom-40,
+        paddingBottom: insets.bottom-35,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
