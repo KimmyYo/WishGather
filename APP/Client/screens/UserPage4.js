@@ -1,10 +1,11 @@
-import { ScrollView, StyleSheet, View, TextInput, Text, KeyboardAvoidingView, Platform, Pressable, Dimensions, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, TextInput, Text, Dimensions, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { FontSize, Padding, FontFamily, Color, Border } from "../GlobalStyles";
+
 import axios from 'axios';
-import React, { useState } from 'react';
+
 
 import GoBackButton1 from '../components/GoBackButton1';
 import SetButton from '../components/SetButton';

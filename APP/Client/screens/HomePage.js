@@ -7,10 +7,9 @@ import TempleDistance from "../components/TempleDistance";
 
 import { useNavigation } from "@react-navigation/native";
 
-// import Footer from "../components/footer";
 
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const HomePage = () => {
   const [locationIconVisible, setLocationIconVisible] = useState(false);
@@ -58,7 +57,7 @@ const HomePage = () => {
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: insets.top,
-        paddingBottom: insets.bottom,
+        paddingBottom: insets.bottom - 35,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
@@ -133,7 +132,7 @@ const HomePage = () => {
 
 const styles = StyleSheet.create({
   locationContainer: {
-    width:"90%",
+    width:"95%",
     height: 55,
     flexDirection: 'row',
     alignItems: 'center',

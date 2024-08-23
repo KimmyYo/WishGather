@@ -1,13 +1,14 @@
 import React, {useState, useEffect} from 'react';
-import {Button, Text, SafeAreaView, View, StyleSheet, FlatList, Pressable, Dimensions} from 'react-native';
+import {Text, View, StyleSheet, FlatList, Pressable, Dimensions} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import axios from 'axios';
 
+import GoBackButton1 from "../components/GoBackButton1";
 import EventCard from '../components/EventCard';
 import PageTitle  from '../components/PageTitle';
-import NavigateBack from '../components/NavigateBack';
+
 
 const API = require('./DBconfig')
 function TempleEventPage({route}){
@@ -37,6 +38,7 @@ function TempleEventPage({route}){
         <SafeAreaProvider>
             <View style={{
                 flex: 1,
+                backgroundColor: 'white',
                 justifyContent: 'start',
                 alignItems: 'start',
                 // Paddings to handle safe area
@@ -45,8 +47,10 @@ function TempleEventPage({route}){
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }}>
-                <NavigateBack />
-                <PageTitle titleText="法會資訊"></PageTitle>
+                <GoBackButton1 destination="TempleHomePage" />
+
+                <PageTitle titleText="法會資訊" iconName="event" /> 
+
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={eventData}
@@ -57,6 +61,7 @@ function TempleEventPage({route}){
                         style={styles.flatList}
                     />
                 </View>
+
                 <Pressable style={styles.addBtn} 
                            onPress={() => 
                                     navigation.navigate('EditTempleInfoPage', 
@@ -65,8 +70,9 @@ function TempleEventPage({route}){
                                         forEdit: false
                                     })}>
                                     {/* should get newest id from db? after or before add succeed*/}
-                    <Ionicons name="add-outline" size={30}/>
+                    <Ionicons name="add-outline" color={"white"} size={30}/>
                 </Pressable>
+
             </View>
         </SafeAreaProvider>
     )
@@ -77,17 +83,11 @@ let screenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
     flatListContainer: {
-        height: screenHeight,
         width: screenWidth,
+        height: screenHeight,
     },
     flatList:{
         flex: 1
-    },
-    pressBack: {
-        width: screenWidth,
-        height: 30,
-        padding: 5,
-        fontSize: 50
     },
     addBtn:{
         backgroundColor: "orange",

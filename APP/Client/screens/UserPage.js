@@ -176,9 +176,13 @@ const UserPageContent = () => {
             </Pressable>
 
             <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
-            <Text style={styles.buttonText}>DEMO用
-            </Text>
+              <Text style={styles.buttonText}>DEMO用</Text>
             </Pressable>
+
+            <Pressable style={styles.button} onPress={() => navigation.navigate("TempleHomePage")}>
+              <Text style={styles.buttonText}>TempleHomePage</Text>
+            </Pressable>
+
           </View>
 
 
@@ -215,7 +219,7 @@ const UserPage = () => {
         component={HomePage}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={40} color={color} />
+            <Ionicons name="home-outline" size={30} color={color} />
           ),
         }}
       />
@@ -224,7 +228,7 @@ const UserPage = () => {
         component={OfferingPage4}
         options={{
           tabBarIcon: ({ color }) => (
-            <MaterialIcons name="temple-buddhist" size={40} color={color} />
+            <MaterialIcons name="temple-buddhist" size={30} color={color} />
           ),
         }}
       />
@@ -233,7 +237,7 @@ const UserPage = () => {
         component={CartPage}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="cart-outline" size={40} color={color} />
+            <Ionicons name="cart-outline" size={30} color={color} />
           ),
         }}
       />
@@ -242,7 +246,7 @@ const UserPage = () => {
         component={UserPageContent}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name="person-outline" size={40} color={color} />
+            <Ionicons name="person-outline" size={30} color={color} />
           ),
         }}
       />

@@ -89,7 +89,7 @@ const OfferingPage4 = () => {
         flex: 1,
         backgroundColor: "white",
         paddingTop: insets.top,
-        paddingBottom: insets.bottom,
+        paddingBottom: insets.bottom - 35,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderColor: '#ccc',
     borderWidth: 1,
-    borderRadius: 5,
+    borderRadius: 20,
     paddingHorizontal: 10,
   },
   categoryContainer: {
