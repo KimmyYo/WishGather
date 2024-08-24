@@ -3,9 +3,10 @@ import { StyleSheet, View, Text, Pressable, FlatList, Dimensions } from "react-n
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
-import DonationItem from "../components/DonationItem";
 import { Color, FontFamily, FontSize, Border } from "../GlobalStyles";
 
+import DonationItem from "../components/DonationItem";
+import GoBackButton1 from "../components/GoBackButton1";
 const { width, height } = Dimensions.get('window');
 
 const OfferingPage1 = () => {
@@ -19,14 +20,14 @@ const OfferingPage1 = () => {
       title: '開運吊飾',
       description: '無',
       imageSource: require("../assets/rectangle-112.png"),
-      tickSource: require("../assets/tick-box.png"),
+      
     },
     {
       id: '2',
       title: '光明燈',
       description: '被祈福人資訊',
       imageSource: require("../assets/rectangle-111.png"),
-      tickSource: require("../assets/tick-box.png"),
+      
     },
     // Add more items as needed
   ];
@@ -45,15 +46,7 @@ const OfferingPage1 = () => {
       <SafeAreaView style={styles.container} edges={['top', 'left', 'right']}>
         {/* Header */}
         <View style={styles.header}>
-          <Pressable
-            style={styles.goBackButton}
-            onPress={() => navigation.navigate("OfferingPage")}
-          >
-            <Image
-              style={styles.goBackImage}
-              source={require("../assets/go-back-button.png")}
-            />
-          </Pressable>
+          <GoBackButton1 destination="OfferingPage" />
           <Text style={styles.headerTitle}>
             捐贈選擇
           </Text>
@@ -68,7 +61,7 @@ const OfferingPage1 = () => {
         />
       
       {/* Finish Order */}
-        <Pressable
+        {/* <Pressable
           style={styles.checkoutButton}
           onPress={() => navigation.navigate("OfferingPage2")}
         >
@@ -78,7 +71,7 @@ const OfferingPage1 = () => {
             source={require("../assets/rectangle-92.png")}
           />
           <Text style={styles.checkoutText}>送出訂單</Text>
-        </Pressable>
+        </Pressable> */}
 
       </SafeAreaView>
     </SafeAreaProvider>

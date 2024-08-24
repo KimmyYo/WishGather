@@ -1,7 +1,8 @@
 import React from "react";
-import { Image } from "expo-image";
 import { StyleSheet, Pressable, Text, View, Dimensions, SafeAreaView, FlatList } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+
+import GoBackButton1 from "../components/GoBackButton1";
 
 import { FontSize, FontFamily, Color, Border } from "../GlobalStyles";
 
@@ -21,16 +22,9 @@ const SubmissionResult = ({ route }) => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable
-          style={styles.goBackButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Image
-            style={styles.icon}
-            contentFit="cover"
-            source={require("../assets/go-back-button.png")}
-          />
-        </Pressable>
+       
+        <GoBackButton1 destination="UserPage" />
+
         <Text style={styles.title}>提交成功</Text>
       </View>
       

@@ -1,13 +1,12 @@
 import React, { useState, useMemo } from "react";
-import { Image } from "expo-image";
-import { StyleSheet, Pressable, View, Text, FlatList, SafeAreaView, Dimensions, TextInput, Modal, TouchableOpacity } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { StyleSheet, View, Text, FlatList, Dimensions, TextInput, Modal, TouchableOpacity} from "react-native";
+import { useNavigation, useRoute} from "@react-navigation/native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Color, FontFamily } from "../GlobalStyles";
-import TempleCard from "../components/TempleCard";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import TempleCard from "../components/TempleCard";
 import GoBackButton1 from "../components/GoBackButton1";
-import Footer from "../components/footer";
+
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +16,9 @@ const OfferingPage6 = () => {
   const [searchText, setSearchText] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [modalMessage, setModalMessage] = useState("");
+
+  const route = useRoute();
+  const { selectedTitle } = route.params;
 
   const templeCards = [
     {
@@ -88,7 +90,7 @@ const OfferingPage6 = () => {
       title={item.title}
       distance={item.distance}
       onSave={handleSave}
-      onPress={() => navigation.navigate("OfferingPage5")}
+      onPress={() => navigation.navigate("HomePage1")}
     />
   );
 
@@ -106,8 +108,11 @@ const OfferingPage6 = () => {
 
           {/* Header */}
           {/* Title */}
+          {/* 需抓取前面的OfferingPage4所選的供品類別 */}
+
           <View style={styles.titleContainer}>
-            <Text style={styles.pageTitle}>供品類別 : 蠟燭</Text>
+            <MaterialCommunityIcons name="basket" size={24} color="orange" style={styles.icon} />
+            <Text style={styles.pageTitle}>供品類別 : {selectedTitle}</Text>
           </View>
 
           {/* Search Bar */}
@@ -169,6 +174,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     marginBottom: 15,
   },
+  icon: {
+    marginRight: 5,
+  },
   pageTitle: {
     fontSize: 28,
     color: "#4F4F4F",
@@ -205,8 +213,8 @@ const styles = StyleSheet.create({
   },
   noResultsText: {
     fontSize: 18,
-    fontFamily: FontFamily.interRegular,
-    color: Color.colorDimgray_200,
+    fontWeight:'bold',
+    color: '#ccc',
     textAlign: 'center',
   },
   modalOverlay: {

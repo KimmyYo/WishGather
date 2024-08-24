@@ -4,8 +4,7 @@ import { StyleSheet, Pressable, View, Text, Modal, SafeAreaView, TouchableOpacit
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import LogoutOverlay from "../components/LogoutOverlay";
-import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
+
 
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -177,12 +176,12 @@ const UserPage = () => {
         </View>
         
 
-        <Modal animationType="fade" transparent visible={textVisible}>
+        {/* <Modal animationType="fade" transparent visible={textVisible}>
           <View style={styles.textOverlay}>
             <Pressable style={styles.textBg} onPress={closeText} />
             <LogoutOverlay onClose={closeText} />
           </View>
-        </Modal>
+        </Modal> */}
 
       </SafeAreaProvider>
       

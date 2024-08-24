@@ -72,7 +72,9 @@ const OfferingPage4 = () => {
               destination="OfferingPage6"
               imageSource={item.imageSource}
               title={item.title}
+              onPress={() => navigation.navigate('OfferingPage6', { selectedCategory: item.title })}
             />
+
           </View>
         )}
         horizontal

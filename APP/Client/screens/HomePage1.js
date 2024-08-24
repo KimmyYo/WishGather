@@ -1,13 +1,13 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, FlatList, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Pressable, FlatList, Dimensions, Alert } from 'react-native';
 import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import OfferingItem from "../components/OfferingItem"; 
-import GoBackButton_B from "../components/GoBackButton_B";
+import CloseButton from "../components/CloseButton";
 import SetButton from '../components/SetButton';
-import { Color, Border, FontFamily, FontSize, Padding } from "../GlobalStyles";
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,14 +22,21 @@ const HomePage1 = () => {
   const [selectedOfferings, setSelectedOfferings] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
 
+  // State to track quantity for each offering
+  const [quantities, setQuantities] = useState({});
+
   // Handler for selecting an offering
   const handleSelectOffering = (offering) => {
     setSelectedOfferings((prevOfferings) => [...prevOfferings, offering]);
   };
 
-  // Handler for checkout
-  const handleCheckout = () => {
-    navigation.navigate("OfferingPage", { selectedOfferings });
+  // Handler for adding item to cart with a specific quantity
+  const handleAddToCart = (title, quantity) => {
+    setQuantities((prevQuantities) => ({
+      ...prevQuantities,
+      [title]: quantity,
+    }));
+    Alert.alert('新增成功', `${title} 已新增至購物車`);
   };
 
   // Offerings data
@@ -53,32 +60,27 @@ const HomePage1 = () => {
         title={item.title}
         price={item.price}
         description={item.description}
+        quantity={quantities[item.title] || 0}
         onSelect={() => handleSelectOffering(item)}
+        onAddToCart={handleAddToCart}
       />
     );
   };
 
-  const renderCategoryItem = ({ item }) => (
-    <Pressable onPress={() => setSelectedCategory(item)}>
-      <View style={[styles.categoryContainer, selectedCategory === item && styles.selectedCategory]}>
-        <Text style={[styles.categoryText, selectedCategory === item && styles.selectedCategoryText]}>
-          {item}
-        </Text>
-      </View>
-    </Pressable>
-  );
-
-  // Determine which offerings to show based on the selected category
-  const currentOfferings = selectedCategory === "點燈" ? offerings_1 : offerings_2;
-
   return (
     <SafeAreaProvider>
-      <View style={[styles.homePage1, { paddingTop: insets.top-15, paddingBottom: insets.bottom, paddingLeft: insets.left, paddingRight: insets.right }]}>
-        
+      <View style={{
+        flex: 1,
+        backgroundColor: "white",
+        paddingTop: insets.top -50,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left,
+        paddingRight: insets.right
+      }}>
         {/* Temple Image */}
         <View>
           <Image style={styles.headerImage} contentFit="cover" source={require("../assets/rectangle-3.png")} />
-          <GoBackButton_B onPress={() => navigation.navigate("HomePage")} />
+          <CloseButton />
         </View>
 
         {/* Temple Title */}
@@ -87,8 +89,7 @@ const HomePage1 = () => {
           <Text style={styles.subTitle}>營業時間 : 06:00~21:30</Text>
         </View>
 
-
-        <View style={{ width:width*0.9 ,flexDirection: "row", alignItems:"start", justifyContent: "start", paddingVertical: 10, borderBottomWidth: 1, borderColor:"#E0E0E0"}}>
+        <View style={{ width:width*0.95 ,flexDirection: "row", alignSelf:"center", justifyContent: "start", paddingVertical: 10, borderBottomWidth: 1, borderColor:"#ccc"}}>
           {categories.map((category) => (
             <Pressable key={category} onPress={() => setSelectedCategory(category)} style={{borderRadius:15}}>
               <Text style={[styles.category, selectedCategory === category && styles.selectedCategory]}>
@@ -103,17 +104,19 @@ const HomePage1 = () => {
             data={offerings_1}
             renderItem={renderOfferingItem}
             keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.flatListContent}
           />
         ) : (
           <FlatList
             data={offerings_2}
             renderItem={renderOfferingItem}
             keyExtractor={(item) => item.id}
+            contentContainerStyle={styles.flatListContent}
           />
         )}
         {/* Checkout Button */}
         <View style={styles.buttonContainer}>
-          <SetButton   onPress={() => navigation.navigate('OfferingPage')} btnText={'前往結帳'} btnStatus={'primary'} />
+          <SetButton onPress={() => navigation.navigate('OfferingPage')} btnText={'前往結帳'} btnStatus={'primary'} />
         </View>
 
       </View>
@@ -122,25 +125,11 @@ const HomePage1 = () => {
 };
 
 const styles = StyleSheet.create({
-  homePage1: {
-    flex: 1,
-    justifyContent: 'start',
-    alignItems: 'center',
-    backgroundColor: "white",
-  },
-  category: {
-    fontSize: 18,
-    color: "#6C6C6C",
-    fontWeight: "500",
-    paddingHorizontal: 15,
-    paddingVertical: 6,
-    marginLeft: width * 0.05,
-    
-  },
-  selectedCategory: {
-    color: "white",
-    backgroundColor: "#FFA042",
-    borderRadius: 15,
+  headerImage: {
+    height: height * 0.30,
+    opacity: 0.9,
+    width: width,
+    alignSelf: 'center',
   },
   infoContainer: {
     alignItems: "center",
@@ -148,24 +137,40 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   mainTitle: {
-    fontSize: FontSize.size_9xl,
-    fontWeight: "600",
-    color: 'black',
+    fontSize: 26,
+    fontWeight: "bold",
+    color: '#4F4F4F',
   },
   subTitle: {
-    fontSize: FontSize.size_lg,
-    color: Color.colorGray_200,
+    fontSize: 16,
+    color: "#9D9D9D",
     marginTop: 5,
   },
-  headerImage: {
-    height: height * 0.25,
-    opacity: 0.9,
-    width: width,
-    alignSelf: 'center',
+  category: {
+    fontSize: 18,
+    color: "#4F4F4F",
+    fontWeight: "500",
+    paddingHorizontal: 15,
+    paddingVertical: 6,
+    marginLeft: width * 0.05,
+  },
+  selectedCategory: {
+    color: "white",
+    backgroundColor: "#FFA042",
+    borderRadius: 15,
+  },
+  flatListContent: {
+    paddingVertical: 10,
+    justifyContent:'center',
+    alignItems: 'center',
+    paddingBottom:60,
   },
   buttonContainer: {
-    marginVertical: 5,
+    width: width,
+    justifyContent: "center",
     alignItems: 'center',
+    position: 'absolute',
+    bottom: 20,
   },
 });
 

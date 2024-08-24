@@ -2,50 +2,41 @@ const Stack = createNativeStackNavigator();
 import * as React from "react";
 import { NavigationContainer } from "@react-navigation/native";
 import { useFonts } from "expo-font";
+
 import Main from "./screens/Main";
-import UserPage from "./screens/UserPage";
-import HomePage from "./screens/HomePage";
-import AddressOverlay from "./components/AddressOverlay";
-import HomePage4 from "./screens/HomePage4";
-import LogoutOverlay from "./components/LogoutOverlay";
-import UserPage1 from "./screens/UserPage1";
-import OfferingPage from "./screens/OfferingPage";
-import UserPage2 from "./screens/UserPage2";
-import UserPage3 from "./screens/UserPage3";
-import HomePage5 from "./screens/HomePage5";
-import OfferingPage1 from "./screens/OfferingPage1";
-import OfferingPage2 from "./screens/OfferingPage2";
-import OfferingPage3 from "./screens/OfferingPage3";
-import OfferingPage4 from "./screens/OfferingPage4";
-import OfferingPage5 from "./screens/OfferingPage5";
-import UserPage31 from "./screens/UserPage31";
-import UserPage22 from "./screens/UserPage22";
-import UserPage4 from "./screens/UserPage4";
-import OfferingPage6 from "./screens/OfferingPage6";
-import HomePage1 from "./screens/HomePage1";
-import HomePage2 from "./screens/HomePage2";
-import HomePage3 from "./screens/HomePage3";
-import CartPage from "./screens/CartPage";
+import SignIn from "./screens/SignIn";
+import SignUp from "./screens/SignUp";
+
+import FoodScanningPage from "./screens/FoodScanningPage";
+import ScanResult from "./screens/ScanResult";
+import SubmissionResult from './screens/SubmissionResult.js';
+
 import TempleHomePage from "./screens/TempleHomePage";
 import TempleEventPage from "./screens/TempleEventPage";
 import EditTempleInfoPage from "./screens/EditTempleInfoPage";
 import MatchingPage from "./screens/MatchingPage";
-import FoodScanningPage from "./screens/FoodScanningPage";
-import SignUp from "./screens/SignUp";
 
+import UserPage from "./screens/UserPage";
+import UserPage1 from "./screens/UserPage1";
+import UserPage2 from "./screens/UserPage2";
+import UserPage3 from "./screens/UserPage3";
+import UserPage4 from "./screens/UserPage4";
+import HomePage from "./screens/HomePage";
+import HomePage1 from "./screens/HomePage1";
+import OfferingPage from "./screens/OfferingPage";
+import OfferingPage1 from "./screens/OfferingPage1";
+import OfferingPage2 from "./screens/OfferingPage2";
+import OfferingPage4 from "./screens/OfferingPage4";
+import OfferingPage5 from "./screens/OfferingPage5";
+import OfferingPage6 from "./screens/OfferingPage6";
+import CartPage from "./screens/CartPage";
 import ProductPage from "./screens/ProductPage";
-import ScanResult from "./screens/ScanResult";
-
-
-import SignIn from "./screens/SignIn";
+import AddressOverlay from "./components/AddressOverlay";
 import Charity from './screens/Charity';
 import Temple from './screens/Temple.js'; 
-import SubmissionResult from './screens/SubmissionResult.js'
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { View, Text, Pressable, TouchableOpacity ,StyleSheet} from "react-native";
 
-import { SafeAreaView } from 'react-native-safe-area-context'; 
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 // fit into every devices: https://docs.expo.dev/versions/latest/sdk/safe-area-context/
@@ -74,41 +65,46 @@ const App = () => {
 
           <Stack.Navigator screenOptions={{ headerShown: false }} initialRouteName="Main">
             
-
             <Stack.Screen
               name="Main"
               component={Main}
               options={{ headerShown: false }}
             />
             <Stack.Screen
+              name="SignUp"
+              component={SignUp}
+              options={{ headerShown: false }}
+            />
+
+            <Stack.Screen
+              name="SignIn"
+              component={SignIn}
+              options={{ headerShown: false }}
+            />
+
+            {/* Food Scanning */}
+            <Stack.Screen
               name="FoodScanningPage"
               component={FoodScanningPage}
               options={{ headerShown: false }}
             />
-
-
             <Stack.Screen
               name="ScanResult"
               component={ScanResult}
               options={{ headerShown: false }}
             />
-
-<Stack.Screen
+            <Stack.Screen
               name="SubmissionResult"
               component={SubmissionResult}
               options={{ headerShown: false }}
             />
 
-
+            {/* Temple */}
             <Stack.Screen
               name="TempleHomePage"
               component={TempleHomePage}
               options={{ headerShown: false }}
             />
-
-
-
-
             <Stack.Screen
               name="TempleEventPage"
               component={TempleEventPage}
@@ -124,39 +120,16 @@ const App = () => {
               component={MatchingPage}
               options={{ headerShown: false}}
             />
+
+            {/* User */}
             <Stack.Screen
               name="UserPage"
               component={UserPage}
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="HomePage"
-              component={HomePage}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="AddressOverlay"
-              component={AddressOverlay}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePage4"
-              component={HomePage4}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="LogoutOverlay"
-              component={LogoutOverlay}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
               name="UserPage1"
               component={UserPage1}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="OfferingPage"
-              component={OfferingPage}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -176,30 +149,20 @@ const App = () => {
             />
 
             <Stack.Screen
-              name="SignUp"
-              component={SignUp}
+              name="HomePage"
+              component={HomePage}
               options={{ headerShown: false }}
             />
-
+            
             <Stack.Screen
-              name="SignIn"
-              component={SignIn}
+              name="HomePage1"
+              component={HomePage1}
               options={{ headerShown: false }}
             />
-
+            
             <Stack.Screen
-              name="Charity"
-              component={Charity}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="Temple"
-              component={Temple}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePage5"
-              component={HomePage5}
+              name="OfferingPage"
+              component={OfferingPage}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -212,11 +175,7 @@ const App = () => {
               component={OfferingPage2}
               options={{ headerShown: false }}
             />
-            <Stack.Screen
-              name="OfferingPage3"
-              component={OfferingPage3}
-              options={{ headerShown: false }}
-            />
+
             <Stack.Screen
               name="OfferingPage4"
               component={OfferingPage4}
@@ -228,33 +187,8 @@ const App = () => {
               options={{ headerShown: false }}
             />
             <Stack.Screen
-              name="UserPage31"
-              component={UserPage31}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="UserPage22"
-              component={UserPage22}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
               name="OfferingPage6"
               component={OfferingPage6}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePage1"
-              component={HomePage1}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePage2"
-              component={HomePage2}
-              options={{ headerShown: false }}
-            />
-            <Stack.Screen
-              name="HomePage3"
-              component={HomePage3}
               options={{ headerShown: false }}
             />
             <Stack.Screen
@@ -267,6 +201,24 @@ const App = () => {
               component={ProductPage}
               options={{ headerShown: false }}
             />
+            <Stack.Screen
+              name="AddressOverlay"
+              component={AddressOverlay}
+              options={{ headerShown: false }}
+            />
+
+            {/* Test Page */}
+            <Stack.Screen
+              name="Charity"
+              component={Charity}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Temple"
+              component={Temple}
+              options={{ headerShown: false }}
+            />
+             
           </Stack.Navigator>
         ) : null}
       </NavigationContainer>
