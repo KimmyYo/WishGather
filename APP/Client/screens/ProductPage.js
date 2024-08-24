@@ -1,29 +1,19 @@
 import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TextInput, Pressable } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, TextInput, Pressable, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { Ionicons, AntDesign } from '@expo/vector-icons';  // Import Expo icon library
-import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
-import Counter from "../components/Counter";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
-const ProductPage = ({ route }) => {
+const ProductPage = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation();
-  const { imageSource, title, price, description } = route.params;
-  const [quantity, setQuantity] = useState(1);
+  const { imageSource, title, price, description, initialQuantity, onAddToCart } = route.params;
+  const [quantity, setQuantity] = useState(initialQuantity);
   const [remark, setRemark] = useState('');
 
-  const handleIncrease = () => setQuantity(quantity + 1);
-  const handleDecrease = () => {
-    if (quantity > 0) {
-      setQuantity(quantity - 1);
-    }
-  };
-
   const handleAddToCart = () => {
-    navigation.navigate('HomePage1', { selectedQuantity: quantity, itemTitle: title });
+    onAddToCart(title, quantity, remark); 
+    navigation.goBack();
   };
 
   return (
@@ -33,38 +23,45 @@ const ProductPage = ({ route }) => {
           justifyContent: 'flex-start',
           alignItems: 'flex-start',
           backgroundColor: "white",
-          paddingTop: insets.top,
+          paddingTop: insets.top - 50,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left,
           paddingRight: insets.right 
         }}>  
         
-        <Pressable style={styles.closeButton} onPress={() => navigation.navigate('HomePage1')}>
-          <AntDesign name="left" size={28} color="black" />
-        </Pressable>
-        
-        <Image style={styles.image} source={imageSource} />
-        
+        <View style={styles.imageContainer}>
+          <Image style={styles.image} source={imageSource} />
+        </View>
+
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>$ {price}</Text>
         {description && <Text style={styles.description}>備注 : {description}</Text>}
         
         <View style={styles.remarkContainer}>
-            <Text style={styles.remark}>特殊指示 : </Text>
+            <Text style={styles.remark}>備註 : </Text>
             <TextInput
               style={styles.remarkInput}
-              placeholder="請輸入指示..."
+              placeholder="請輸入備註..."
               value={remark}
               onChangeText={setRemark}
             />
         </View>
 
-        <View style={styles.counterContainer}>
-          <Counter quantity={quantity} onIncrease={handleIncrease} onDecrease={handleDecrease} />
+        {/* Counter */}
+        <View style={styles.quantityContainer}>
+          <Pressable onPress={() => setQuantity(quantity > 1 ? quantity - 1 : 0)} style={styles.quantityButton}>
+            <Text style={styles.quantityButtonText}>-</Text>
+          </Pressable>
+          <Text style={styles.quantityText}>{quantity}</Text>
+          <Pressable onPress={() => setQuantity(quantity + 1)} style={styles.quantityButton}>
+            <Text style={styles.quantityButtonText}>+</Text>
+          </Pressable>
         </View>
 
+        {/* Add To Cart Button */}
         <Pressable style={styles.addToCartButton} onPress={handleAddToCart}>
-          <Text style={styles.addToCartText}>新增至購物車</Text>
+          <MaterialCommunityIcons name="cart" size={24} color="white" />
+          <Text style={styles.addToCartButtonText}>加入購物車</Text>
         </Pressable>
       </View>
     </SafeAreaProvider>
@@ -72,55 +69,50 @@ const ProductPage = ({ route }) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    backgroundColor: Color.colorWhite,
+  imageContainer: {
+    width: width,
+    height: height * 0.4,
+    marginBottom: 20,
+    position: 'relative',
   },
   image: {
-    width: width,
-    height: height * 0.35,
+    width: '100%',
+    height: '100%',
     alignSelf: 'center',
-    marginBottom: 20,
-  },
-  closeButton: {
-    zIndex: 1,
-    borderRadius: 20,
-    width: 38,
-    height: 38,
-    padding: 5,
-    alignItems: 'center',
-    justifyContent: 'center',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
   },
   title: {
+    color:'#4F4F4F',
     fontSize: 24,
-    fontWeight: '600',
+    fontWeight: 'bold',
     marginLeft: 20,
-    marginTop: 20,
+    marginTop: 15,
   },
   price: {
     fontSize: 20,
     fontWeight: '500',
-    color: "gray",
+    color: "#4F4F4F",
     marginLeft: 20,
-    marginVertical: 5,
+    marginVertical: 10,
   },
   description: {
     fontSize: 18,
-    color: Color.colorGray_500,
+    color: '#9D9D9D',
     marginLeft: 20,
     marginVertical: 5,
   },
   remarkContainer: {
-    width: width * 0.9,
+    width: width,
     borderTopWidth: 1, 
-    borderColor: "#E0E0E0",
+    borderColor: "#ccc",
     marginTop: 20,
     alignSelf: 'center',
   },
   remark: {
+    color:'#4F4F4F',
     fontSize: 18,
-    fontWeight: '500',
+    fontWeight: 'bold',
     marginLeft: 20,
     marginVertical: 10,
   },
@@ -131,34 +123,49 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     paddingHorizontal: 10,
-    fontSize: FontSize.size_md,
-    fontFamily: FontFamily.interRegular,
     alignSelf: 'center',
     marginBottom: 10,
   },
-  counterContainer: {
-    width: width,
+  quantityContainer: {
+    flexDirection: 'row',
+    justifyContent:'center',
     alignItems: 'center',
-    borderTopWidth: 1, 
-    borderColor: "#E0E0E0",
-    marginTop: 20,
-    paddingTop: 10,
+    alignSelf:'center',
+    marginBottom: 20,
   },
-  addToCartButton: {
-    position: 'absolute',
-    bottom: 20,
-    left: width * 0.1,
-    width: width * 0.8,
-    height: 50,
-    backgroundColor: "#FFA500",
-    borderRadius: 25,
+  quantityButton: {
+    width: 40,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 20,
   },
-  addToCartText: {
+  quantityButtonText: {
+    fontSize: 26,
+    fontWeight:'bold',
+    color: 'orange', 
+  },
+  quantityText: {
+    fontSize: 22,
+    marginHorizontal: 20,
+    color: '#4F4F4F',
+  },
+  addToCartButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'orange', // Example color, change as needed
+    padding: 10,
+    borderRadius: 8,
+    alignSelf: 'center'
+  },
+  addToCartButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+    marginLeft: 10,
+  },
+  iconContainer: {
+    marginRight: 10,
   },
 });
 

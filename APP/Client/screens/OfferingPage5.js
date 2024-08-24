@@ -96,13 +96,13 @@ const OfferingPage5 = () => {
       </ScrollView>
 
       {/* OfferingPage專屬黑底返回鍵 */}
-      <Pressable style={styles.goBackButton} onPress={() => navigation.goBack()}>
+      {/* <Pressable style={styles.goBackButton} onPress={() => navigation.goBack()}>
         <Image
           style={styles.goBackIcon}
           contentFit="cover"
           source={require("../assets/go-back-button1.png")}
         />
-      </Pressable>
+      </Pressable> */}
 
       {/* 顯示該廟宇提供之供品類別其所有內容，連接資料庫處 : imageSource、標題、金額、敘述*/}
       <ScrollView 
@@ -184,7 +184,7 @@ const OfferingPage5 = () => {
       </ScrollView> */}
       
       {/* 前往結帳按鈕 */}
-      <Pressable
+      {/* <Pressable
         style={styles.goCheckoutButton}
         onPress={() => navigation.navigate("OfferingPage")}
       >
@@ -194,7 +194,7 @@ const OfferingPage5 = () => {
           source={require("../assets/rectangle-93.png")}
         />
         <Text style={styles.checkoutText}>前往結帳</Text>
-      </Pressable>
+      </Pressable> */}
       
       </View>
     </SafeAreaView>

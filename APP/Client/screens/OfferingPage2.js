@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Image } from "expo-image";
 import axios from 'axios';
-import { StyleSheet, Pressable, Text, View ,ScrollView } from "react-native";
+import { StyleSheet, Pressable, Text, View ,SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { FontSize, FontFamily, Color, Border } from "../GlobalStyles";
 import { Dimensions } from 'react-native';
@@ -73,14 +74,14 @@ const OfferingPage2 = () => {
           </View> */}
 
           {/* Home Button */}
-          <Pressable style={styles.confirmButton} onPress={() => navigation.navigate("HomePage")}>
+          {/* <Pressable style={styles.confirmButton} onPress={() => navigation.navigate("HomePage")}>
             <Image
               style={styles.confirmButtonBackground}
               contentFit="cover"
               source={require("../assets/rectangle-91.png")}
             />
             <Text style={styles.confirmButtonText}>回首頁</Text>
-          </Pressable>
+          </Pressable> */}
         </View>
       </SafeAreaView>
     </SafeAreaProvider>

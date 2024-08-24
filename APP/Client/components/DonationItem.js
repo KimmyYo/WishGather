@@ -5,7 +5,7 @@ import Checkbox from "expo-checkbox";
 import { Border, FontFamily, FontSize, Color } from "../GlobalStyles";
 import Counter from "./Counter";  // 引入 Counter 組件
 
-const DonationItem = ({ title, description, imageSource, tickSource }) => {
+const DonationItem = ({ title, description, imageSource}) => {
     const [quantity, setQuantity] = useState(0);
     const [isChecked, setChecked] = useState(false);
 
