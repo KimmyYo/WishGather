@@ -21,7 +21,7 @@ function MatchingStatus() {
     const insets = useSafeAreaInsets();
     const templeID = 1;
     const [matchData, setMatchData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     
     useEffect(() => {

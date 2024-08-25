@@ -30,15 +30,15 @@ function TempleHomePage() {
 			setEventData(eventResponse.data);
 
 			// // Fetch match data
-			// const matchResponse = await axios.get(`${API}/match/${1}`);
-			// setMatchData(matchResponse.data);
+			const matchResponse = await axios.get(`${API}/match/${1}`);
+			setMatchData(matchResponse.data);
 		} catch (err) {
 			setError(err); 
 		} 
 	};
 
     useEffect(() => {
-        fetchData();
+        // fetchData();
     }, []); // Add templeID as a dependency
   
 	// if (loading) return <Text>Loading...</Text>;
