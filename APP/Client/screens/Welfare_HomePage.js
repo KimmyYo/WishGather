@@ -8,9 +8,10 @@ const API = require('./DBconfig');
 export default function HomePage({ navigation }) {
 
   const { height } = Dimensions.get('window'); 
-  const [temples, setTemples] = useState([]);
-  const [error, setError] = useState(null); // for debugging
+  const [error, setError] = useState(null); 
 
+  //捐贈品運送的API
+  const [temples, setTemples] = useState([]);
   useEffect(() => {  
     axios.get(`${API}/temples`)
       .then(response => {
@@ -21,23 +22,43 @@ export default function HomePage({ navigation }) {
       });
   }, []);
 
-  const renderTempleItem = ({ item }) => (
-    <View style={styles.donateItemContainer}>
-      <Text style={styles.donateItemText}>Name: {item.NAME}</Text>
-      <Text style={styles.donateItemText}>Address: {item.ADDRESS}</Text>
+  const [anotherData, setAnotherData] = useState([]);
+  useEffect(() => {
+    axios.get(`${API}/anotherDataTable`) 
+      .then(response => {
+        setAnotherData(response.data);
+      })
+      .catch(error => {
+        setError(error);
+      });
+  }, []);
+
+
+  const transportItem = ({ item }) => (
+    <View style={styles.itemContainer}>
+      <Text style={styles.itemText}>Name: {item.NAME}</Text>
+      <Text style={styles.itemText}>Address: {item.ADDRESS}</Text>
     </View>
   );
 
+  const matchingItem = ({ item }) => (
+    <View style={styles.anotherItemContainer}>
+      <Text style={styles.anotherItemText}>Field1: {item.FIELD1}</Text>
+      <Text style={styles.anotherItemText}>Field2: {item.FIELD2}</Text>
+    </View>
+  );
+  
   return (
+
     <View style={styles.container}>
+      
       <TouchableOpacity onPress={() => navigation.navigate('Transport')}>
         <Text style={[styles.text, { top: height * 0.1 }]}>捐贈運送</Text>
       </TouchableOpacity>
-
       <View style={styles.donateListContainer}>
         <FlatList
           data={temples}
-          renderItem={renderTempleItem}
+          renderItem={transportItem}
           keyExtractor={(item, index) => index.toString()}
         />
       </View>
@@ -45,8 +66,16 @@ export default function HomePage({ navigation }) {
       <TouchableOpacity onPress={() => navigation.navigate('Matching')}>
         <Text style={[styles.text, { top: height * 0.51 }]}>媒合確認</Text>
       </TouchableOpacity>
+      <View>
+        <FlatList
+          data={anotherData}
+          renderItem={matchingItem}
+          keyExtractor={(item, index) => index.toString()}
+        />
+      </View>
 
       {error && <Text style={styles.errorText}>{error.message}</Text>}
+
     </View>
   );
 }
@@ -68,7 +97,7 @@ const styles = StyleSheet.create({
     left: '9%',
     width: '85%',
   },
-  donateItemContainer: {
+  itemContainer: {
     height: 85,
     backgroundColor: 'white',
     padding: 10,
@@ -77,7 +106,7 @@ const styles = StyleSheet.create({
     borderColor: '#cccccc',
     borderWidth: 1,
   },
-  donateItemText: {
+  itemText: {
     fontSize: 16,
     color: 'black',
   },
@@ -85,5 +114,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'red',
     textAlign: 'center',
+    top:'20%',
   },
 });
