@@ -27,7 +27,9 @@ const ConfirmModal = ({ isVisible, onCancel, onConfirm, orderDetails }) => {
         <Text style={styles.confirmationReminder}>
             // 若送出訂單，請勿取消訂單{'\n'}
             // 請於預定領取時間至服務台領取{'\n'}
-            // 現場付款請備妥剛好現金
+            // 現場付款請備妥剛好現金{'\n'}
+            // 請於備註提供匯款帳號後五碼，感謝配合
+
         </Text>
 
         <View style={styles.confirmationButtons}>

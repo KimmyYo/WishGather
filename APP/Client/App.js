@@ -32,6 +32,12 @@ import OfferingPage6 from "./screens/OfferingPage6";
 import CartPage from "./screens/CartPage";
 import ProductPage from "./screens/ProductPage";
 import AddressOverlay from "./components/AddressOverlay";
+
+import Welfare_HomePage from './screens/Welfare_HomePage.js';
+import Welfare_MatchingPage from './screens/Welfare_MatchingPage.js';
+import Welfare_TransportPage from './screens/Welfare_TransportPage.js';
+import Welfare_UserPage from './screens/Welfare_UserPage.js';
+
 import Charity from './screens/Charity';
 import Temple from './screens/Temple.js'; 
 
@@ -204,6 +210,27 @@ const App = () => {
             <Stack.Screen
               name="AddressOverlay"
               component={AddressOverlay}
+              options={{ headerShown: false }}
+            />
+            {/* Welfare */}
+            <Stack.Screen
+              name="Welfare_HomePage"
+              component={Welfare_HomePage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Welfare_MatchingPage"
+              component={Welfare_MatchingPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Welfare_TransportPage"
+              component={Welfare_TransportPage}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Welfare_UserPage"
+              component={Welfare_UserPage}
               options={{ headerShown: false }}
             />
 

@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef } from 'react';
 import { Text, View, StyleSheet, FlatList, Dimensions} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
 
 
@@ -59,8 +59,9 @@ function TempleHomePage() {
           paddingLeft: insets.left + 30,
           paddingRight: insets.right + 30 
         }}>
-			<View style={{width: width*0.95, justifyContent:'center', alignSelf:'center', marginLeft: 10 ,marginBottom: 35}}>
-				<Text style={{fontSize:28, fontWeight:'bold', color:'#4F4F4F'}}>歡迎回來 ! 高雄文武聖殿</Text>
+			<View style={{width: width*0.95, flexDirection: 'row',justifyContent:'flex-start', alignSelf:'center' ,marginBottom: 35}}>
+				<MaterialCommunityIcons name="home-heart" size={30} color="orange" style={{marginRight: 8}} />
+				<Text style={{fontSize:24, fontWeight:'bold', color:'#4F4F4F'}}>歡迎回來 ! 高雄文武聖殿</Text>
 			</View>
 
 			<View style={styles.infoContainer}>
@@ -92,27 +93,16 @@ function TempleHomePage() {
 
 const styles = StyleSheet.create({
 	infoContainer:{
-		width: width*0.95,
-		// height: 200,
-		backgroundColor:"#F0F0F0",
+		width: width * 0.95,
+		backgroundColor:"white",
 		justifyContent:'center',
 		alignSelf:'center',
-		// borderWidth:1,
-		borderRadius:20,
+
 		paddingHorizontal: 10,
-		paddingVertical: 20,
+		paddingVertical: 15,
 		marginBottom: 40,
-
-		// Shadow properties
-		shadowColor: "#000", // Shadow color
-		shadowOffset: {
-			width: 0, // Horizontal shadow offset
-			height: 4, // Vertical shadow offset
-		},
-		shadowOpacity: 0.3, // Shadow opacity (0 to 1)
-		shadowRadius: 5, // Shadow blur radius
-		elevation: 5, // Elevation for Android shadow
-
+		borderTopWidth: 1,
+		borderColor: '#ccc',	
 	},
 	scrollView: {
 		paddingLeft: 16,

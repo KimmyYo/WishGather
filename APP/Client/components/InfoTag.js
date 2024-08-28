@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
     labelContainer: {
     },
     label:{
-        color: "#FF5A00",
+        color: "orange",
         fontWeight: "bold"
     },
     value: {

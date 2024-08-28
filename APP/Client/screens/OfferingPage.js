@@ -3,45 +3,48 @@ import { StyleSheet, View, Text, Pressable, ScrollView, Image, Dimensions, TextI
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import DateTimePicker from 'react-native-ui-datepicker';
 import { Picker } from '@react-native-picker/picker';
-import ConfirmItem from '../components/ConfirmItem';
-import ConfirmModal from '../components/ConfirmModal'; // Import ConfirmModal
-import SetButton from '../components/SetButton';
-import OrderInfo from '../components/OrderInfo';
 import Modal from 'react-native-modal';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+import GoBackButton1 from '../components/GoBackButton1';
+import ConfirmItem from '../components/ConfirmItem';
+import DonationItem from '../components/DonationItem';
+import OrderInfo from '../components/OrderInfo';
+import DatePickerModal from '../components/DatePickerModal';
+import TimePickerModal from '../components/TimePickerModal';
+import PaymentMethodModal from '../components/PaymentMethodModal';
+import ConfirmModal from '../components/ConfirmModal'; 
+import SetButton from '../components/SetButton';
 
 
-const { width, height } = Dimensions.get('window');
+const { width} = Dimensions.get('window');
 
 const OfferingPage = () => {
   const navigation = useNavigation();
+  const route = useRoute();
   const insets = useSafeAreaInsets();
 
-  const chosenItems = [
-    { id: '1', imageSource: require('../assets/rectangle-46.png'), title: '開運吊飾', price: '120' },
-    { id: '2', imageSource: require('../assets/rectangle-43.png'), title: '光明燈', price: '800' },
-    // Add more items as needed
-  ];
+  const { items = [] } = route.params || {};
+
+  const calculateTotalPrice = () => {
+    return items.reduce((total, item) => total + (item.price * item.quantity), 0);
+  };
 
   const [note, setNote] = useState('');
+
   const [pickupDate, setPickupDate] = useState(new Date());
-  const [pickupTime, setPickupTime] = useState({ hour: '06', minute: '00' }); 
   const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+
+  const [pickupTime, setPickupTime] = useState({ hour: '06', minute: '00' }); 
   const [isTimePickerVisible, setTimePickerVisible] = useState(false); 
+
   const [paymentMethod, setPaymentMethod] = useState('現場付款');
   const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
   const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
 
-  {/* Function - Show Date Picker */}
-  const handleDateChange = (date) => {
-    setPickupDate(date);
-    setDatePickerVisible(false);
-  };
-  {/* Function - Show Time Picker */}
-  const handleTimeChange = (hour, minute) => {
-    setPickupTime({ hour, minute });
-    setTimePickerVisible(false);
-  };
+  const handleDateChange = (selectedDate) => { setPickupDate(selectedDate); };
+
+
  {/* Function - Payment Method */}
   const handlePaymentMethodChange = (method) => {
     setPaymentMethod(method);
@@ -75,98 +78,27 @@ const OfferingPage = () => {
         iconType="Entypo" 
         title="領取日期" 
         value={pickupDate.toISOString().split('T')[0]} 
-        onPress={() => setDatePickerVisible(true)} // Show date picker on press
+        onPress={() => setDatePickerVisible(true)} 
       />
       <OrderInfo
         iconName="clock" 
         iconType="Entypo" 
         title="領取時間" 
         value={`${pickupTime.hour}:${pickupTime.minute}`} 
-        onPress={() => setTimePickerVisible(true)} // Show time picker on press
+        onPress={() => setTimePickerVisible(true)} 
       />
       <OrderInfo
         iconName="payment" 
         iconType="MaterialIcons" 
         title="付款方式" 
         value={paymentMethod} 
-        onPress={() => setPaymentModalVisible(true)} // Show payment modal on press
+        onPress={() => setPaymentModalVisible(true)} 
       />
       {paymentMethod === '線上轉帳付款' && (
         <View style={styles.paymentAccountContainer}>
           <Text style={styles.paymentAccountText}>宮廟匯款帳號 : 72668349{"\n"}請於送出訂單後12小時之內匯款</Text>
         </View>
       )}
-      
-      {/* Date Picker Modal */}
-      <Modal
-        isVisible={isDatePickerVisible}
-        backdropColor={"#d0d0d0"}
-        onBackdropPress={() => setDatePickerVisible(false)}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <DateTimePicker
-            mode="single"
-            date={pickupDate}
-            onChange={params => handleDateChange(params.date)}
-            selectedItemColor={"#F6AB3A"}
-            headerButtonColor="#F6AB3A"
-          />
-        </View>
-      </Modal>
-
-      {/* Time Picker Modal */}
-      <Modal
-        isVisible={isTimePickerVisible}
-        backdropColor={"#d0d0d0"}
-        onBackdropPress={() => setTimePickerVisible(false)}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>選擇時間</Text>
-          <View style={styles.timePickerContainer}>
-            <Picker
-              selectedValue={pickupTime.hour}
-              style={styles.picker}
-              onValueChange={(itemValue) => setPickupTime(prevState => ({ ...prevState, hour: itemValue }))}
-            >
-              {Array.from({ length: 24 }, (_, i) => (
-                <Picker.Item key={i} label={`${i < 10 ? `0${i}` : i}`} value={`${i < 10 ? `0${i}` : i}`} />
-              ))}
-            </Picker>
-            <Picker
-              selectedValue={pickupTime.minute}
-              style={styles.picker}
-              onValueChange={(itemValue) => setPickupTime(prevState => ({ ...prevState, minute: itemValue }))}
-            >
-              {['00', '10', '20', '30', '40', '50'].map(minute => (
-                <Picker.Item key={minute} label={minute} value={minute} />
-              ))}
-            </Picker>
-          </View>
-          <Pressable style={styles.modalButton} onPress={() => handleTimeChange(pickupTime.hour, pickupTime.minute)}>
-            <Text style={styles.modalButtonText}>完成</Text>
-          </Pressable>
-        </View>
-      </Modal>
-
-      {/* Payment Method Modal */}
-      <Modal
-        isVisible={isPaymentModalVisible}
-        backdropColor={"#d0d0d0"}
-        onBackdropPress={() => setPaymentModalVisible(false)}
-        style={styles.modal}
-      >
-        <View style={styles.modalContent}>
-          <Text style={styles.modalTitle}>付款方式</Text>
-          <Pressable style={styles.modalOption} onPress={() => handlePaymentMethodChange('現場付款')}>
-            <Text style={styles.modalOptionText}>現場付款</Text>
-          </Pressable>
-          <Pressable style={styles.modalOption} onPress={() => handlePaymentMethodChange('線上轉帳付款')}>
-            <Text style={styles.modalOptionText}>線上轉帳付款</Text>
-          </Pressable>
-        </View>
-      </Modal>
     </View>
   );
 
@@ -188,32 +120,39 @@ const OfferingPage = () => {
         paddingRight: insets.right 
       }}>
 
-        {/* Go back Button */}
-        <Pressable onPress={() => navigation.navigate('HomePage1')} style={styles.backButton}>
-          <Image
-            style={styles.goBackIcon}
-            contentFit="cover"
-            source={require("../assets/left-chevron.png")}
-          />
-        </Pressable>
+        <GoBackButton1 destination="HomePage1" />
 
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {/* Title */}
           <View style={styles.titleContainer}>
             <Text style={styles.pageTitle}>訂單明細</Text>
           </View>
+
           {/* Item */}
-          <View style={styles.itemsContainer}>
-            {chosenItems.map((item) => (
-              <ConfirmItem key={item.id} imageSource={item.imageSource} title={item.title} price={item.price} />
-            ))}
-          </View>
+
+          
+          {items.map((item, index) => (
+            <View style={styles.itemsContainer}>
+              <ConfirmItem key={item.id} quantity={item.quantity} title={item.title} price={item.price} />
+            </View>
+          ))}
           
           {/* Total */}
           <View style={{width:width*0.95, paddingHorizontal:10, paddingTop: 15,justifyContent:"center", alignItems:"flex-end"}}>
-            <Text style={{fontSize:18, fontWeight:"bold", color:"#4F4F4F"}}>總計 : $920</Text>
+            <Text style={{fontSize:18, fontWeight:"bold", color:"#4f4f4f"}}>總計 :  <Text style={{color:"orange"}}>${calculateTotalPrice()}</Text>  元</Text>
           </View>
           
+          {/* Donation Choose*/}
+          <View style={styles.titleContainer}>
+            <Text style={styles.pageTitle}>捐贈選擇</Text>
+          </View>
+
+          {items.map((item, index) => (
+            <View style={styles.itemsContainer}>
+              <DonationItem key={item.id} quantity={item.quantity} title={item.title} price={item.price} />
+            </View>
+          ))}
+
           {/* Note */}
           <View style={styles.titleContainer}>
             <Text style={styles.pageTitle}>新增備注</Text>
@@ -235,11 +174,7 @@ const OfferingPage = () => {
         
         {/* Confirm Button */}
         <View style={styles.buttonContainer}>
-          <SetButton 
-            btnText={'送出訂單'} 
-            btnStatus={'primary'} 
-            onPress={handleOrderSubmit}
-          />
+          <SetButton btnText={'送出訂單'} btnStatus={'primary'} onPress={handleOrderSubmit}/>
         </View>
 
         {/* Confirmation Modal */}
@@ -250,7 +185,30 @@ const OfferingPage = () => {
             orderDetails={orderDetails}
             animationType="fade" transparent
         />
+        {/* Date Picker Modal */}
+        <DatePickerModal
+          isVisible={isDatePickerVisible}
+          onClose={() => setDatePickerVisible(false)}
+          date={pickupDate}
+          onChange={handleDateChange}
+        />
 
+        {/* Time Picker Modal */}
+        <TimePickerModal
+          isVisible={isTimePickerVisible}
+          initialTime={pickupTime}
+          onClose={() => setTimePickerVisible(false)}
+          onConfirm={(hour, minute) => {
+            setPickupTime({ hour, minute });
+            setTimePickerVisible(false);
+          }}
+        />
+        {/* Payment Method Modal*/}
+        <PaymentMethodModal
+          isVisible={isPaymentModalVisible}
+          onClose={() => setPaymentModalVisible(false)}
+          onMethodSelect={handlePaymentMethodChange}
+        />
       </View>
     </SafeAreaProvider>
   );
@@ -279,6 +237,7 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
     alignItems: 'center',
+    paddingBottom: 80,
   },
   itemsContainer: {
     width: width*0.95,
@@ -324,89 +283,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     position: 'absolute',
     bottom: 20,
-  },
-  modal: {
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  modalContent: {
-    backgroundColor: "white",
-    borderRadius: 15,
-    padding: 20,
-    alignItems: "center",
-    width: width * 0.8,
-  },
-  modalTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  timePickerContainer: {
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  picker: {
-    height: 150,
-    width: 100,
-  },
-  modalButton: {
-    marginTop: 20,
-    backgroundColor: "#FFA042",
-    padding: 10,
-    borderRadius: 10,
-    width: "100%",
-    alignItems: "center",
-  },
-  modalButtonText: {
-    color: "white",
-    fontWeight: "bold",
-  },
-  modalOption: {
-    marginVertical: 10,
-    padding: 10,
-    width: "80%",
-    alignItems: "center",
-    backgroundColor:"#FFA042",
-    borderRadius:20,
-  },
-  modalOptionText: {
-    fontSize: 16,
-    fontWeight:"bold",
-    color: "white",
-  },
-  confirmationDetails: {
-    alignItems: 'flex-start',
-    marginBottom: 20,
-  },
-  confirmationText: {
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 5,
-  },
-  confirmationReminder: {
-    fontSize: 14,
-    color: '#555',
-    textAlign: 'center',
-    marginBottom: 20,
-  },
-  confirmationButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  confirmButton: {
-    flex: 1,
-    alignItems: 'center',
-    paddingVertical: 10,
-    marginHorizontal: 5,
-    borderRadius: 5,
-    backgroundColor: '#007AFF',
-  },
-  confirmButtonText: {
-    fontSize: 16,
-    color: 'white',
-    fontWeight: 'bold',
   },
 });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const MatchingPage = () => {
+const Welfare_MatchingPage = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>This is the Matching Screen</Text>
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MatchingPage;
+export default Welfare_MatchingPage;

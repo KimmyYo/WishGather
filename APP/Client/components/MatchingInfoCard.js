@@ -1,107 +1,109 @@
-import { React, useState } from 'react'
-import { View, Text, Button, TouchableOpacity, Dimensions, Image, StyleSheet, Pressable, SafeAreaView } from 'react-native'
-import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import React from 'react';
+import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 
-function MatchingInfoCard({infos}){
-    const { matchingStatus } = infos.MATCHING_STATUS;
-    let statusText;
-    switch (matchingStatus) {
+function MatchingInfoCard({ infos }) {
+    const { MATCHING_STATUS } = infos;
+
+    let statusTextStyle;
+    switch (MATCHING_STATUS) {
         case "A": 
-            statusText = styles.waitStatus;
+            statusTextStyle = styles.waitStatus;
             break;
         case "B":
-            statusText = styles.confirmedStatus;
+            statusTextStyle = styles.confirmedStatus;
             break;
-        default :
-            statusText = styles.defaultStatus;
+        default:
+            statusTextStyle = styles.defaultStatus;
     }
-    // get welfare icon from database using instituition name 
+
     return (
         <View style={styles.cardContainer}>
             <View style={styles.logoContainer}>
                 <Image style={styles.image} source={require("../assets/welfare-sample.png")}/>
             </View>
+
             <View style={styles.bottomContainer}>
                 <View style={styles.infoContainer}>
                     <Text style={styles.title}>{ infos.NAME }</Text>
-                    <Text style={statusText}>{ infos.MATCHING_STATUS }</Text>
+                    <Text style={styles.defaultStatus}>媒合狀態 : <Text style={statusTextStyle}>{ MATCHING_STATUS }</Text></Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.button}>
-                        <Text style={styles.btnText}>內容</Text>
+                        <Text style={styles.btnText}>查看內容</Text>
                     </TouchableOpacity>
                 </View>
             </View>            
         </View>
-    )
+    );
 }
 
-let screenHeight = Dimensions.get("window").height;
-let screenWidth = Dimensions.get("window").width;
+const screenWidth = Dimensions.get("window").width;
+
 const styles = StyleSheet.create({
-    cardContainer:{
-        width: screenWidth * 0.8,
-        height: screenWidth * 0.6,
-       
-        flex: 1,
+    cardContainer: {
+        width: screenWidth * 0.9,
+        height: 220,
         flexDirection: "column",
         justifyContent: "space-around",
         alignItems: "center",
-        gap: 40,
-
         backgroundColor: "white",
-        borderWidth: "1px",
+        borderWidth: 1,
         borderColor: "#ccc",
-        borderRadius: 10,
-        marginVertical: 10,
-        paddingHorizontal: 10,
+        borderRadius: 15,
+        marginVertical: 8,
+        paddingHorizontal: 5,
         paddingVertical: 35,
-        peddingTop: 10
-        
+    },
+    logoContainer:{
+        marginBottom: 10,
+        padding: 5,
+    },
+    image: {
+        width: 90,
+        height: 90,
     },
     bottomContainer: {
         width: "90%",
-        flex: 1,
         flexDirection: "row",
         justifyContent: "space-between",
-        alignItems: "center"
+        alignItems: "center",
+        padding: 5,
+        marginTop: 10,
     },
-    infoContainer:{
+    
+    infoContainer: {
         gap: 8,
     },
-    image:{
-        width: 85,
-        height: 85,
-    },
-    title:{
+    
+    title: {
+        color: "#4F4F4F",
         fontSize: 20,
         fontWeight: "bold"
     },
-    button:{
+    button: {
         paddingHorizontal: 17,
         paddingVertical: 10,
-        backgroundColor: "#F6AB3A",
+        backgroundColor: "orange",
         borderRadius: 8
     },
     btnText: {
+        color: 'white',
         fontSize: 16,
         fontWeight: "bold",
     },
-    waitStatus:{
+    waitStatus: {
         fontSize: 16,
-        color: "#F6AB3A",
+        color: "red",
         fontWeight: "bold"
     },
     confirmedStatus: {
-        color: "#0b961b",
+        color: "green",
         fontWeight: "bold"
     },
     defaultStatus: {
         color: "#ccc",
         fontWeight: "bold"
     }
-})
-
+});
 
 export default MatchingInfoCard;

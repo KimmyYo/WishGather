@@ -1,94 +1,94 @@
-import React from "react";
-import { useState } from "react";
-import { StyleSheet, View, Text, Image } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, Text, Pressable, Dimensions } from "react-native";
 import Checkbox from "expo-checkbox";
-import { Border, FontFamily, FontSize, Color } from "../GlobalStyles";
-import Counter from "./Counter";  // 引入 Counter 組件
 
-const DonationItem = ({ title, description, imageSource}) => {
+const { width } = Dimensions.get('window');
+
+const DonationItem = ({ title, description, imageSource }) => {
     const [quantity, setQuantity] = useState(0);
     const [isChecked, setChecked] = useState(false);
 
     const handleIncrease = () => setQuantity(quantity + 1);
     const handleDecrease = () => {
         if (quantity > 0) {
-        setQuantity(quantity - 1);
+            setQuantity(quantity - 1);
         }
     };
-  return (
-    <View style={styles.container}>
-      <View style={styles.itemContainer}>
 
-        {/*Donate yes/no */}
-        <View>
-            <Checkbox
-              style={{width:22, height:22, margin: 8}}
-              value={isChecked} 
-              onValueChange={setChecked}
-              color={isChecked ? '#FFA500' : undefined}
-            />
+    return (
+        <View style={styles.container}>
+            <View style={styles.infoContainer}>
+                {/* Donate yes/no */}
+                <Checkbox
+                    style={{ width: 22, height: 22, margin: 8 }}
+                    value={isChecked}
+                    onValueChange={setChecked}
+                    color={isChecked ? '#FFA500' : undefined}
+                />
+                
+                <Text style={styles.title}>{title}</Text>
+
+                {/* Counter */}
+                <View style={styles.quantityContainer}>
+                    <Pressable onPress={handleDecrease} style={styles.quantityButton}>
+                        <Text style={styles.quantityButtonText}>-</Text>
+                    </Pressable>
+                    <Text style={styles.quantityText}>{quantity}</Text>
+                    <Pressable onPress={handleIncrease} style={styles.quantityButton}>
+                        <Text style={styles.quantityButtonText}>+</Text>
+                    </Pressable>
+                </View>
+
+            </View>
         </View>
-        
-        {/*Item Image */}
-        <Image style={styles.image} source={imageSource} />
-
-        {/*Item Name */}
-        <View style={{flexDirection:"column", marginLeft: 15}}>
-          <Text style={styles.text}>
-            <Text style={styles.title}>{title}{"\n"}</Text>
-            <Text style={styles.description}>備註 : {description}</Text>
-          </Text>
-
-          {/* Counter */}
-          <View style={{flexDirection:"row", alignItems:"baseline"}}>
-            <Text style={{fontWeight:"500"}}>捐贈數量 : </Text>
-            <Counter quantity={quantity} onIncrease={handleIncrease} onDecrease={handleDecrease} />
-          </View>
-        </View>
-
-      </View>
-    </View>
-  );
+    );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    width: "100%",
-    height: 140,
-    backgroundColor: Color.colorWhite,
-    borderBottomWidth: 1,
-    borderColor: Color.colorWhitesmoke_300,
-    justifyContent: "center",
-    marginVertical: 5,
-  },
-  itemContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 10,
-  },
-  image: {
-    height: 100,
-    width: 100,
-    borderRadius:10
-  },
-  text: {
-    flex: 1,
-    lineHeight:30,
-    color: Color.colorBlack,
-    textAlign: "left",
-  },
-  title: {
-    fontSize: FontSize.size_6xl,
-    fontWeight:"500",
-  },
-  description: {
-    fontSize: FontSize.size_mini,
-  },
-  tick: {
-    width: 40,
-    height: 40,
-    marginLeft: 10,
-  },
+    container: {
+        width: width * 0.9,
+        height: 60,
+        flexDirection: 'row',
+        justifyContent: "center",
+        paddingVertical: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#E0E0E0',
+    },
+    infoContainer: {
+        flex: 1,
+        marginLeft: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: "#4F4F4F",
+    },
+    quantityContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        alignSelf: 'center',
+    },
+    quantityButton: {
+        width: 30, 
+        height: 30, 
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 15, 
+    },
+    quantityButtonText: {
+        fontSize: 22, 
+        fontWeight: 'bold',
+        color: 'orange',
+    },
+    quantityText: {
+        fontSize: 18, 
+        marginHorizontal: 15,
+        color: '#4F4F4F',
+    },
 });
 
 export default DonationItem;

@@ -2,12 +2,11 @@ import React, { useState, useCallback } from "react";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TextInput, Pressable, Modal, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Image } from "expo-image";
-import AddressOverlay from "../components/AddressOverlay";
-import TempleDistance from "../components/TempleDistance";
-
 import { useNavigation } from "@react-navigation/native";
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-
+import TempleDistance from "../components/TempleDistance";
+import AddressOverlay from "../components/AddressOverlay";
 
 const { width } = Dimensions.get('window');
 
@@ -65,13 +64,13 @@ const HomePage = () => {
         {/* Location */}
         <View style={styles.locationContainer}>
           
-          <View style={{marginRight:10}}>
-            <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
-              <Image style={styles.icon} contentFit="cover" source={require("../assets/location.png")} />
-            </Pressable>
-          </View>
+        <View style={{ marginRight: 10 }}>
+          <Pressable style={styles.locationIcon} onPress={openLocationIcon}>
+            <MaterialCommunityIcons name="map-marker" size={26} color="orange" />
+          </Pressable>
+        </View>
 
-          <View>
+        <View>
             <Pressable style={styles.pressable} onPress={openText1}>
               <Text style={styles.locationText}>當前位置: {currentAddress}  </Text>
             </Pressable>

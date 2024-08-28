@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Pressable, Image, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Pressable, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
 import { FontFamily, Border, FontSize, Color } from '../GlobalStyles';
 
@@ -24,9 +24,9 @@ const CartItem = ({ onPress, imageSource, orderTitle, orderDetails, onDelete }) 
           <View style={styles.textContainer}>
             <Text style={styles.title}>{orderTitle}</Text>
             <Text style={styles.description}>{orderDetails}</Text>
-            <Pressable onPress={onPress} style={styles.viewOrderButton}>
+            <TouchableOpacity onPress={onPress} style={styles.viewOrderButton}>
               <Text style={styles.viewOrderText}>編輯</Text>
-            </Pressable>
+            </TouchableOpacity>
           </View>
 
         </View>

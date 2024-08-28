@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const TransportPage = () => {
+const Welfare_TransportPage = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>This is the Transport Screen</Text>
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default TransportPage;
+export default Welfare_TransportPage;

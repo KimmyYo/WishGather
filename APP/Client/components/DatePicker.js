@@ -84,6 +84,8 @@ const styles = StyleSheet.create({
       
         },
         label: {
+          color:"#4F4F4F",
+          fontWeight:'bold',
           fontSize: 20
         },
         labelContainer: {

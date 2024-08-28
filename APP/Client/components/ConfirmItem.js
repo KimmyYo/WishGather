@@ -1,23 +1,19 @@
 import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, Pressable, Dimensions } from 'react-native';
-import { Color, FontFamily, FontSize, Border } from '../GlobalStyles';
-import Counter from '../components/Counter';
+
 
 const { width } = Dimensions.get('window');
 
-const ConfirmItem = ({ imageSource, title, price }) => {
-  const [quantity, setQuantity] = useState(1);
-
-  const incrementQuantity = () => setQuantity(prev => prev + 1);
-  const decrementQuantity = () => setQuantity(prev => (prev > 1 ? prev - 1 : 1));
+const ConfirmItem = ({ title, price, quantity}) => {
 
   return (
     <View style={styles.container}>
 
-      <Counter quantity={quantity} onIncrease={incrementQuantity} onDecrease={decrementQuantity} />
+      {/* <Counter quantity={quantity} onIncrease={incrementQuantity} onDecrease={decrementQuantity} /> */}
 
       <View style={styles.infoContainer}>
         <View style={styles.titleContainer}>
+          <Text style={styles.quantity}>{quantity}</Text>  
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.price}>${price}</Text>
         </View>
@@ -36,11 +32,6 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#E0E0E0',
   },
-  image: {
-    width: 50,
-    height: 50,
-    borderRadius: 5,
-  },
   infoContainer: {
     flex: 1,
     marginLeft: 5,
@@ -49,8 +40,13 @@ const styles = StyleSheet.create({
   titleContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-
     paddingVertical: 8
+  },
+  quantity:{
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: "#4F4F4F",
+    
   },
   title: {
     fontSize: 18,
@@ -60,7 +56,7 @@ const styles = StyleSheet.create({
   price: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: "#4F4F4F",
+    color: "orange",
   },
 });
 
