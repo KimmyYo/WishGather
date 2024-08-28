@@ -68,14 +68,14 @@ const styles = StyleSheet.create({
         justifyContent: "space-around",
         alignItems: "center",
         gap: 30,
-        width: screenWidth * 0.8,
+        width: screenWidth * 0.9,
         height: "auto",
         paddingVertical: 30,
         paddingHorizontal: 18
 
     },
     upperContainer: {
-        width: "100%",
+        width: "90%",
         flex: 1,
         flexDirection: "row",
         justifyContent: "flex-start",
@@ -87,11 +87,13 @@ const styles = StyleSheet.create({
         height: 60,
     },
     instituteName: {
+        color: "#4F4F4F",
         fontSize: 22,
         fontWeight: "bold",
         marginBottom: 8
     },
     instituteAddress: {
+        color: "#9D9D9D",
         fontSize: 15,
     },
     charaContainer: {

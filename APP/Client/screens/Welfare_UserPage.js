@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-const UserPage = () => {
+const Welfare_UserPage = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>This is the User Screen</Text>
@@ -21,4 +21,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserPage;
+export default Welfare_UserPage;

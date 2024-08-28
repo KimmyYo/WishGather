@@ -8,38 +8,31 @@ import OfferingItem from "../components/OfferingItem";
 import CloseButton from "../components/CloseButton";
 import SetButton from '../components/SetButton';
 
-
 const { width, height } = Dimensions.get('window');
 
 const HomePage1 = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
-
-  // Offering categories
+  
   const categories = ["點燈", "文創商品"];
-
-  // State for selected offerings and category
   const [selectedOfferings, setSelectedOfferings] = useState([]);
+  const [chosenItems, setChosenItems] = useState([]); // State to store selected items with quantity
   const [selectedCategory, setSelectedCategory] = useState(categories[0]);
-
-  // State to track quantity for each offering
   const [quantities, setQuantities] = useState({});
 
-  // Handler for selecting an offering
-  const handleSelectOffering = (offering) => {
-    setSelectedOfferings((prevOfferings) => [...prevOfferings, offering]);
-  };
-
-  // Handler for adding item to cart with a specific quantity
-  const handleAddToCart = (title, quantity) => {
+  const handleAddToCart = (title, quantity, price, id) => {
     setQuantities((prevQuantities) => ({
       ...prevQuantities,
-      [title]: quantity,
+      [title]: { quantity, price },
     }));
+
     Alert.alert('新增成功', `${title} 已新增至購物車`);
+    
+    console.log('title:', title);
+    console.log('Updated quantities:', quantity); // Check the quantities
+    console.log('Chosen Items:', chosenItems); // Check the chosen items
   };
 
-  // Offerings data
   const offerings_1 = [
     { id: '1', imageSource: require("../assets/rectangle-4.png"), title: "祈福燈", price: "800", description: "請於備註填寫祈福對象資訊" },
     { id: '2', imageSource: require("../assets/rectangle-43.png"), title: "光明燈", price: "1000", description: "請於備註填寫祈福對象資訊" },
@@ -60,11 +53,24 @@ const HomePage1 = () => {
         title={item.title}
         price={item.price}
         description={item.description}
-        quantity={quantities[item.title] || 0}
-        onSelect={() => handleSelectOffering(item)}
-        onAddToCart={handleAddToCart}
+        quantity={quantities[item.title]?.quantity || 0}
+        onAddToCart={(title, quantity) => handleAddToCart(title, quantity, item.price, item.id)}
       />
     );
+  };
+
+  const handleCheckout = () => {
+    const items = Object.keys(quantities)
+      .filter(title => quantities[title].quantity > 0)
+      .map(title => ({
+        title,
+        quantity: quantities[title].quantity,
+        price: quantities[title].price,
+      }));
+  
+    console.log("Selected items for checkout:", items);  // Log to check selected items
+  
+    navigation.navigate('OfferingPage', { items });
   };
 
   return (
@@ -77,13 +83,11 @@ const HomePage1 = () => {
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
-        {/* Temple Image */}
         <View>
           <Image style={styles.headerImage} contentFit="cover" source={require("../assets/rectangle-3.png")} />
           <CloseButton />
         </View>
 
-        {/* Temple Title */}
         <View style={styles.infoContainer}>
           <Text style={styles.mainTitle}>大甲鎮瀾宮媽祖廟</Text>
           <Text style={styles.subTitle}>營業時間 : 06:00~21:30</Text>
@@ -114,16 +118,14 @@ const HomePage1 = () => {
             contentContainerStyle={styles.flatListContent}
           />
         )}
-        {/* Checkout Button */}
+        
         <View style={styles.buttonContainer}>
-          <SetButton onPress={() => navigation.navigate('OfferingPage')} btnText={'前往結帳'} btnStatus={'primary'} />
+          <SetButton onPress={handleCheckout} btnText={'前往結帳'} btnStatus={'primary'} />
         </View>
-
       </View>
     </SafeAreaProvider>
   );
 };
-
 const styles = StyleSheet.create({
   headerImage: {
     height: height * 0.30,

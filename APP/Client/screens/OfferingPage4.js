@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import GoBackButton1 from "../components/GoBackButton1";
 import ProductItem from "../components/ProductItem";
 
 const { width } = Dimensions.get('window');
@@ -90,12 +89,11 @@ const OfferingPage4 = () => {
       <View style={{
         flex: 1,
         backgroundColor: "white",
-        paddingTop: insets.top,
+        paddingTop: insets.top + 20,
         paddingBottom: insets.bottom - 35,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
-        <GoBackButton1 destination="UserPage" />
 
         {/* Title */}
         <View style={styles.titleContainer}>

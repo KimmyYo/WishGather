@@ -1,18 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, FlatList } from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
-import TabBar from "../components/TabBar"; //footer
+
+import SectionHeader from '../components/SectionHeader';
 
 const API = require('./DBconfig');
 
-export default function HomePage({ navigation }) {
+const { width, height } = Dimensions.get('window');
 
-  const { height } = Dimensions.get('window'); 
-  const [error, setError] = useState(null); 
 
+export default function Welfare_HomePage({ navigation }) {
+  const insets = useSafeAreaInsets();
+  const [error, setError] = useState(null);
+  
   //捐贈品運送的API
   const [temples, setTemples] = useState([]);
-  useEffect(() => {  
+  useEffect(() => {
+
     axios.get(`${API}/temples`)
       .then(response => {
         setTemples(response.data);
@@ -21,6 +27,7 @@ export default function HomePage({ navigation }) {
         setError(error);
       });
   }, []);
+
 
   const [anotherData, setAnotherData] = useState([]);
   useEffect(() => {
@@ -35,9 +42,9 @@ export default function HomePage({ navigation }) {
 
 
   const transportItem = ({ item }) => (
-    <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>Name: {item.NAME}</Text>
-      <Text style={styles.itemText}>Address: {item.ADDRESS}</Text>
+    <View style={styles.donateItemContainer}>
+      <Text style={styles.donateItemTitle}>{item.NAME}</Text>
+      <Text style={styles.donateItemText}>{item.ADDRESS}</Text>
     </View>
   );
 
@@ -49,66 +56,104 @@ export default function HomePage({ navigation }) {
   );
   
   return (
+    <SafeAreaProvider>
+      <View style={[styles.container, {
+        paddingTop: insets.top + 25,
+        paddingBottom: insets.bottom,
+        paddingLeft: insets.left + 30,
+        paddingRight: insets.right + 30
+      }]}>
+        
+        <View style={{width: width*0.95, flexDirection: 'row', justifyContent: 'flex-start', alignSelf: 'center', marginBottom: 35}}>
+          <MaterialCommunityIcons name="home-heart" size={30} color="orange" style={{marginRight: 8}} />
+          <Text style={{fontSize: 24, fontWeight: 'bold', color: '#4F4F4F'}}>歡迎回來 ! 陽光基金會</Text>
+        </View>
 
-    <View style={styles.container}>
-      
-      <TouchableOpacity onPress={() => navigation.navigate('Transport')}>
-        <Text style={[styles.text, { top: height * 0.1 }]}>捐贈運送</Text>
-      </TouchableOpacity>
-      <View style={styles.donateListContainer}>
-        <FlatList
-          data={temples}
-          renderItem={transportItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
+        <View style={styles.infoContainer}>
+          <SectionHeader title="捐贈運送狀態" onPress={() => navigation.navigate('Welfare_TransportPage')} />
+          <FlatList
+            data={temples}
+            renderItem={transportItem}
+            keyExtractor={(item, index) => index.toString()}
+            horizontal // Set horizontal to true
+            showsHorizontalScrollIndicator={false} // Hide horizontal scroll indicator
+            contentContainerStyle={styles.flatListContainer}
+          />
+        </View>
+
+        <View style={styles.infoContainer}>
+          <SectionHeader title="媒合確認" onPress={() => navigation.navigate('Welfare_MatchingPage')} />
+        </View>
+        
+        <View>
+          <FlatList
+            data={anotherData}
+            renderItem={matchingItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </View>
+
+        {error && <Text style={styles.errorText}>{error.message}</Text>}
       </View>
-
-      <TouchableOpacity onPress={() => navigation.navigate('Matching')}>
-        <Text style={[styles.text, { top: height * 0.51 }]}>媒合確認</Text>
-      </TouchableOpacity>
-      <View>
-        <FlatList
-          data={anotherData}
-          renderItem={matchingItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-
-      {error && <Text style={styles.errorText}>{error.message}</Text>}
-
-    </View>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  text: {
-    fontSize: 20,
-    color: "black",
-    position: 'absolute',
-    left: '10%',
-  },
-  donateListContainer: {
-    position: 'absolute',
-    top: '15%',
-    bottom: '47%',
-    left: '9%',
-    width: '85%',
-  },
-  itemContainer: {
-    height: 85,
     backgroundColor: 'white',
-    padding: 10,
-    marginVertical: 5,
+    justifyContent: 'start',
+    alignItems: 'start',
+  },
+  welcomeContainer: {
+    width: width * 0.95,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginLeft: 10,
+    marginBottom: 35,
+  },
+  welcomeText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#4F4F4F',
+  },
+  infoContainer: {
+    width: width * 0.95,
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignSelf: 'center',
+    paddingHorizontal: 10,
+    paddingVertical: 15,
+    marginBottom: 40,
+    borderTopWidth: 1,
+    borderColor: '#ccc',
+  },
+  flatListContainer: {
+    alignSelf:'center',
+  },
+  donateItemContainer: {
+    width: width * 0.4, 
+    height: 200,
+    backgroundColor: 'white',
+    padding: 15,
+    marginHorizontal: 5, // Margin to space items horizontally
     borderRadius: 10,
     borderColor: '#cccccc',
     borderWidth: 1,
+    
+    justifyContent:'flex-end',
   },
-  itemText: {
-    fontSize: 16,
-    color: 'black',
+  donateItemTitle:{
+    color: '#4F4F4F',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 8,
+  },
+
+  donateItemText: {
+    fontSize: 14,
+    color: '#4F4F4F',
   },
   errorText: {
     fontSize: 16,

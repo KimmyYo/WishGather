@@ -42,7 +42,7 @@ function EditTempleInfoPage(){
                     </Pressable>
                 </View>
                 
-                <PageTitle titleText={forEdit ? "編輯法會資訊" : "新增法會資訊"}></PageTitle>
+                <PageTitle  iconName ={forEdit ? "edit" : "add"} titleText={forEdit ? "編輯法會資訊" : "新增法會資訊"}></PageTitle>
                 
                 <View style={styles.formContainer}>
                     <TextInputSet labelName={'法會名稱'} defaultValue={info.title} multiLine={false} placeholder={"請輸入法會名稱"}/>

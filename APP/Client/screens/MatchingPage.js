@@ -6,7 +6,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 import PageTitle from '../components/PageTitle';
 import MatchingInstitution from './MatchingInstitution';
 import MatchingStatus from './MatchingStatus';
-import NavigateBack from '../components/NavigateBack';
+import GoBackButton1 from '../components/GoBackButton1';
 
 
 
@@ -26,22 +26,23 @@ function MatchingPage() {
                 paddingRight: insets.right
             }}>
                 
-                <NavigateBack />
-                <PageTitle titleText="媒合"></PageTitle>
+                <GoBackButton1  destination={'TempleHomePage'}/>
+                <PageTitle iconName={'group'} titleText="媒合"></PageTitle>
                
             </View>
             
             <Tab.Navigator 
                 screenOptions={{
                     tabBarStyle: {
-                        backgroundColor: "#f2f2f2"
+                        backgroundColor: "#f2f2f2",
                     },
                     tabBarLabelStyle: { 
+                        color:"4F4F4F",
                         fontSize: 20, 
                         fontWeight: "semibold",
                     },
                     tabBarIndicatorStyle: { 
-                        backgroundColor: '#b87006',
+                        backgroundColor: 'orange',
                         padding: 2,
                         width: 80,
                         marginLeft: 60,

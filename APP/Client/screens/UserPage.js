@@ -183,6 +183,10 @@ const UserPageContent = () => {
               <Text style={styles.buttonText}>TempleHomePage</Text>
             </Pressable>
 
+            <Pressable style={styles.button} onPress={() => navigation.navigate("Welfare_HomePage")}>
+              <Text style={styles.buttonText}>WelfareHomePage</Text>
+            </Pressable>
+
           </View>
 
 

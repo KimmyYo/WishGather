@@ -5,7 +5,7 @@ import TabBar from "../components/TabBar"; //footer
 
 const API = require('./DBconfig');
 
-export default function HomePage({ navigation }) {
+export default function Welfare_MatchingPage({ navigation }) {
 
   const { height } = Dimensions.get('window'); 
   const [error, setError] = useState(null); 
@@ -30,7 +30,6 @@ export default function HomePage({ navigation }) {
     </View>
   );
 
-  
   return (
 
     <View style={styles.container}>

@@ -20,6 +20,7 @@ const SectionHeader = ({ title, onPress }) => {
 const styles = StyleSheet.create({
     container: {
         minHeight: 30,
+        paddingLeft: 10,
         justifyContent: 'center',
         alignItems: 'flex-start',
         // borderWidth: 1,
