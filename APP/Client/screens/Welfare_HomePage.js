@@ -8,14 +8,17 @@ import SectionHeader from '../components/SectionHeader';
 
 const API = require('./DBconfig');
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
+
 
 export default function Welfare_HomePage({ navigation }) {
   const insets = useSafeAreaInsets();
+  const [error, setError] = useState(null);
+  
+  //捐贈品運送的API
   const [temples, setTemples] = useState([]);
-  const [error, setError] = useState(null); // For debugging
-
   useEffect(() => {
+
     axios.get(`${API}/temples`)
       .then(response => {
         setTemples(response.data);
@@ -25,13 +28,33 @@ export default function Welfare_HomePage({ navigation }) {
       });
   }, []);
 
-  const renderTempleItem = ({ item }) => (
+
+  const [anotherData, setAnotherData] = useState([]);
+  useEffect(() => {
+    axios.get(`${API}/anotherDataTable`) 
+      .then(response => {
+        setAnotherData(response.data);
+      })
+      .catch(error => {
+        setError(error);
+      });
+  }, []);
+
+
+  const transportItem = ({ item }) => (
     <View style={styles.donateItemContainer}>
       <Text style={styles.donateItemTitle}>{item.NAME}</Text>
       <Text style={styles.donateItemText}>{item.ADDRESS}</Text>
     </View>
   );
 
+  const matchingItem = ({ item }) => (
+    <View style={styles.anotherItemContainer}>
+      <Text style={styles.anotherItemText}>Field1: {item.FIELD1}</Text>
+      <Text style={styles.anotherItemText}>Field2: {item.FIELD2}</Text>
+    </View>
+  );
+  
   return (
     <SafeAreaProvider>
       <View style={[styles.container, {
@@ -50,7 +73,7 @@ export default function Welfare_HomePage({ navigation }) {
           <SectionHeader title="捐贈運送狀態" onPress={() => navigation.navigate('Welfare_TransportPage')} />
           <FlatList
             data={temples}
-            renderItem={renderTempleItem}
+            renderItem={transportItem}
             keyExtractor={(item, index) => index.toString()}
             horizontal // Set horizontal to true
             showsHorizontalScrollIndicator={false} // Hide horizontal scroll indicator
@@ -60,6 +83,14 @@ export default function Welfare_HomePage({ navigation }) {
 
         <View style={styles.infoContainer}>
           <SectionHeader title="媒合確認" onPress={() => navigation.navigate('Welfare_MatchingPage')} />
+        </View>
+        
+        <View>
+          <FlatList
+            data={anotherData}
+            renderItem={matchingItem}
+            keyExtractor={(item, index) => index.toString()}
+          />
         </View>
 
         {error && <Text style={styles.errorText}>{error.message}</Text>}
@@ -102,7 +133,7 @@ const styles = StyleSheet.create({
     alignSelf:'center',
   },
   donateItemContainer: {
-    width: width * 0.4, // Adjust width for horizontal scrolling
+    width: width * 0.4, 
     height: 200,
     backgroundColor: 'white',
     padding: 15,
@@ -119,6 +150,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 8,
   },
+
   donateItemText: {
     fontSize: 14,
     color: '#4F4F4F',
@@ -127,5 +159,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'red',
     textAlign: 'center',
+    top:'20%',
   },
 });
