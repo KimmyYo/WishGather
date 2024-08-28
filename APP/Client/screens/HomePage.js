@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TextInput, Pressable, Modal, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Image } from "expo-image";
@@ -7,6 +7,8 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import TempleDistance from "../components/TempleDistance";
 import AddressOverlay from "../components/AddressOverlay";
+
+import * as Location from 'expo-location';
 
 const { width } = Dimensions.get('window');
 
@@ -38,6 +40,28 @@ const HomePage = () => {
     setCurrentAddress(newAddress);
     setLocationIconVisible(false);
     setText1Visible(false);
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        setCurrentAddress('無法獲取位置權限');
+        return;
+      }
+
+      let location = await Location.getCurrentPositionAsync({});
+      let result = await Location.reverseGeocodeAsync({
+        latitude: location.coords.latitude,
+        longitude: location.coords.longitude
+      });
+
+      if (result.length > 0) {
+        let address = result[0];
+        let fullAddress = `${address.city || ''}${address.street || ''}${address.streetNumber || ''}`.trim();
+        setCurrentAddress(fullAddress || '無法獲取具體地址');
+      }
+    })();
   }, []);
 
   const temples = [

@@ -25,6 +25,7 @@
     "expo-font": "~12.0.7",
     "expo-image": "~1.12.12",
     "expo-linear-gradient": "~13.0.2",
+    "expo-location": "^17.0.1",
     "expo-status-bar": "~1.12.1",
     "moment": "^2.30.1",
     "nativewind": "^2.0.11",

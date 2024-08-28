@@ -20,7 +20,8 @@
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
-        "NSCameraUsageDescription": "WishGather needs access to your Camera."
+        "NSCameraUsageDescription": "WishGather needs access to your Camera.",
+        "NSLocationWhenInUseUsageDescription": "This app needs access to location when open."
       },
       "bundleIdentifier": "com.wishgather"
     },
@@ -30,7 +31,7 @@
         "backgroundColor": "#FFFFFF"
       },
       "permissions": [
-        "android.permission.CAMERA"
+        "android.permission.CAMERA","ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"
       ],
       "package": "com.wishgather"
     },
