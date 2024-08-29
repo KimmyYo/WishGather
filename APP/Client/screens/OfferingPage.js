@@ -155,7 +155,7 @@ const OfferingPage = () => {
 
           {/* Note */}
           <View style={styles.titleContainer}>
-            <Text style={styles.pageTitle}>新增備注</Text>
+            <Text style={styles.pageTitle}>新增備註</Text>
           </View>
           <View style={styles.noteContainer}>
             <TextInput

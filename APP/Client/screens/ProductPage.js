@@ -35,7 +35,7 @@ const ProductPage = ({ route, navigation }) => {
 
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>$ {price}</Text>
-        {description && <Text style={styles.description}>備注 : {description}</Text>}
+        {description && <Text style={styles.description}>備註 : {description}</Text>}
         
         <View style={styles.remarkContainer}>
             <Text style={styles.remark}>備註 : </Text>
