@@ -4,20 +4,30 @@ import { StyleSheet, Pressable, View, Text, Modal, SafeAreaView, TouchableOpacit
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+// import LogoutOverlay from "../components/LogoutOverlay";
 
-import { Border, Color, Padding, FontSize, FontFamily } from "../GlobalStyles";
 
 import { StatusBar } from 'expo-status-bar';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
+import HomePage from '../Believer/HomePage';
+import OfferingPage4 from '../Believer/OfferingPage4';
+import CartPage from '../Believer/CartPage';
+
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
+import Ionicons from "@expo/vector-icons/Ionicons";
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+const Tab = createBottomTabNavigator();
+
+
 import axios from 'axios';
 
 //把API抓進來-都固定用專案教室IP
-const API=require('./config/DBconfig')
+const API=require('../config/DBconfig')
 
-const UserPage = () => {
+const UserPageContent = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
 
@@ -117,7 +127,7 @@ const UserPage = () => {
             <Image
               style={styles.userPageChild}
               contentFit="cover"
-              source={require("../assets/ellipse-2.png")}
+              source={require("../../assets/ellipse-2.png")}
             />
 
             {/* User Name */}
@@ -151,10 +161,10 @@ const UserPage = () => {
 
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("UserPage21")}
+              onPress={() => navigation.navigate("UserPage2")}
             >
               <MaterialCommunityIcons name="heart" size={24} color="#4f4f4f" />
-              <Text style={styles.buttonText}>收藏清單</Text>
+              <Text style={styles.buttonText}>我的收藏</Text>
             </Pressable>
             
             <Pressable
@@ -166,10 +176,17 @@ const UserPage = () => {
             </Pressable>
 
             <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
-        <Text style={styles.buttonText}>DEMO用 我是廟方！
+              <Text style={styles.buttonText}>DEMO用</Text>
+            </Pressable>
 
-        </Text>
-    </Pressable>
+            <Pressable style={styles.button} onPress={() => navigation.navigate("TempleHomePage")}>
+              <Text style={styles.buttonText}>TempleHomePage</Text>
+            </Pressable>
+
+            <Pressable style={styles.button} onPress={() => navigation.navigate("Welfare_HomePage")}>
+              <Text style={styles.buttonText}>WelfareHomePage</Text>
+            </Pressable>
+
           </View>
 
 
@@ -187,6 +204,57 @@ const UserPage = () => {
       </SafeAreaProvider>
       
     </>
+  );
+};
+
+const UserPage = () => {
+  return (
+    <Tab.Navigator
+      initialRouteName="首頁"
+      screenOptions={{
+        tabBarLabelPosition: "below-icon",
+        tabBarShowLabel: true,
+        tabBarActiveTintColor: "#D97F30",
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen
+        name="宮廟資訊"
+        component={HomePage}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="home-outline" size={30} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="訂購"
+        component={OfferingPage4}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <MaterialIcons name="temple-buddhist" size={30} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="購物車"
+        component={CartPage}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="cart-outline" size={30} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="首頁"
+        component={UserPageContent}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name="person-outline" size={30} color={color} />
+          ),
+        }}
+      />
+    </Tab.Navigator>
   );
 };
 

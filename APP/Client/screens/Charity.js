@@ -14,7 +14,7 @@ const { width, height } = Dimensions.get('window');
 import axios from 'axios';
 
 //把API抓進來-都固定用專案教室IP
-const API=require('./DBconfig')
+const API=require('./config/DBconfig')
 
 const UserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
