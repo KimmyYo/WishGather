@@ -85,7 +85,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   dateText: {
-    color: Color.colorGray_500,
+    color: "#4F4F4F",
+    fontWeight:'bold',
     fontSize: 16,
   },
 });

@@ -1,12 +1,10 @@
-// OfferingItem.js
 import React from 'react';
 import { View, Text, Image, StyleSheet, Pressable, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Color, Border, FontFamily, FontSize } from "../GlobalStyles";
 
 const { width } = Dimensions.get('window');
 
-const OfferingItem = ({ imageSource, title, price, description }) => {
+const OfferingItem = ({ imageSource, title, price, description, quantity, onAddToCart }) => {
   const navigation = useNavigation();
 
   const handlePress = () => {
@@ -15,11 +13,13 @@ const OfferingItem = ({ imageSource, title, price, description }) => {
       title,
       price,
       description,
+      initialQuantity: quantity || 1, // 傳遞初始數量
+      onAddToCart,
     });
   };
 
   return (
-    <View style={styles.container}>
+    <Pressable style={styles.container} onPress={handlePress}>
       <View style={styles.textContainer}>
         <Text style={styles.title}>{title}</Text>
         <Text style={styles.price}>${price}</Text>
@@ -27,74 +27,73 @@ const OfferingItem = ({ imageSource, title, price, description }) => {
       </View>
 
       <View style={styles.imageContainer}>
-        <Image style={styles.image} source={imageSource} />
-        <Pressable style={styles.addButton} onPress={handlePress}>
-          <Text style={styles.addButtonText}>+</Text>
-        </Pressable>
+        <Image source={imageSource} style={styles.image} />
+        {quantity > 0 && (
+          <View style={styles.quantityBadge}>
+            <Text style={styles.quantityText}>{quantity}</Text>
+          </View>
+        )}
       </View>
-    </View>
+    </Pressable>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: width * 0.95,
-    height: 140,
-    backgroundColor: Color.colorGray_100,
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 10,
+    paddingHorizontal: 5,
+    paddingVertical: 10,
     borderBottomWidth: 1,
-    borderColor: "#E0E0E0",
-  },
-  imageContainer: {
-    position: 'relative',
-  },
-  image: {
-    width: 100,
-    height: 100,
-    borderRadius: Border.br_8xs,
-  },
-  addButton: {
-    position: 'absolute',
-    bottom: 5,
-    right: 5,
-    backgroundColor: "white",
-    borderRadius: 15,
-    width: 30,
-    height: 30,
-    alignItems: 'center',
-    justifyContent: 'center',
-
-    shadowColor: 'black',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
-    shadowRadius: 3,
-  },
-  addButtonText: {
-    color: Color.colorBlack,
-    fontSize: 20,
-    fontWeight: 'bold',
+    borderColor: '#ccc',
+    width: width*0.95,
+    height: 120,
   },
   textContainer: {
     flex: 1,
     paddingLeft: 10,
   },
   title: {
-    fontSize: 20,
-    fontFamily: FontFamily.interMedium,
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#4F4F4F',
   },
   price: {
     fontSize: 16,
-    fontWeight: '500',
-    color: "gray",
-    marginVertical: 2,
+    fontWeight: 'bold',
+    color: '#FFA042',
+    marginTop: 5,
   },
   description: {
-    fontSize: 12,
-    color: "gray",
+    fontSize: 14,
+    color: '#9D9D9D',
     marginTop: 5,
+  },
+  imageContainer: {
+    position: 'relative', // To position the quantity badge
+    alignItems: 'center',
+  },
+  image: {
+    width: width * 0.2,
+    height: width * 0.2,
+    resizeMode: 'contain',
+  },
+  quantityBadge: {
+    position: 'absolute',
+    top: -5, // Adjust this to position the badge at the top-right
+    right: -5,
+    backgroundColor: '#FFA042',
+    borderRadius: 12,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quantityText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
 
