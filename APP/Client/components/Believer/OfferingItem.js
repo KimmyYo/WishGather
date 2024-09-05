@@ -8,7 +8,7 @@ const OfferingItem = ({ imageSource, title, price, description, quantity, onAddT
   const navigation = useNavigation();
 
   const handlePress = () => {
-    navigation.navigate('ProductPage', {
+    navigation.navigate('ProductInfoPage', {
       imageSource,
       title,
       price,

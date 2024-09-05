@@ -1,8 +1,7 @@
 import * as React from "react";
 import { View, StyleSheet, Text, TextInput, Pressable, Dimensions } from "react-native";
-import { FontFamily, FontSize, Border, Color } from "../GlobalStyles";
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const AddressOverlay = ({ onClose, onSubmit }) => {
   const [address, setAddress] = React.useState("");
@@ -84,14 +83,14 @@ const styles = StyleSheet.create({
     borderColor:"#ccc",
   },
   buttonText: {
-    fontSize: FontSize.size_xl,
-    fontFamily: FontFamily.interMedium,
+    fontSize: 16,
+    fontWeight:'bold',
   },
   cancelButtonText: {
-    color: Color.colorSteelblue,
+    color: 'red',
   },
   confirmButtonText: {
-    color: Color.colorSteelblue,
+    color: 'blue',
   },
 });
 

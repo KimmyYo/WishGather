@@ -5,7 +5,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width, height } = Dimensions.get('window');
 
-const ProductPage = ({ route, navigation }) => {
+const ProductInfoPage = ({ route, navigation }) => {
   const insets = useSafeAreaInsets();
   const { imageSource, title, price, description, initialQuantity, onAddToCart } = route.params;
   const [quantity, setQuantity] = useState(initialQuantity);
@@ -169,4 +169,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ProductPage;
+export default ProductInfoPage;

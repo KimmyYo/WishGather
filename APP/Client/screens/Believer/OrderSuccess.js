@@ -13,7 +13,7 @@ const { width, height } = Dimensions.get("window");
 
 const API=require('../config/DBconfig')
 
-const OfferingPage2 = () => {
+const OrderSuccess = () => {
   const navigation = useNavigation();
   const [transaction, setTransaction] = useState([]);
 
@@ -152,4 +152,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OfferingPage2;
+export default OrderSuccess;

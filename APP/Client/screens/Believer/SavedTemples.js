@@ -5,13 +5,13 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import GoBackButton1 from "../../components/GoBackButton1";
-import CollectedTemple from "../../components/CollectedTemple";
+import GoBackButton1 from "../../components/Utility/GoBackButton1";
+import CollectedTemple from "../../components/Believer/CollectedTemple";
 
 const { width } = Dimensions.get('window');
 const API = require('../config/DBconfig');
 
-const UserPage21 = () => {
+const SavedTemples = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const [temples, setTemples] = useState([]);
@@ -31,7 +31,7 @@ const UserPage21 = () => {
       templeImage={{ uri: item.IMAGE || 'default_image_path.png' }}
       templeName={item.NAME}
       address={item.ADDRESS}
-      onPressablePress={() => navigation.navigate("OfferingPage")}
+      onPressablePress={() => navigation.navigate("OfferingsByTemple")}
     />
   );
 
@@ -89,4 +89,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserPage21;
+export default SavedTemples;

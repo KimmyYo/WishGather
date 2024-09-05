@@ -12,8 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-import HomePage from '../Believer/HomePage';
-import OfferingPage4 from '../Believer/OfferingPage4';
+import BelieverHomePage from '../Believer/BelieverHomePage';
+import OfferingPage from '../Believer/OfferingPage';
 import CartPage from '../Believer/CartPage';
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
@@ -145,7 +145,7 @@ const UserPageContent = () => {
           <View style={styles.actionsContainer}>
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("UserPage4")}
+              onPress={() => navigation.navigate("ProfileMahagement")}
             >
               <MaterialCommunityIcons name="account-edit" size={24} color="#4f4f4f" />
               <Text style={styles.buttonText}>個資維護</Text>
@@ -220,7 +220,7 @@ const UserPage = () => {
     >
       <Tab.Screen
         name="宮廟資訊"
-        component={HomePage}
+        component={BelieverHomePage}
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name="home-outline" size={30} color={color} />
@@ -229,7 +229,7 @@ const UserPage = () => {
       />
       <Tab.Screen
         name="訂購"
-        component={OfferingPage4}
+        component={OfferingPage}
         options={{
           tabBarIcon: ({ color }) => (
             <MaterialIcons name="temple-buddhist" size={30} color={color} />
