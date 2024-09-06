@@ -104,7 +104,7 @@ const ProfileManagement = () => {
             <Image
             style={styles.userImage}
             contentFit="cover"
-            source={require("../assets/ellipse-2.png")}
+            source={require("../../assets/ellipse-2.png")}
             />
         </View>
        

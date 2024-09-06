@@ -15,7 +15,7 @@ import * as Location from 'expo-location';
 const { width } = Dimensions.get('window');
 
 
-const HomePage = () => {
+const BelieverHomePage = () => {
   const [locationIconVisible, setLocationIconVisible] = useState(false);
   const [text1Visible, setText1Visible] = useState(false);
   const [searchText, setSearchText] = useState("");
