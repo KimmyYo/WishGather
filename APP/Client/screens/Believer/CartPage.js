@@ -4,7 +4,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
-import CartItem from "../../components/CartItem";
+import CartItem from "../../components/Believer/CartItem";
 
 import axios from 'axios';
 
@@ -30,7 +30,7 @@ const CartPage = () => {
 
   const renderItem = ({ item }) => (
     <CartItem
-      onPress={() => navigation.navigate("OfferingPage")}
+      onPress={() => navigation.navigate("OrderConfirmationPage")}
       imageSource={{ uri: item.IMAGE }}
       orderTitle={`${item.templeName}\n`}
       orderDetails={`${item.itemCount} 項商品 · NT$${item.totalAmount}`}

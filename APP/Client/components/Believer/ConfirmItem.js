@@ -8,15 +8,14 @@ const ConfirmItem = ({ title, price, quantity}) => {
 
   return (
     <View style={styles.container}>
-
-      {/* <Counter quantity={quantity} onIncrease={incrementQuantity} onDecrease={decrementQuantity} /> */}
-
       <View style={styles.infoContainer}>
+        
         <View style={styles.titleContainer}>
           <Text style={styles.quantity}>{quantity}</Text>  
           <Text style={styles.title}>{title}</Text>
           <Text style={styles.price}>${price}</Text>
         </View>
+
       </View>
     </View>
   );

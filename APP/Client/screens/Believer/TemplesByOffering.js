@@ -4,13 +4,13 @@ import { useNavigation, useRoute} from "@react-navigation/native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import TempleCard from "../../components/TempleCard";
-import GoBackButton1 from "../../components/GoBackButton1";
+import TempleCard from "../../components/Believer/TempleCard";
+import GoBackButton1 from "../../components/Utility/GoBackButton1";
 
 
 const { width } = Dimensions.get('window');
 
-const OfferingPage6 = () => {
+const TemplesByOffering = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
@@ -248,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OfferingPage6;
+export default TemplesByOffering;

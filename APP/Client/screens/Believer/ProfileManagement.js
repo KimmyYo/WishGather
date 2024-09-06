@@ -14,7 +14,7 @@ const API=require('../config/DBconfig')
 
 const { width, height } = Dimensions.get('window');
 
-const UserPage4 = () => {
+const ProfileManagement = () => {
 
   const insets = useSafeAreaInsets();
   const [newName, setName] = useState('');
@@ -230,10 +230,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 60,
   },
- 
-  
-
   
 });
 
-export default UserPage4;
+export default ProfileManagement;
