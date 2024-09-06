@@ -5,18 +5,22 @@ import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+
 import TempleDistance from "../../components/Believer/TempleDistance";
 import AddressOverlay from "../../components/Believer/AddressOverlay";
+
 
 import * as Location from 'expo-location';
 
 const { width } = Dimensions.get('window');
 
-const BelieverHomePage = () => {
+
+const HomePage = () => {
   const [locationIconVisible, setLocationIconVisible] = useState(false);
   const [text1Visible, setText1Visible] = useState(false);
   const [searchText, setSearchText] = useState("");
-  const [currentAddress, setCurrentAddress] = useState("高雄市鼓山區蓮海路70號");
+  const [currentAddress, setCurrentAddress] = useState("定位中...");
+
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
 
@@ -123,7 +127,9 @@ const BelieverHomePage = () => {
               distance={item.distance}
               date1={item.date1}
               date2={item.date2}
+
               onPress={() => navigation.navigate("OfferingsByTemple")}
+
             />
           )}
           keyExtractor={(item) => item.id}
@@ -144,6 +150,7 @@ const BelieverHomePage = () => {
             <AddressOverlay onClose={closeText1} onSubmit={handleAddressSubmit} />
           </View>
         </Modal>
+
 
 
       </View>
@@ -207,4 +214,6 @@ const styles = StyleSheet.create({
   },
 });
 
+
 export default BelieverHomePage;
+
