@@ -63,11 +63,11 @@ const App = () => {
               component = { BelieverTab }
               options = {{ headerShown: false }}
             />
-            {/* <Stack.Screen
+            <Stack.Screen
               name = "WelfareTab"
               component = { WelfareTab }
               options = {{ headerShown: false }}
-            /> */}
+            />
           </Stack.Navigator>
         </NavigationContainer>
       </GestureHandlerRootView>
