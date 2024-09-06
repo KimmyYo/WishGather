@@ -20,7 +20,7 @@ const OrderHistoryPage = () => {
       orderInfo: '3',
       orderDate: '2024/04/25',
       orderStatus: '待取貨',
-      imageSource: require("../assets/rectangle-211.png"),
+      imageSource: require("../../assets/rectangle-211.png"),
     },
     {
       id: '2',
@@ -28,7 +28,7 @@ const OrderHistoryPage = () => {
       orderInfo: '2',
       orderDate: '2024/04/20',
       orderStatus: '已完成',
-      imageSource: require("../assets/rectangle-211.png"),
+      imageSource: require("../../assets/rectangle-211.png"),
     },
     // Add more orders here
   ];
