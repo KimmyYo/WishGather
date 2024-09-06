@@ -12,7 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-import HomePage from '../Believer/HomePage';
+import HomePage from '../Believer/BelieverHomePage';
 import OfferingPage4 from '../Believer/OfferingPage4';
 import CartPage from '../Believer/CartPage';
 
