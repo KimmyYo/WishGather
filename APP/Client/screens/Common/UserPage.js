@@ -175,17 +175,11 @@ const UserPage = () => {
               <Text style={styles.buttonText}>登出帳戶</Text>          
             </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
-              <Text style={styles.buttonText}>DEMO用</Text>
-            </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("TempleHomePage")}>
-              <Text style={styles.buttonText}>TempleHomePage</Text>
-            </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("Welfare_HomePage")}>
-              <Text style={styles.buttonText}>WelfareHomePage</Text>
-            </Pressable>
+   
+
+
 
           </View>
 

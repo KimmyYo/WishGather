@@ -20,7 +20,7 @@ function TempleScanStack(){
                 options={{ headerShown: false }}
             />
             <Stack.Screen 
-                name="ScanningResult"
+                name="ScanResult"
                 component={ScanResult}
                 options={{ headerShown: false }}
             />

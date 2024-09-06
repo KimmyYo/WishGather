@@ -90,7 +90,7 @@ const TemplesByOffering = () => {
       title={item.title}
       distance={item.distance}
       onSave={handleSave}
-      onPress={() => navigation.navigate("HomePage1")}
+      onPress={() => navigation.navigate("OfferingsByTemple")}
     />
   );
 
