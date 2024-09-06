@@ -27,7 +27,7 @@ import axios from 'axios';
 //把API抓進來-都固定用專案教室IP
 const API=require('../config/DBconfig')
 
-const UserPageContent = () => {
+const UserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
 
@@ -207,56 +207,56 @@ const UserPageContent = () => {
   );
 };
 
-const UserPage = () => {
-  return (
-    <Tab.Navigator
-      initialRouteName="首頁"
-      screenOptions={{
-        tabBarLabelPosition: "below-icon",
-        tabBarShowLabel: true,
-        tabBarActiveTintColor: "#D97F30",
-        headerShown: false,
-      }}
-    >
-      <Tab.Screen
-        name="宮廟資訊"
-        component={HomePage}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={30} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="訂購"
-        component={OfferingPage4}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="temple-buddhist" size={30} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="購物車"
-        component={CartPage}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="cart-outline" size={30} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="首頁"
-        component={UserPageContent}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-outline" size={30} color={color} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
+// const UserPage = () => {
+//   return (
+//     <Tab.Navigator
+//       initialRouteName="首頁"
+//       screenOptions={{
+//         tabBarLabelPosition: "below-icon",
+//         tabBarShowLabel: true,
+//         tabBarActiveTintColor: "#D97F30",
+//         headerShown: false,
+//       }}
+//     >
+//       <Tab.Screen
+//         name="宮廟資訊"
+//         component={HomePage}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <Ionicons name="home-outline" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="訂購"
+//         component={OfferingPage4}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <MaterialIcons name="temple-buddhist" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="購物車"
+//         component={CartPage}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <Ionicons name="cart-outline" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="首頁"
+//         component={UserPageContent}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <Ionicons name="person-outline" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//     </Tab.Navigator>
+//   );
+// };
 
 const styles = StyleSheet.create({
   userPageChild: {
