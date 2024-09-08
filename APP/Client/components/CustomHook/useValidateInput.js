@@ -6,6 +6,7 @@ export function useValidation(){
   const [userEmailError, setUserEmailError] = useState('');
   const [userPasswordError, setUserPasswordError] = useState('');
   const [userRoleError, setUserRoleError] = useState('');
+  const [addressError, setAddressError] = useState('');
 
   const validateUserName = (userName) => {
     if (!userName.trim()) {
@@ -70,6 +71,15 @@ export function useValidation(){
       return true;
     }
   };
+  const validateAddress = (address) => {
+    if (!address) {
+      setAddressError('請輸入地址');
+      return false;
+    } else {
+      setAddressError('');
+      return true;
+    }
+  };
 
   return {
     validateUserName,
@@ -77,11 +87,13 @@ export function useValidation(){
     validateUserEmail,
     validateUserPassword,
     validateUserRole,
+    validateAddress,
     userNameError,
     phoneNumberError,
     userEmailError,
     userPasswordError,
     userRoleError,
+    addressError
   };
 }
 

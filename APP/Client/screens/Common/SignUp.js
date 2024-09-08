@@ -31,6 +31,7 @@ const SignUp = () => {
     validateUserEmail,
     validateUserPassword,
     validateUserRole,
+    validataAddressError,
     validateAddress,
     userNameError,
     phoneNumberError,
