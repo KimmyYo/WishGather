@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef, useContext } from 'react';
 import {Button, Text, SafeAreaView, View, StyleSheet, FlatList} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -9,7 +9,8 @@ import EventCard from '../../components/Temple/EventCard';
 import MatchingCard from '../../components/Temple/MatchingCard';
 import MatchingInfoCard from '../../components/Temple/MatchingInfoCard';
 import TempleEventPage from './TempleEventPage';
-
+import Loading from '../../components/Utility/Loading';
+import { UserContext } from '../../components/Context/UserContext';
 
 const API = require('../config/DBconfig')
 
@@ -19,17 +20,19 @@ function TempleHomePage() {
     const insets = useSafeAreaInsets();
 	const navigation = useNavigation();
 
+	const { userId } = useContext(UserContext);
 	const [eventData, setEventData] = useState([]);
 	const [matchData, setMatchData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
+	var response;
 
 	const fetchData = async () => {
 		try { 
-			const eventResponse = await axios.get(`${API}/temples_info`);
-			setEventData(eventResponse.data);
-			const matchResponse = await axios.get(`${API}/match/${1}`);
-			setMatchData(matchResponse.data);
+			response = await axios.get(`${API}/temples_info`);
+			setEventData(response.data);
+			response = await axios.get(`${API}/match/${userId}`);
+			setMatchData(response.data);
 
 			setLoading(false);
 		} catch (err) {
@@ -43,8 +46,8 @@ function TempleHomePage() {
         fetchData();
     }, []); // Add templeID as a dependency
   
-	// if (loading) return <Text>Loading...</Text>;
-	// if (error) return <Text>Error: {error.message}</Text>;
+	if (loading) return <Loading />;
+	if (error) return <Text>Error: {error.message}</Text>;
 
     return (
       <SafeAreaProvider>

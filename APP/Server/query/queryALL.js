@@ -2,7 +2,7 @@
 
 const db = require('../config/db');
 
-const queryDatabase = (tableName, res) => {
+function queryDatabase(tableName, res){
     db.query(`SELECT * FROM ${tableName}`, (err, results) => {
         if (err) {
             console.error(`Failed to query ${tableName}:`, err);
