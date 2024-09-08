@@ -177,6 +177,25 @@ const SignUp = () => {
       }
     
     {/* 若角色為宮廟或社福機構，儲存上方資料後隱藏上方部分，然後顯示下半部讓使用者輸入 */}
+
+    { role == 'A' && 
+      <View style={styles.formContainer}>
+        <PageTitle titleText={name}/>
+        <TextInputBox
+          inputType='text'
+          placeholder="輸入住家區域"
+          textValue={address}
+          onChangeText={(text) => {
+            setAddress(text);
+            validateAddress(text);
+          }}
+          validState={!addressError}
+          invalidInput={addressError || ''}
+        />
+        {/* TODO: 營業時間 */}
+      </View> 
+    }
+
     { role == 'B' && 
       <View style={styles.formContainer}>
         <PageTitle titleText={name}/>
