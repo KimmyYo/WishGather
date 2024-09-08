@@ -7,14 +7,14 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import axios from 'axios';
 
 
-import GoBackButton1 from '../../components/GoBackButton1';
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import SetButton from '../../components/Utility/SetButton';
 
 const API=require('../config/DBconfig')
 
 const { width, height } = Dimensions.get('window');
 
-const UserPage4 = () => {
+const ProfileManagement = () => {
 
   const insets = useSafeAreaInsets();
   const [newName, setName] = useState('');
@@ -104,7 +104,7 @@ const UserPage4 = () => {
             <Image
             style={styles.userImage}
             contentFit="cover"
-            source={require("../assets/ellipse-2.png")}
+            source={require("../../assets/ellipse-2.png")}
             />
         </View>
        
@@ -230,10 +230,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 60,
   },
- 
-  
-
   
 });
 
-export default UserPage4;
+export default ProfileManagement;

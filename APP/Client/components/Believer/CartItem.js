@@ -1,7 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Text, Pressable, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { GestureHandlerRootView, Swipeable } from 'react-native-gesture-handler';
-import { FontFamily, Border, FontSize, Color } from '../GlobalStyles';
 
 const { width } = Dimensions.get('window');
 
@@ -107,7 +106,7 @@ const styles = StyleSheet.create({
     width: 85,
     height: 150,
     marginLeft: 5,
-    borderRadius: Border.br_xl,
+    borderRadius: 15,
   },
   deleteButton: {
     backgroundColor: 'red',
@@ -119,7 +118,7 @@ const styles = StyleSheet.create({
   },
   deleteButtonText: {
     color: 'white',
-    fontSize: FontSize.size_xl,
+    fontSize: 16,
   },
 });
 

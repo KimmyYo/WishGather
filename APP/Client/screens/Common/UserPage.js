@@ -12,8 +12,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-import HomePage from '../Believer/HomePage';
-import OfferingPage4 from '../Believer/OfferingPage4';
+import BelieverHomePage from '../Believer/BelieverHomePage';
+import OfferingPage from '../Believer/OfferingPage';
 import CartPage from '../Believer/CartPage';
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
@@ -27,7 +27,7 @@ import axios from 'axios';
 //把API抓進來-都固定用專案教室IP
 const API=require('../config/DBconfig')
 
-const UserPageContent = () => {
+const UserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
 
@@ -175,17 +175,11 @@ const UserPageContent = () => {
               <Text style={styles.buttonText}>登出帳戶</Text>          
             </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
-              <Text style={styles.buttonText}>DEMO用</Text>
-            </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("TempleHomePage")}>
-              <Text style={styles.buttonText}>TempleHomePage</Text>
-            </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("Welfare_HomePage")}>
-              <Text style={styles.buttonText}>WelfareHomePage</Text>
-            </Pressable>
+   
+
+
 
           </View>
 
@@ -207,56 +201,56 @@ const UserPageContent = () => {
   );
 };
 
-const UserPage = () => {
-  return (
-    <Tab.Navigator
-      initialRouteName="首頁"
-      screenOptions={{
-        tabBarLabelPosition: "below-icon",
-        tabBarShowLabel: true,
-        tabBarActiveTintColor: "#D97F30",
-        headerShown: false,
-      }}
-    >
-      <Tab.Screen
-        name="宮廟資訊"
-        component={HomePage}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home-outline" size={30} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="訂購"
-        component={OfferingPage4}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <MaterialIcons name="temple-buddhist" size={30} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="購物車"
-        component={CartPage}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="cart-outline" size={30} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="首頁"
-        component={UserPageContent}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person-outline" size={30} color={color} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
-  );
-};
+// const UserPage = () => {
+//   return (
+//     <Tab.Navigator
+//       initialRouteName="首頁"
+//       screenOptions={{
+//         tabBarLabelPosition: "below-icon",
+//         tabBarShowLabel: true,
+//         tabBarActiveTintColor: "#D97F30",
+//         headerShown: false,
+//       }}
+//     >
+//       <Tab.Screen
+//         name="宮廟資訊"
+//         component={HomePage}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <Ionicons name="home-outline" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="訂購"
+//         component={OfferingPage4}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <MaterialIcons name="temple-buddhist" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="購物車"
+//         component={CartPage}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <Ionicons name="cart-outline" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//       <Tab.Screen
+//         name="首頁"
+//         component={UserPageContent}
+//         options={{
+//           tabBarIcon: ({ color }) => (
+//             <Ionicons name="person-outline" size={30} color={color} />
+//           ),
+//         }}
+//       />
+//     </Tab.Navigator>
+//   );
+// };
 
 const styles = StyleSheet.create({
   userPageChild: {

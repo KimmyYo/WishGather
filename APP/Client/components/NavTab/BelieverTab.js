@@ -3,9 +3,9 @@ import { createMaterialBottomTabNavigator } from '@react-navigation/material-bot
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import BelieverHomeStack from '../NavStack/BelieverHomeStack';
-import OfferingPage1 from '../../screens/Believer/OfferingPage1';
+import BelieverOfferingStack from '../NavStack/BelieverOfferingStack';
 import CartPage from '../../screens/Believer/CartPage';
-import UserPage from '../../screens/Common/UserPage'
+import UserPage from '../../screens/Common/UserPage';
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -28,7 +28,7 @@ function BelieverTab(){
           />
            <Tab.Screen   
             name = "訂購" 
-            component = { OfferingPage1 }
+            component = { BelieverOfferingStack }
             options={{
               tabBarLabel: '訂購',
               tabBarIcon: ({color}) => (<MaterialCommunityIcons name="store-search" color={color} size={26} />)

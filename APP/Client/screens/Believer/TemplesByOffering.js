@@ -4,13 +4,13 @@ import { useNavigation, useRoute} from "@react-navigation/native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import TempleCard from "../../components/TempleCard";
-import GoBackButton1 from "../../components/GoBackButton1";
+import TempleCard from "../../components/Believer/TempleCard";
+import GoBackButton1 from "../../components/Utility/GoBackButton1";
 
 
 const { width } = Dimensions.get('window');
 
-const OfferingPage6 = () => {
+const TemplesByOffering = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const [searchText, setSearchText] = useState("");
@@ -23,49 +23,49 @@ const OfferingPage6 = () => {
   const templeCards = [
     {
       id: '1',
-      imageSource: require("../assets/rectangle-214.png"),
+      imageSource: require("../../assets/rectangle-214.png"),
       title: '大甲 鎮瀾宮媽祖廟',
       distance: "台中市大甲區順天路158號",
     },
     {
       id: '2',
-      imageSource: require("../assets/rectangle-215.png"),
+      imageSource: require("../../assets/rectangle-215.png"),
       title: '左營 仁濟宮',
       distance: "高雄市左營區左營新路17號",
     },
     {
       id: '3',
-      imageSource: require("../assets/rectangle-216.png"),
+      imageSource: require("../../assets/rectangle-216.png"),
       title: '鳳邑 雷府大將廟',
       distance: "高雄市鳳山區五甲一路732號",
     },
     {
       id: '4',
-      imageSource: require("../assets/rectangle-217.png"),
+      imageSource: require("../../assets/rectangle-217.png"),
       title: '左營 金鑾殿',
       distance: "高雄市左營區蓮潭路141號五樓",
     },
     {
       id: '5',
-      imageSource: require("../assets/rectangle-218.png"),
+      imageSource: require("../../assets/rectangle-218.png"),
       title: '朝元宮 鐵路媽祖',
       distance: "高雄市三民區鐵道二街1號",
     },
     {
       id: '6',
-      imageSource: require("../assets/rectangle-219.png"),
+      imageSource: require("../../assets/rectangle-219.png"),
       title: '東照山 關帝廟',
       distance: "高雄市大樹區忠義路1號",
     },
     {
       id: '7',
-      imageSource: require("../assets/rectangle-2110.png"),
+      imageSource: require("../../assets/rectangle-2110.png"),
       title: '府城 三山國王廟',
       distance: "台南市北區西門路三段100號",
     },
     {
       id: '8',
-      imageSource: require("../assets/rectangle-2111.png"),
+      imageSource: require("../../assets/rectangle-2111.png"),
       title: '車城 福安宮',
       distance: "屏東縣車城鄉福安路51號",
     }
@@ -90,7 +90,7 @@ const OfferingPage6 = () => {
       title={item.title}
       distance={item.distance}
       onSave={handleSave}
-      onPress={() => navigation.navigate("HomePage1")}
+      onPress={() => navigation.navigate("OfferingsByTemple")}
     />
   );
 
@@ -248,4 +248,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default OfferingPage6;
+export default TemplesByOffering;

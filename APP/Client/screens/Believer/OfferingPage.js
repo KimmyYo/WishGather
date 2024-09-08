@@ -1,288 +1,206 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, Text, Pressable, ScrollView, Image, Dimensions, TextInput, Alert } from 'react-native';
+import React, { useState, useMemo } from "react";
+import { Image } from "expo-image";
+import { StyleSheet, View, TextInput, Dimensions, FlatList, Text } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import DateTimePicker from 'react-native-ui-datepicker';
-import { Picker } from '@react-native-picker/picker';
-import Modal from 'react-native-modal';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import GoBackButton1 from '../../components/Utility/GoBackButton1';
-import ConfirmItem from '../../components/ConfirmItem';
-import DonationItem from '../../components/DonationItem';
-import OrderInfo from '../../components/OrderInfo';
-import DatePickerModal from '../../components/Utility/DatePickerModal';
-import TimePickerModal from '../../components/Utility/TimePickerModal';
-import PaymentMethodModal from '../../components/PaymentMethodModal';
-import ConfirmModal from '../../components/ConfirmModal'; 
-import SetButton from '../../components/Utility/SetButton';
+import ProductItem from "../../components/Believer/ProductItem";
 
-
-const { width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const OfferingPage = () => {
+  const [searchText, setSearchText] = useState("");
   const navigation = useNavigation();
-  const route = useRoute();
   const insets = useSafeAreaInsets();
 
-  const { items = [] } = route.params || {};
+  const productsByCategory = [
+    {
+      title: "經典祭拜供品",
+      data: [
+        { id: '1', imageSource: require("../../assets/rectangle-19.png"), title: "蠟燭"},
+        { id: '2', imageSource: require("../../assets/rectangle-191.png"), title: "金紙"},
+        { id: '3', imageSource: require("../../assets/rectangle-193.png"), title: "發糕"},
 
-  const calculateTotalPrice = () => {
-    return items.reduce((total, item) => total + (item.price * item.quantity), 0);
-  };
+      ],
+    },
+    {
+      title: "有效期商品",
+      data: [
+        { id: '4', imageSource: require("../../assets/rectangle-192.png"), title: "蔬果"},
+        { id: '5', imageSource: require("../../assets/rectangle-194.png"), title: "祭拜禮盒(零食)"},
+        { id: '6', imageSource: require("../../assets/rectangle-195.png"), title: "飲料" },
+      ],
+    },
+    {
+      title: "文創商品",
+      data: [
+        { id: '7', imageSource: require("../../assets/rectangle-196.png"), title: "祈福御守"},
+      ],
+    },
+  ];
 
-  const [note, setNote] = useState('');
+  const filteredProducts = useMemo(() => {
+    if (!searchText) return productsByCategory;
 
-  const [pickupDate, setPickupDate] = useState(new Date());
-  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
+    return productsByCategory.map(category => {
+      const filteredData = category.data.filter(item =>
+        item.title.toLowerCase().includes(searchText.toLowerCase())
+      );
 
-  const [pickupTime, setPickupTime] = useState({ hour: '06', minute: '00' }); 
-  const [isTimePickerVisible, setTimePickerVisible] = useState(false); 
+      if (filteredData.length > 0) {
+        return { ...category, data: filteredData };
+      }
 
-  const [paymentMethod, setPaymentMethod] = useState('現場付款');
-  const [isPaymentModalVisible, setPaymentModalVisible] = useState(false);
-  const [isConfirmModalVisible, setConfirmModalVisible] = useState(false);
+      return null;
+    }).filter(Boolean);
+  }, [searchText, productsByCategory]);
 
-  const handleDateChange = (selectedDate) => { setPickupDate(selectedDate); };
+  const renderCategory = ({ item }) => (
+    <View style={styles.categoryContainer}>
+      <View style={styles.categoryTitleContainer}>
+        <MaterialCommunityIcons name="basket" size={22} color="orange" style={styles.categoryIcon} />
+        <Text style={styles.categoryTitle}>{item.title}</Text>
+      </View>
+      <FlatList
+        data={item.data}
+        keyExtractor={(product) => product.id}
+        renderItem={({ item }) => (
+          <View style={styles.productItemWrapper}>
+            <ProductItem
+              destination="TemplesByOffering"
+              imageSource={item.imageSource}
+              title={item.title}
+              onPress={() => navigation.navigate('TemplesByOffering', { selectedCategory: item.title })}
+            />
 
-
- {/* Function - Payment Method */}
-  const handlePaymentMethodChange = (method) => {
-    setPaymentMethod(method);
-    setPaymentModalVisible(false);
-  };
-
-  {/* Function - Show Confirm Modal */}
-  const handleOrderSubmit = () => {
-    setConfirmModalVisible(true);
-  };
-
-  {/* Function - Confirm and back to HomePage */}
-  const handleConfirmOrder = () => {
-    setConfirmModalVisible(false);
-    Alert.alert("訂單已送出");
-    navigation.navigate('HomePage');
-  };
-
-
-  const renderOrderInfo = () => (
-    <View style={styles.orderInfoContainer}>
-      <OrderInfo
-        iconName="store" 
-        iconType="MaterialIcons" 
-        title="活動名稱" 
-        value="左營仁濟宮 燈花供養祈福" 
-        onPress={() => {}} 
+          </View>
+        )}
+        horizontal
+        showsHorizontalScrollIndicator={false}
       />
-      <OrderInfo
-        iconName="calendar" 
-        iconType="Entypo" 
-        title="領取日期" 
-        value={pickupDate.toISOString().split('T')[0]} 
-        onPress={() => setDatePickerVisible(true)} 
-      />
-      <OrderInfo
-        iconName="clock" 
-        iconType="Entypo" 
-        title="領取時間" 
-        value={`${pickupTime.hour}:${pickupTime.minute}`} 
-        onPress={() => setTimePickerVisible(true)} 
-      />
-      <OrderInfo
-        iconName="payment" 
-        iconType="MaterialIcons" 
-        title="付款方式" 
-        value={paymentMethod} 
-        onPress={() => setPaymentModalVisible(true)} 
-      />
-      {paymentMethod === '線上轉帳付款' && (
-        <View style={styles.paymentAccountContainer}>
-          <Text style={styles.paymentAccountText}>宮廟匯款帳號 : 72668349{"\n"}請於送出訂單後12小時之內匯款</Text>
-        </View>
-      )}
     </View>
   );
 
-  const orderDetails = {
-    eventName: "左營仁濟宮 燈花供養祈福",
-    pickupDate: pickupDate.toISOString().split('T')[0],
-    pickupTime: `${pickupTime.hour}:${pickupTime.minute}`,
-    paymentMethod: paymentMethod,
-  };
+  const noResults = searchText && filteredProducts.length === 0;
 
   return (
     <SafeAreaProvider>
       <View style={{
         flex: 1,
         backgroundColor: "white",
-        paddingTop: insets.top, 
-        paddingBottom: insets.bottom, 
-        paddingLeft: insets.left, 
-        paddingRight: insets.right 
+        paddingTop: insets.top + 20,
+        paddingBottom: insets.bottom - 35,
+        paddingLeft: insets.left,
+        paddingRight: insets.right
       }}>
 
-        <GoBackButton1 destination="HomePage1" />
-
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-          {/* Title */}
-          <View style={styles.titleContainer}>
-            <Text style={styles.pageTitle}>訂單明細</Text>
-          </View>
-
-          {/* Item */}
-
-          
-          {items.map((item, index) => (
-            <View style={styles.itemsContainer}>
-              <ConfirmItem key={item.id} quantity={item.quantity} title={item.title} price={item.price} />
-            </View>
-          ))}
-          
-          {/* Total */}
-          <View style={{width:width*0.95, paddingHorizontal:10, paddingTop: 15,justifyContent:"center", alignItems:"flex-end"}}>
-            <Text style={{fontSize:18, fontWeight:"bold", color:"#4f4f4f"}}>總計 :  <Text style={{color:"orange"}}>${calculateTotalPrice()}</Text>  元</Text>
-          </View>
-          
-          {/* Donation Choose*/}
-          <View style={styles.titleContainer}>
-            <Text style={styles.pageTitle}>捐贈選擇</Text>
-          </View>
-
-          {items.map((item, index) => (
-            <View style={styles.itemsContainer}>
-              <DonationItem key={item.id} quantity={item.quantity} title={item.title} price={item.price} />
-            </View>
-          ))}
-
-          {/* Note */}
-          <View style={styles.titleContainer}>
-            <Text style={styles.pageTitle}>新增備注</Text>
-          </View>
-          <View style={styles.noteContainer}>
-            <TextInput
-              style={styles.noteInput}
-              placeholder='請在此撰寫備註...'
-              multiline
-              value={note}
-              onChangeText={setNote}
-            />
-          </View>
-          
-          {/* OrderInfo */}
-          {renderOrderInfo()}
-
-        </ScrollView>
-        
-        {/* Confirm Button */}
-        <View style={styles.buttonContainer}>
-          <SetButton btnText={'送出訂單'} btnStatus={'primary'} onPress={handleOrderSubmit}/>
+        {/* Title */}
+        <View style={styles.titleContainer}>
+          <MaterialCommunityIcons name="food" size={28} color="orange" style={styles.icon} />
+          <Text style={styles.pageTitle}>供品類別</Text>
         </View>
 
-        {/* Confirmation Modal */}
-        <ConfirmModal
-            isVisible={isConfirmModalVisible}
-            onCancel={() => setConfirmModalVisible(false)}
-            onConfirm={handleConfirmOrder}
-            orderDetails={orderDetails}
-            animationType="fade" transparent
-        />
-        {/* Date Picker Modal */}
-        <DatePickerModal
-          isVisible={isDatePickerVisible}
-          onClose={() => setDatePickerVisible(false)}
-          date={pickupDate}
-          onChange={handleDateChange}
-        />
+        {/* Search Bar */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="搜尋(Ex:祭拜禮盒)"
+            style={styles.input}
+            value={searchText}
+            onChangeText={setSearchText}
+          />
+        </View>
 
-        {/* Time Picker Modal */}
-        <TimePickerModal
-          isVisible={isTimePickerVisible}
-          initialTime={pickupTime}
-          onClose={() => setTimePickerVisible(false)}
-          onConfirm={(hour, minute) => {
-            setPickupTime({ hour, minute });
-            setTimePickerVisible(false);
-          }}
-        />
-        {/* Payment Method Modal*/}
-        <PaymentMethodModal
-          isVisible={isPaymentModalVisible}
-          onClose={() => setPaymentModalVisible(false)}
-          onMethodSelect={handlePaymentMethodChange}
-        />
+        {noResults ? (
+          <View style={styles.noResultsContainer}>
+            <Text style={styles.noResultsText}>查無此品項 ! 請重新輸入 !</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={filteredProducts}
+            keyExtractor={(item, index) => item.title + index}
+            renderItem={renderCategory}
+            contentContainerStyle={styles.flatListContent}
+          />
+        )}
       </View>
     </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  goBackIcon: {
-    width: 28,
-    height: 28,
-    marginLeft: 10,
-  },
   titleContainer: {
-    width: width*0.95,
+    width: width * 0.95,
+    flexDirection: 'row',
     justifyContent: "center",
-    alignItems: 'flex-start',
-    marginTop: 10,       
+    alignItems: 'center',
+    alignSelf: 'center',
     paddingHorizontal: 10,
+    marginBottom: 15,
+  },
+  icon: {
+    marginRight: 10,
   },
   pageTitle: {
-    fontSize: 26,
+    fontSize: 28,
     color: "#4F4F4F",
     fontWeight: "bold",
     textAlign: 'left',
-    marginVertical: 2,
+    marginBottom: 2,
   },
-  scrollViewContent: {
-    flexGrow: 1,
-    alignItems: 'center',
-    paddingBottom: 80,
-  },
-  itemsContainer: {
-    width: width*0.95,
-    justifyContent: "center",
-    alignItems: 'center',
-    marginTop: 5,
-  },
-  noteContainer: {
-    width: width*0.95,
-    marginVertical: 2,
-    padding: 10,
-    borderRadius: 10,
-    borderBottomWidth:1,
-    borderColor: '#E0E0E0',
-  },
-  noteInput: {
-    height: 100,
-    borderColor: '#E0E0E0',
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 5,
-    textAlignVertical: 'top',
-  },
-  orderInfoContainer: {
-    width: width*0.95,
-    justifyContent: "center",
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  paymentAccountContainer: {
-    marginTop: 10,
-    paddingHorizontal: 15,
-  },
-  paymentAccountText: {
-    fontSize: 16,
-    color: "#4F4F4F",
-    textAlign: "center",
-  },
-  buttonContainer: {
+  searchContainer: {
     width: width,
-    justifyContent: "center",
+    paddingHorizontal: 5,
+    paddingBottom: 8,
+    alignSelf: 'center',
+    justifyContent: 'center',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  input: {
+    width: width * 0.9,
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 10,
+  },
+  categoryContainer: {
+    width: width * 0.95,
+    justifyContent: 'flex-start',
+    alignItems: 'start',
+    alignSelf: 'center',
+  },
+  categoryTitleContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    position: 'absolute',
-    bottom: 20,
+    padding: 10,
+  },
+  categoryIcon: {
+    marginRight: 8,
+  },
+  categoryTitle: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#4F4F4F',
+  },
+  flatListContent: {
+    paddingBottom: 60,
+  },
+  productItemWrapper: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 5,
+  },
+  noResultsContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noResultsText: {
+    fontSize: 18,
+    color: 'gray',
+    textAlign: 'center',
   },
 });
 

@@ -4,12 +4,12 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
-import GoBackButton1 from "../../components/GoBackButton1";
-import HistoryOrderCard from "../../components/HistoryOrderCard";
+import GoBackButton1 from "../../components/Utility/GoBackButton1";
+import HistoryOrderCard from "../../components/Believer/HistoryOrderCard";
 
 const { width } = Dimensions.get('window');
 
-const UserPage3 = () => {
+const OrderHistoryPage = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
 
@@ -20,7 +20,7 @@ const UserPage3 = () => {
       orderInfo: '3',
       orderDate: '2024/04/25',
       orderStatus: '待取貨',
-      imageSource: require("../assets/rectangle-211.png"),
+      imageSource: require("../../assets/rectangle-211.png"),
     },
     {
       id: '2',
@@ -28,7 +28,7 @@ const UserPage3 = () => {
       orderInfo: '2',
       orderDate: '2024/04/20',
       orderStatus: '已完成',
-      imageSource: require("../assets/rectangle-211.png"),
+      imageSource: require("../../assets/rectangle-211.png"),
     },
     // Add more orders here
   ];
@@ -40,7 +40,7 @@ const UserPage3 = () => {
       orderDate={item.orderDate}
       orderStatus={item.orderStatus}
       imageSource={item.imageSource}
-      onPressablePress={() => navigation.navigate("OfferingPage3")}
+      onPressablePress={() => navigation.navigate("OrderSuccess")}
     />
   );
 
@@ -98,4 +98,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserPage3;
+export default OrderHistoryPage;

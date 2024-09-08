@@ -70,8 +70,8 @@ function SignIn() {
         }
       })
       .catch(error => {
-        console.error('Error fetching profile', error);
-        Alert.alert('Error', 'Failed to fetch user profile.');
+        // console.error('Error fetching profile', error);
+        // Alert.alert('Error', 'Failed to fetch user profile.');
       });
     }
   }, [token, navigation]);

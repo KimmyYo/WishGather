@@ -4,13 +4,13 @@ import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import OfferingItem from "../../components/OfferingItem"; 
-import CloseButton from "../../components/CloseButton";
+import OfferingItem from "../../components/Believer/OfferingItem"; 
+import CloseButton from "../../components/Utility/CloseButton";
 import SetButton from '../../components/Utility/SetButton';
 
 const { width, height } = Dimensions.get('window');
 
-const HomePage1 = () => {
+const OfferingsByTemple = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   
@@ -70,7 +70,7 @@ const HomePage1 = () => {
   
     console.log("Selected items for checkout:", items);  // Log to check selected items
   
-    navigation.navigate('OfferingPage', { items });
+    navigation.navigate('OrderConfirmationPage', { items });
   };
 
   return (
@@ -176,4 +176,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage1;
+export default OfferingsByTemple;

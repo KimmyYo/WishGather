@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, Pressable, Dimensions } from 'react-native';
 import { Image } from "expo-image";
 import { LinearGradient } from 'expo-linear-gradient';
-import { Border, Color, FontSize, FontFamily } from "../GlobalStyles";
+import { Border, Color, FontSize, FontFamily } from "../../GlobalStyles";
 
 const { width, height } = Dimensions.get('window');
 
