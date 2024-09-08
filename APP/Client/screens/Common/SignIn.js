@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, SafeAreaView, Alert ,Pressable} from 'react-native';
 
 //儲存空間用來放token(類似php session那種感覺)
@@ -16,7 +16,7 @@ import NavigateBack from '../../components/Utility/NavigateBack';
 import TextInputBox from '../../components/Utility/TextInputBox';
 import { useAlertDialog } from '../../components/CustomHook/useAlertDialog';
 import { useValidation } from '../../components/CustomHook/useValidateInput';
-
+import { UserContext } from '../../components/Context/UserContext';
 // 把API抓進來-都固定用專案教室IP
 const API = require('../config/DBconfig');
 
@@ -26,11 +26,12 @@ function SignIn() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState(null);
+  const [refreshToken, setRefreshToken] = useState(null);
   const [role, setRole] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setChecked] = useState(false);
-
+  const { setUserId } = useContext(UserContext);
   const { showAlertDialog, renderAlertDialog } = useAlertDialog();
   const {
     validateUserEmail,
@@ -49,33 +50,59 @@ function SignIn() {
 
   useEffect(() => {
     if (token) {
-      // 這裡應該根據token獲取用戶角色
+      // 根據token獲取用戶角色
       axios.get(`${API}/profile`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
       })
       .then(response => {
-        const { role } = response.data;
+        const { userId, role } = response.data;
         setRole(role);
+        setUserId(userId); // 設定global userId (會員table)
         // 根據角色導航
         if (role === '信眾') {
           navigation.replace('BelieverTab');
         } else if (role === '社福') {
-          navigation.replace('Charity');
-        } else if (role === '廟方') {
+          navigation.replace('WelfareTab');
+        } else if (role === '宮廟') {
           navigation.replace('TempleTab');
         } else {
           console.error('Unknown role:', role);
         }
       })
-      .catch(error => {
-        // console.error('Error fetching profile', error);
-        // Alert.alert('Error', 'Failed to fetch user profile.');
+      .catch(error => { 
+        console.log(error);
       });
     }
   }, [token, navigation]);
   
+// Function to refresh token
+  const refreshTokens = async () => {
+    const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
+    try {
+    const response = await axios.post(`${API}/refreshtoken`, { refreshToken: storedRefreshToken });
+    const { token } = response.data;
+
+    // Save new access token
+    await AsyncStorage.setItem('userToken', token);
+    } catch (error) {
+      console.error('Error refreshing token:', error);
+    }
+  };
+
+  // Handle 403 errors to trigger token refresh
+  axios.interceptors.response.use(
+    (response) => response,
+    async (error) => {
+      if (error.response && error.response.status === 403) {
+        await refreshTokens();
+      }
+      return Promise.reject(error);
+    }
+  );
+
+
   const handleSignIn = async () => {
     const isEmailValid = validateUserEmail(email.trim());
     const isPasswordValid = validateUserPassword(password);
@@ -89,27 +116,26 @@ function SignIn() {
       };
       // 登入Server 
       try {
-        const response = await axios.post(signInApi, userData, { // Ensure correct variable names
-          headers: {
-            'Content-Type': 'application/json',
-          },
+        const response = await axios.post(`${API}/signin`, userData, { // Ensure correct variable names
+          headers: {'Content-Type': 'application/json'},
         });
-        const { token } = response.data;
-        if (token) {
+        const { token, refreshToken } = response.data;
+        if (token && refreshToken) {
           setToken(token);
           await AsyncStorage.setItem('userToken', token);
+          await AsyncStorage.setItem('refreshToken', refreshToken);
           setIsLoading(false);
         } else {
-          showAlertDialog('登入失敗', '請重新嘗試');
+          console.log("no token here...");
+          showAlertDialog('登入失敗', '請重新試');
         }
       } catch (error) {
         console.error('Sign-in failed:', error);
         showAlertDialog('登入失敗', '請重新嘗試');
-      } finally {
-        setIsLoading(false);
-      }
+      } 
     }
   };
+
 
   // 登出設定
   const handleSignOut = async () => {
