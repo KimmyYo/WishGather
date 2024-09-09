@@ -25,8 +25,12 @@ function MatchingInstituteCard({ institute }) {
     useEffect(() => {
         // mock 鳳山龍山寺 as current user 
         var templeCord = {x: 22.620901886750495, y: 120.36202571109524};
-        const calcDistance = calculateDistance(templeCord.x, templeCord.y, institute.COORDINATE.x, institute.COORDINATE.y);
-        setDistance(calcDistance);
+        if (institute.COORDINATE && institute.COORDINATE.x && institute.COORDINATE.y) {
+            const calcDistance = calculateDistance(templeCord.x, templeCord.y, institute.COORDINATE.x, institute.COORDINATE.y);
+            setDistance(calcDistance);
+        } else {
+            console.log("Coordinates are not available");
+        }
     })
     // order by distance (set bound distance)
 

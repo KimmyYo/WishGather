@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {Text, View, StyleSheet, FlatList, Pressable, Dimensions} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -8,12 +8,15 @@ import axios from 'axios';
 import GoBackButton1 from "../../components/Utility/GoBackButton1";
 import EventCard from '../../components/Temple/EventCard';
 import PageTitle  from '../../components/Utility/PageTitle';
+import Loading from '../../components/Utility/Loading';
+import { UserContext } from '../../components/Context/UserContext';
 
 
 const API = require('../config/DBconfig')
 function TempleEventPage({route}){
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
     const [date, setDate] = useState(new Date());
     const [eventData, setEventData] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -21,7 +24,7 @@ function TempleEventPage({route}){
     
     useEffect(() => {
         // Replace with your API endpoint
-        axios.get(`${API}/temples_info`)
+        axios.get(`${API}/ceremony/${userId}`)
             .then(response => {
                 setEventData(response.data);
                 setLoading(false);
@@ -32,7 +35,7 @@ function TempleEventPage({route}){
             });
     }, []);
 
-    if (loading) return <Text>Loading...</Text>;
+    if (loading) return <Loading />;
     if (error) return <Text>Error: {error.message}</Text>;
     return(
         <SafeAreaProvider>
@@ -55,7 +58,7 @@ function TempleEventPage({route}){
                     <FlatList
                         data={eventData}
                         renderItem={({ item }) => <EventCard event={ item } size="rectangle" />}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.eID}
                         vetical
                         contentContainerStyle={styles.scrollView}
                         style={styles.flatList}

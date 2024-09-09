@@ -33,6 +33,5 @@ function queryMatchingData(templeID, res){
 }
 
 module.exports = {
-    queryDatabase,
-    queryMatchingData
-};
+    queryDatabase
+}
