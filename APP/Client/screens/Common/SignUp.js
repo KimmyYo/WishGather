@@ -6,17 +6,23 @@ import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 import NavigateBack from '../../components/Utility/NavigateBack';
 import TextInputBox from '../../components/Utility/TextInputBox';
+import PageTitle from '../../components/Utility/PageTitle';
 import { useValidation } from '../../components/CustomHook/useValidateInput';
 import { useAlertDialog } from '../../components/CustomHook/useAlertDialog';
-const API = require('../config/DBconfig');
+const base = require('../config/DBconfig');
+const SIGNUP_API = `${base}/signup`
 
 const SignUp = () => {
-  //宣告要用到的變數
+  // 會員基本資訊
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
+  // 宮廟資訊
+  // 社福機構資訊
+  const [address, setAddress] = useState('');
+  // HOOKS
   const navigation = useNavigation();
   const { showAlertDialog, renderAlertDialog } = useAlertDialog();
   const {
@@ -25,40 +31,48 @@ const SignUp = () => {
     validateUserEmail,
     validateUserPassword,
     validateUserRole,
+    validataAddressError,
+    validateAddress,
     userNameError,
     phoneNumberError,
     userEmailError,
     userPasswordError,
     userRoleError,
+    addressError
   } = useValidation();
   
-  const believersAPI = `${API}/believers`;
   const handleRegister = async () => {
-    const isUserNameValid = validateUserName(name);
-    const isPhoneNumberValid = validatePhoneNumber(phone);
-    const isEmailValid = validateUserEmail(email.trim());
-    const isPasswordValid = validateUserPassword(password);
-    const isRoleValid = validateUserRole(role);
-
+    const isUserNameValid = validateUserName(name),
+          isPhoneNumberValid = validatePhoneNumber(phone),
+          isEmailValid = validateUserEmail(email.trim()),
+          isPasswordValid = validateUserPassword(password),
+          isRoleValid = validateUserRole(role),
+          isAddressValid = validateAddress(address);
+    
     const userInputData = {
       NAME: name,
-      PHONE: phone,
+      PHONE_NUM: phone,
       EMAIL: email.trim(),
       PASSWORD: password,
-      ROLE: role
+      ROLE: role,
+      ADDRESS: address
     }
+    console.log(userInputData);
+    // 
     if(!isRoleValid){
       showAlertDialog('輸入錯誤', '請選擇身份別');
     }
-    if(isUserNameValid && isPhoneNumberValid && isEmailValid && isPasswordValid && isRoleValid){
-      axios.post(believersAPI, userInputData, {
+    if(isUserNameValid && isPhoneNumberValid && isEmailValid && isPasswordValid && isRoleValid && isAddressValid){
+      // 註冊API 
+      axios.post(SIGNUP_API, userInputData, {
         headers: {
           'Content-Type': 'application/json',
         },
       })
       .then((response) => {
+        console.log("here");
           showAlertDialog('註冊成功', '歡迎登入');
-          // TODO: 直接登入？
+          // 廟方或社福機構導向註冊頁
           navigation.navigate('SignIn');
       })
       .catch((error) => {
@@ -75,93 +89,152 @@ const SignUp = () => {
       style={styles.container}
     >
       <NavigateBack />
-      {/* Logo設計好可以考慮放上去 */}
-      <Text style={{color:"#272727", fontSize: 35, marginBottom: 15, fontWeight: '500'}}>註冊</Text>
-      <Text style={{color:"#272727", fontSize: 25, marginBottom: 50}}>Registration</Text>
-      <View style={styles.formContainer}>
-        <TextInputBox
-          inputType='text'
-          placeholder="輸入姓名"
-          textValue={name}
-          onChangeText={(text) => {
-            setName(text);
-            validateUserName(text);
-          }}
-          validState={!userNameError}
-          invalidInput={userNameError || ''}
-        />
-        <TextInputBox
-          inputType='text'
-          placeholder="輸入電話號碼"
-          textValue={phone}
-          onChangeText={(text) => {
-            setPhone(text);
-            validatePhoneNumber(text);
-          }}
-          validState={!phoneNumberError}
-          invalidInput={phoneNumberError || ''}
-        />
-        <TextInputBox
-          inputType='email'
-          placeholder="輸入電子郵件"
-          textValue={email}
-          onChangeText={(text) => {
-            setEmail(text);
-            validateUserEmail(text);
-          }}
-          validState={!userEmailError}
-          invalidInput={userEmailError || ''}
-        />
-        <TextInputBox
-          inputType='password'
-          placeholder="設定密碼"
-          textValue={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            validateUserPassword(text);
-          }}
-          validState={!userPasswordError}
-          invalidInput={userPasswordError || ''}
-        />
+      <View style={styles.pageTitleContainer}>
+        <Text style={{color:"#272727", fontSize: 35, marginBottom: 15, fontWeight: '500'}}>註冊</Text>
+        <Text style={{color:"#272727", fontSize: 25, marginBottom: 50}}>Registration</Text>
       </View>
+      {!role && 
+        <View>
+          <View style={styles.formContainer}>
+            <TextInputBox
+              inputType='text'
+              placeholder="輸入姓名"
+              textValue={name}
+              onChangeText={(text) => {
+                setName(text);
+                validateUserName(text);
+              }}
+              validState={!userNameError}
+              invalidInput={userNameError || ''}
+            />
+            <TextInputBox
+              inputType='text'
+              placeholder="輸入電話號碼"
+              textValue={phone}
+              onChangeText={(text) => {
+                setPhone(text);
+                validatePhoneNumber(text);
+              }}
+              validState={!phoneNumberError}
+              invalidInput={phoneNumberError || ''}
+            />
+            <TextInputBox
+              inputType='email'
+              placeholder="輸入電子郵件"
+              textValue={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                validateUserEmail(text);
+              }}
+              validState={!userEmailError}
+              invalidInput={userEmailError || ''}
+            />
+            <TextInputBox
+              inputType='password'
+              placeholder="設定密碼"
+              textValue={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                validateUserPassword(text);
+              }}
+              validState={!userPasswordError}
+              invalidInput={userPasswordError || ''}
+            />
+          </View>
 
-      {/* Role Selection Buttons */}
-      <View style={styles.roleContainer}>
-        <TouchableOpacity
-          style={[
-            styles.roleButton,
-            role === '信眾' && styles.roleButtonSelected,
-          ]}
-          onPress={() => setRole('信眾')}
-        >
-          <Text style={styles.roleButtonText}>信眾</Text>
-        </TouchableOpacity>
+          <View style={styles.roleContainer}>
+            <TouchableOpacity
+              style={[
+                styles.roleButton,
+                role === 'A' && styles.roleButtonSelected,
+              ]}
+              onPress={() => setRole('A')}
+            >
+              <Text style={styles.roleButtonText}>信眾</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.roleButton,
-            role === '廟方' && styles.roleButtonSelected,
-          ]}
-          onPress={() => setRole('廟方')}
-        >
-          <Text style={styles.roleButtonText}>廟方</Text>
-        </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.roleButton,
+                role === 'B' && styles.roleButtonSelected,
+              ]}
+              onPress={() => setRole('B')}
+            >
+              <Text style={styles.roleButtonText}>宮廟</Text>
+            </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[
-            styles.roleButton,
-            role === '社福' && styles.roleButtonSelected,
-          ]}
-          onPress={() => setRole('社福')}
-        >
-          <Text style={styles.roleButtonText}>社福</Text>
-        </TouchableOpacity>
-      </View>
-
-      <Pressable style={styles.button} onPress={handleRegister}>
-        <Text style={styles.buttonText}>確認送出</Text>
-      </Pressable>
+            <TouchableOpacity
+              style={[
+                styles.roleButton,
+                role === 'C' && styles.roleButtonSelected,
+              ]}
+              onPress={() => setRole('C')}
+            >
+              <Text style={styles.roleButtonText}>社福</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      }
     
+    {/* 若角色為宮廟或社福機構，儲存上方資料後隱藏上方部分，然後顯示下半部讓使用者輸入 */}
+
+    { role == 'A' && 
+      <View style={styles.formContainer}>
+        <PageTitle titleText={name}/>
+        <TextInputBox
+          inputType='text'
+          placeholder="輸入住家區域"
+          textValue={address}
+          onChangeText={(text) => {
+            setAddress(text);
+            validateAddress(text);
+          }}
+          validState={!addressError}
+          invalidInput={addressError || ''}
+        />
+        {/* TODO: 營業時間 */}
+      </View> 
+    }
+
+    { role == 'B' && 
+      <View style={styles.formContainer}>
+        <PageTitle titleText={name}/>
+        <TextInputBox
+          inputType='text'
+          placeholder="輸入宮廟地址"
+          textValue={address}
+          onChangeText={(text) => {
+            setAddress(text);
+            validateAddress(text);
+          }}
+          validState={!addressError}
+          invalidInput={addressError || ''}
+        />
+        {/* TODO: 營業時間 */}
+      </View> 
+    }
+
+    { role == 'C' && 
+      <View style={styles.formContainer}>
+        <PageTitle titleText={name}/>
+        <TextInputBox
+          inputType='text'
+          placeholder="輸入社福機構地址"
+          textValue={address}
+          onChangeText={(text) => {
+            setAddress(text);
+            validateAddress(text);
+          }}
+          validState={!addressError}
+          invalidInput={addressError || ''}
+        />
+        {/* TODO: 營業時間 */}
+      </View>
+    }
+    <Pressable style={styles.button} onPress={handleRegister}>
+      <Text style={styles.buttonText}>確認送出</Text>
+    </Pressable>
+    {/* 警告訊息 */}
     {renderAlertDialog()}
     </LinearGradient>
 

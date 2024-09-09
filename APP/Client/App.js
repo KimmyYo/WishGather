@@ -10,6 +10,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { useTheme } from 'react-native-paper';
+import { UserProvider } from "./components/Context/UserContext.js";
 
 const Stack = createNativeStackNavigator();
 
@@ -32,45 +33,47 @@ const App = () => {
 // test 
   return (
     <>
-    <GestureHandlerRootView style={{ flex: 1 }}>
-        <NavigationContainer>
-          <Stack.Navigator 
-            screenOptions = {{ headerShown: false }}
-            initialRouteName = "Main"
-          >
-            <Stack.Screen 
-              name = "Main"
-              component = { Main }
-              options = {{ headerShown: false }}
-            />
-            <Stack.Screen
-              name = "SignIn"
-              component = { SignIn }
-              options = {{ headerShown: false }}
-            />
-            <Stack.Screen
-              name = "SignUp"
-              component = { SignUp }
-              options = {{ headerShown: false }}
-            />
-            <Stack.Screen
-              name = "TempleTab"
-              component = { TempleTab }
-              options = {{ headerShown: false }}
-            />
-            <Stack.Screen
-              name = "BelieverTab"
-              component = { BelieverTab }
-              options = {{ headerShown: false }}
-            />
-            <Stack.Screen
-              name = "WelfareTab"
-              component = { WelfareTab }
-              options = {{ headerShown: false }}
-            />
-          </Stack.Navigator>
-        </NavigationContainer>
-      </GestureHandlerRootView>
+    <UserProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+          <NavigationContainer>
+            <Stack.Navigator 
+              screenOptions = {{ headerShown: false }}
+              initialRouteName = "Main"
+            >
+              <Stack.Screen 
+                name = "Main"
+                component = { Main }
+                options = {{ headerShown: false }}
+              />
+              <Stack.Screen
+                name = "SignIn"
+                component = { SignIn }
+                options = {{ headerShown: false }}
+              />
+              <Stack.Screen
+                name = "SignUp"
+                component = { SignUp }
+                options = {{ headerShown: false }}
+              />
+              <Stack.Screen
+                name = "TempleTab"
+                component = { TempleTab }
+                options = {{ headerShown: false }}
+              />
+              <Stack.Screen
+                name = "BelieverTab"
+                component = { BelieverTab }
+                options = {{ headerShown: false }}
+              />
+              {/* <Stack.Screen
+                name = "WelfareTab"
+                component = { WelfareTab }
+                options = {{ headerShown: false }}
+              /> */}
+            </Stack.Navigator>
+          </NavigationContainer>
+        </GestureHandlerRootView>
+      </UserProvider>
     </>
   );
 };

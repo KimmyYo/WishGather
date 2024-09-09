@@ -12,8 +12,10 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-import HomePage from '../Believer/BelieverHomePage';
-import OfferingPage4 from '../Believer/OfferingPage4';
+
+
+import BelieverHomePage from '../Believer/BelieverHomePage';
+import OfferingPage from '../Believer/OfferingPage';
 import CartPage from '../Believer/CartPage';
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
@@ -175,17 +177,11 @@ const UserPage = () => {
               <Text style={styles.buttonText}>登出帳戶</Text>          
             </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("FoodScanningPage")}>
-              <Text style={styles.buttonText}>DEMO用</Text>
-            </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("TempleHomePage")}>
-              <Text style={styles.buttonText}>TempleHomePage</Text>
-            </Pressable>
 
-            <Pressable style={styles.button} onPress={() => navigation.navigate("Welfare_HomePage")}>
-              <Text style={styles.buttonText}>WelfareHomePage</Text>
-            </Pressable>
+   
+
+
 
           </View>
 

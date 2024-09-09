@@ -5,7 +5,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import BelieverHomeStack from '../NavStack/BelieverHomeStack';
 import BelieverOfferingStack from '../NavStack/BelieverOfferingStack';
 import CartPage from '../../screens/Believer/CartPage';
-import UserPage from '../../screens/Common/UserPage'
+import UserPage from '../../screens/Common/UserPage';
 
 
 const Tab = createMaterialBottomTabNavigator();

@@ -7,7 +7,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import axios from 'axios';
 
 
-import GoBackButton1 from '../../components/GoBackButton1';
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import SetButton from '../../components/Utility/SetButton';
 
 const API=require('../config/DBconfig')
@@ -104,7 +104,7 @@ const ProfileManagement = () => {
             <Image
             style={styles.userImage}
             contentFit="cover"
-            source={require("../assets/ellipse-2.png")}
+            source={require("../../assets/ellipse-2.png")}
             />
         </View>
        
