@@ -14,7 +14,7 @@ import ConfirmModal from '../../components/Believer/ConfirmModal';
 import SetButton from '../../components/Utility/SetButton';
 
 
-const { width} = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const OrderConfirmationPage = () => {
   const navigation = useNavigation();
