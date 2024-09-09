@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity } from 'react-native';
 import axios from 'axios';
-import TabBar from "../../components/TabBar"; //footer
 
 const API = require('../config/DBconfig');
 
