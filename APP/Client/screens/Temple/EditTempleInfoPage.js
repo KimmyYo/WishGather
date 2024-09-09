@@ -1,7 +1,8 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useContext } from 'react'
 import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, TextInput } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { UserContext } from '../../components/Context/UserContext';
 import  Dialog  from "react-native-dialog";
 import Lunar from '@tony801015/chinese-lunar';
 
@@ -15,10 +16,12 @@ import NavigateBack from '../../components/Utility/NavigateBack';
 function EditTempleInfoPage(){
     const navigation = useNavigation();
     const route = useRoute();
-    const info = route.params.event;
+    // 編輯頁傳入的資料
+    const event = route.params.event;
     const forEdit = route.params.forEdit;
+    const { userId } = useContext(UserContext);
     const insets = useSafeAreaInsets();
-    const [date, setDate] = useState(new Date(info.date));
+    const [date, setDate] = useState(new Date(event.DATE));
 
     return (
         <SafeAreaProvider>
@@ -45,10 +48,10 @@ function EditTempleInfoPage(){
                 <PageTitle  iconName ={forEdit ? "edit" : "add"} titleText={forEdit ? "編輯法會資訊" : "新增法會資訊"}></PageTitle>
                 
                 <View style={styles.formContainer}>
-                    <TextInputSet labelName={'法會名稱'} defaultValue={info.title} multiLine={false} placeholder={"請輸入法會名稱"}/>
-                    <DatePicker dateValue={info.date} labelName={"農曆日期"} isLunar={true} /> 
-                    <DatePicker dateValue={info.date} labelName={"國曆日期"} isLunar={false}/>
-                    <TextInputSet labelName={'法會簡介'} defaultValue={info.Description} multiLine={true} placeholder={"請輸入法會簡介"}/>
+                    <TextInputSet labelName={'法會名稱'} defaultValue={event.NAME} multiLine={false} placeholder={"請輸入法會名稱"}/>
+                    <DatePicker dateValue={event.DATE} labelName={"農曆日期"} isLunar={true} editable={false} /> 
+                    <DatePicker dateValue={event.DATE} labelName={"國曆日期"} isLunar={false} editable={true}/>
+                    <TextInputSet labelName={'法會簡介'} defaultValue={event.DESCRIPTION} multiLine={true} placeholder={"請輸入法會簡介"}/>
                 </View>
                               
                 {/* <View style={styles.buttonPosition}>

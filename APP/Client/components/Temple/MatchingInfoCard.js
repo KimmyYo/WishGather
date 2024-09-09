@@ -2,10 +2,10 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 
 function MatchingInfoCard({ infos }) {
-    const { MATCHING_STATUS } = infos;
+    const { DELIVER_STATUS } = infos;
 
     let statusTextStyle;
-    switch (MATCHING_STATUS) {
+    switch (DELIVER_STATUS) {
         case "A": 
             statusTextStyle = styles.waitStatus;
             break;
@@ -25,7 +25,7 @@ function MatchingInfoCard({ infos }) {
             <View style={styles.bottomContainer}>
                 <View style={styles.infoContainer}>
                     <Text style={styles.title}>{ infos.NAME }</Text>
-                    <Text style={styles.defaultStatus}>媒合狀態 : <Text style={statusTextStyle}>{ MATCHING_STATUS }</Text></Text>
+                    <Text style={styles.defaultStatus}>媒合狀態 : <Text style={statusTextStyle}>{ DELIVER_STATUS }</Text></Text>
                 </View>
                 <View style={styles.buttonContainer}>
                     <TouchableOpacity style={styles.button}>

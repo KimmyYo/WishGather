@@ -55,7 +55,7 @@ const SignUp = () => {
       EMAIL: email.trim(),
       PASSWORD: password,
       ROLE: role,
-      ADDRESS: address
+      ADDRESS: address ?? ''
     }
     console.log(userInputData);
     // 
