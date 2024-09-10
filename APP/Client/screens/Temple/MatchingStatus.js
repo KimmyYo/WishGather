@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from 'react'
+import { React, useEffect, useState, useContext } from 'react'
 import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -9,24 +9,19 @@ import MatchingCard from '../../components/Temple/MatchingCard';
 import SetButton from '../../components/Utility/SetButton';
 import MatchingInfoCard from '../../components/Temple/MatchingInfoCard'
 import { FlatList } from 'react-native-gesture-handler';
+import { UserContext } from '../../components/Context/UserContext';
 
-// pass matching insituition info
-const matchingInformation = [
-    {id: '1', institution: '快樂長照機構', address: '前金區民權街36號', state: '已送達'},
-    {id: '2', institution: '開心長照機構', address: '前金區民權街36號', state: '配送中'},
-    {id: '3', institution: '哈哈長照機構', address: '前金區民權街36號', state: '未送出'},
-]
 const API = require('../config/DBconfig');
 function MatchingStatus() {
     const insets = useSafeAreaInsets();
-    const templeID = 1;
+    const { userId } = useContext(UserContext);
     const [matchData, setMatchData] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     
     useEffect(() => {
         // Replace with your API endpoint
-        axios.get(`${API}/match/${templeID}`)
+        axios.get(`${API}/match/${userId}`)
             .then(response => {
                 setMatchData(response.data);
                 setLoading(false);

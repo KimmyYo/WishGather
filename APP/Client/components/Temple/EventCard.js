@@ -60,11 +60,12 @@ function EventCard ({ event, size }){
     };
     const convertSolarDateToLunarDate = (date) => {
         const gregorianDate = date 
-        const [year, month, day] = gregorianDate.split('-');
-        const lunarData = Lunar(year, month, day).getJson();
-        const lunarDateString = `${lunarData.lunarMonth}${lunarData.lunarDay}`;
-       
-        return lunarDateString;
+        const [year, month, day] = gregorianDate.split('/');
+        if (year && month && day) {
+            const lunarData = Lunar(year, month, day).getJson();
+            return `${lunarData.lunarMonth}${lunarData.lunarDay}`;
+          }
+        return date; 
     }
 
     
@@ -80,9 +81,11 @@ function EventCard ({ event, size }){
     if(size == "square"){
         return (
                 <View style={[styles.card, getCardSize(size)]}>
-                    <Image source={event.imageUrl} style={styles.image} />
-                    <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.TIME)}</Text>
-                    
+                   <Image 
+                        source={event.IMAGE ? { uri: event.IMAGE } : require('../../assets/adaptive-icon.png')}
+                        style={styles.image} 
+                    />
+                    <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.DATE)}</Text>
                 </View>
         );
     }
@@ -93,8 +96,11 @@ function EventCard ({ event, size }){
                     renderRightActions={(progress, dragAnimatedValue) => renderRightActions(progress, dragAnimatedValue, showDialog, goEdit)}
                     ref={swipeableRef}>
                     <View style={[styles.card, getCardSize(size)]}>
-                        <Image source={event.imageUrl} style={styles.image} />
-                        <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.TIME)}</Text>
+                        <Image 
+                            source={event.IMAGE ? { uri: event.IMAGE } : require('../../assets/adaptive-icon.png')}
+                            style={styles.image} 
+                        />
+                        <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.DATE)}</Text>
                     </View>
                 </Swipeable>  
                 <Dialog.Container visible={dialogVisible}>

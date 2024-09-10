@@ -21,15 +21,18 @@ function TempleHomePage() {
 	const navigation = useNavigation();
 
 	const { userId } = useContext(UserContext);
+	const [templeData, setTempleData] = useState([]);
 	const [eventData, setEventData] = useState([]);
 	const [matchData, setMatchData] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
-	var response;
 
+	var response;
 	const fetchData = async () => {
 		try { 
-			response = await axios.get(`${API}/temples_info`);
+			response = await axios.get(`${API}/temples_info/${userId}`);
+			setTempleData(response.data[0]);
+			response = await axios.get(`${API}/ceremony/${userId}`);
 			setEventData(response.data);
 			response = await axios.get(`${API}/match/${userId}`);
 			setMatchData(response.data);
@@ -59,14 +62,19 @@ function TempleHomePage() {
           paddingRight: insets.right + 30} 
         ]}>  
 			<View style={styles.sectionContainer}>
-				<SectionHeader title="文武聖殿法會" onPress={() => navigation.navigate('TempleEventPage')}/>
-				<FlatList
-						data={eventData}
-						renderItem={({ item }) => <EventCard event={item} size="square" />}
-						keyExtractor={(item) => item.tNO}
-						horizontal
-						showsHorizontalScrollIndicator={false}
-						contentContainerStyle={styles.scrollView}
+				<SectionHeader title={templeData.NAME} onPress={() => navigation.navigate('TempleEventPage')}/>
+				 <FlatList
+					data={eventData} // The array of event objects
+					renderItem={({ item }) => (
+					<EventCard
+						event={item} // Pass each event object to EventCard component
+						size="square"
+					/>
+					)}
+					keyExtractor={(item) => item.eID.toString()} // Ensure eID is a string for key
+					horizontal
+					showsHorizontalScrollIndicator={false}
+					contentContainerStyle={styles.scrollView}
 				/>
 			</View>
 			<View style={styles.sectionContainer}>
@@ -74,7 +82,7 @@ function TempleHomePage() {
 				<FlatList
 						data={matchData}
 						renderItem={({ item }) => <MatchingCard infos={item} />}
-						keyExtractor={(item) => item.WELFARE_ID} // Ensure WELFARE_ID is unique and not undefined
+						keyExtractor={(item) => item.wID} // Ensure WELFARE_ID is unique and not undefined
 				/>
 			</View>
         </View>
