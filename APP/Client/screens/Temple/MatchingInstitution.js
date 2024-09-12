@@ -1,12 +1,13 @@
 import { React, useState, useEffect } from 'react'
 import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, FlatList } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
+import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import axios from 'axios';
 
 import PageTitle from '../../components/Utility/PageTitle';
-import SetButton from '../../components/Utility/SetButton'
+import CheckoutBar from '../../components/Utility/CheckoutBar'
 import MatchingInstituteCard from '../../components/Temple/MatchingInstituteCard';
 
 // const matchingInformation = [
@@ -89,7 +90,7 @@ function MatchingInstitution() {
                 paddingRight: insets.right
             }]}>
                 <View style={styles.flatListContainer}>
-                    <FlatList
+                    <FlatList // trigger matching algorithm
                         data={swOrgData}
                         renderItem={({ item }) => <MatchingInstituteCard institute={item} />}
                         keyExtractor={(item) => item.id}
@@ -98,9 +99,9 @@ function MatchingInstitution() {
                     />
                 </View>
                 <View style={styles.buttonContainer}>
-                    <SetButton // trigger matching algorithm
+                    <CheckoutBar 
                         btnText={'一鍵媒合'}
-                        btnStatus={'primary'}
+                        iconName={'arrow-forward-circle-outline'}
                     />
                 </View>
             </View>
@@ -119,11 +120,12 @@ const styles = StyleSheet.create({
         paddingBottom: 80
     },
     buttonContainer: {
-        position: 'absolute',
-        bottom: 40, 
-        left: 0,
-        right: 0,
+        width: '100%',
+        justifyContent: "center",
         alignItems: 'center',
-    }
+        position: 'absolute',
+        bottom: 0,
+        zIndex: 9999,
+      },
 })
 export default MatchingInstitution;

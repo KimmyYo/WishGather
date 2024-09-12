@@ -12,9 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-import BelieverHomePage from '../Believer/BelieverHomePage';
-import OfferingPage from '../Believer/OfferingPage';
-import CartPage from '../Believer/CartPage';
+import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -113,7 +111,7 @@ const UserPage = () => {
           justifyContent: 'flex-start',
           alignItems: 'center',
           paddingTop: insets.top + 10,
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom -40,
           paddingLeft: insets.left,
           paddingRight: insets.right
         }}>
@@ -145,7 +143,7 @@ const UserPage = () => {
           <View style={styles.actionsContainer}>
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("UserPage4")}
+              onPress={() => navigation.navigate("ProfileManagement")}
             >
               <MaterialCommunityIcons name="account-edit" size={24} color="#4f4f4f" />
               <Text style={styles.buttonText}>個資維護</Text>
@@ -153,7 +151,7 @@ const UserPage = () => {
 
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("UserPage3")}
+              onPress={() => navigation.navigate("OrderHistoryPage")}
             >
               <MaterialCommunityIcons name="history" size={24} color="#4f4f4f" />
               <Text style={styles.buttonText}>歷史訂單</Text>
@@ -161,7 +159,7 @@ const UserPage = () => {
 
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("UserPage2")}
+              onPress={() => navigation.navigate("SavedTemples")}
             >
               <MaterialCommunityIcons name="heart" size={24} color="#4f4f4f" />
               <Text style={styles.buttonText}>我的收藏</Text>
@@ -174,16 +172,11 @@ const UserPage = () => {
               <MaterialCommunityIcons name="logout" size={24} color="#4f4f4f" />
               <Text style={styles.buttonText}>登出帳戶</Text>          
             </Pressable>
-
-
-
-   
-
-
-
           </View>
 
-
+          <View style={styles.buttonContainer}>
+              <DrawlotsButton />
+          </View>
 
         </View>
         
@@ -310,6 +303,14 @@ const styles = StyleSheet.create({
   textBg: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: -40,
+    zIndex: 9999,
   },
 });
 

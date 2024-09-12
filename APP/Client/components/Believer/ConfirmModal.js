@@ -22,6 +22,7 @@ const ConfirmModal = ({ isVisible, onCancel, onConfirm, orderDetails }) => {
           <Text style={styles.confirmationText}>領取日期: {orderDetails.pickupDate}</Text>
           <Text style={styles.confirmationText}>領取時間: {orderDetails.pickupTime}</Text>
           <Text style={styles.confirmationText}>付款方式: {orderDetails.paymentMethod}</Text>
+          <Text style={styles.confirmationText}>付款總額: {orderDetails.totalPrice}</Text>
         </View>
 
         <Text style={styles.confirmationReminder}>
