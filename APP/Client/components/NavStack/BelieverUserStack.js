@@ -2,38 +2,28 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import BelieverHomePage from '../../screens/Believer/BelieverHomePage';
-import OfferingsByTemple from '../../screens/Believer/OfferingsByTemple';
+import UserPage  from '../../screens/Common/UserPage';
 import TemplesByOffering from '../../screens/Believer/TemplesByOffering';
 import OrderConfirmationPage from '../../screens/Believer/OrderConfirmationPage';
 import OrderSuccess from '../../screens/Believer/OrderSuccess';
-import ProductInfoPage from '../../screens/Believer/ProductInfoPage'
-
+import OrderHistoryPage from '../../screens/Believer/OrderHistoryPage';
+import SavedTemples from '../../screens/Believer/SavedTemples';
+import ProfileManagement from '../../screens/Believer/ProfileManagement';
 
 
 const Stack = createNativeStackNavigator();
 
-function BelieverHomeStack(){
+function BelieverUserStack(){
   return (
     <Stack.Navigator
         screenOption = {{ headerShown: false }}
-        initialRouteName='BelieverHomePage'
+        initialRouteName='UserPage'
     >
-      <Stack.Screen
-        name = 'BelieverHomePage'
-        component = { BelieverHomePage }
+       <Stack.Screen
+        name = 'UserPage'
+        component = { UserPage }
         options = {{ headerShown: false }}
-      />
-      <Stack.Screen
-        name = 'TemplesByOffering'
-        component = { TemplesByOffering }
-        options = {{ headerShown: false }}
-      />
-      <Stack.Screen
-        name = 'OfferingsByTemple'
-        component = { OfferingsByTemple }
-        options = {{ headerShown: false }}
-      />
+      /> 
       <Stack.Screen
         name = 'OrderConfirmationPage'
         component = { OrderConfirmationPage }
@@ -45,14 +35,23 @@ function BelieverHomeStack(){
         options = {{ headerShown: false }}
       />
       <Stack.Screen
-        name = 'ProductInfoPage'
-        component = { ProductInfoPage }
+        name = 'OrderHistoryPage'
+        component = { OrderHistoryPage }
         options = {{ headerShown: false }}
       />
-      
+      <Stack.Screen
+        name = 'SavedTemples'
+        component = { SavedTemples }
+        options = {{ headerShown: false }}
+      />
+      <Stack.Screen
+        name = 'ProfileManagement'
+        component = { ProfileManagement }
+        options = {{ headerShown: false }}
+      />
       
     </Stack.Navigator>
   )
 }
 
-export default BelieverHomeStack;
+export default BelieverUserStack;

@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Text, Dimensions, Alert } from 'react-native';
+import { StyleSheet, View, ScrollView, TextInput, Text, Dimensions, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import AntDesign from '@expo/vector-icons/AntDesign';
 
 import axios from 'axios';
 
-
+import DrawlotsButton from '../../components/Believer/DrawlotsButton';
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
-import SetButton from '../../components/Utility/SetButton';
+import CheckoutBar from '../../components/Believer/CheckoutBar';
 
 const API=require('../config/DBconfig')
 
@@ -90,72 +91,80 @@ const ProfileManagement = () => {
           flex: 1,
           backgroundColor: "white",
           paddingTop: insets.top,
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom - 40,
           paddingLeft: insets.left,
           paddingRight: insets.right
         }}>
           
         <GoBackButton1  destination="UserPage" />
 
+        {/* Page Title */}
         <View style={styles.titleContainer}>
+            <AntDesign name="edit" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>個資維護</Text>
+        </View>
+            
+
+        
+       
+        
+        {/* TextInput */}
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.formContainer}>
 
             {/* 待修改 : 增加更換照片功能 */}
             <Image
-            style={styles.userImage}
-            contentFit="cover"
-            source={require("../../assets/ellipse-2.png")}
+                style={styles.userImage}
+                contentFit="cover"
+                source={require("../../assets/ellipse-2.png")}
             />
-        </View>
-       
-        {/* TextInput */}
-        <View style={styles.formContainer}>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>姓名 :</Text>
               <TextInput 
-              placeholder=" 中文姓名" 
-              style={styles.input} 
-              value={newName}
-              onChangeText={setName}/>
+                placeholder=" 中文姓名" 
+                style={styles.input} 
+                value={newName}
+                onChangeText={setName}
+              />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>電子郵件 :</Text>
               <TextInput
-              placeholder=" 電子郵件" 
-              style={styles.input} 
-              value={newEmail}
-              onChangeText={setEmail}/>
+                placeholder=" 電子郵件" 
+                style={styles.input} 
+                value={newEmail}
+                onChangeText={setEmail}
+              />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>密碼 :</Text>
               <TextInput 
-              placeholder=" 密碼" 
-              style={styles.input} 
-              secureTextEntry 
-              value={newPassword}
-              onChangeText={setPassword}/>
+                placeholder=" 密碼" 
+                style={styles.input} 
+                secureTextEntry 
+                value={newPassword}
+                onChangeText={setPassword}
+              />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>連絡電話 :</Text>
               <TextInput 
-              placeholder=" 連絡電話" 
-              style={styles.input}
-              value={newPhone}
-              onChangeText={setPhone}
-               />
+                placeholder=" 連絡電話" 
+                style={styles.input}
+                value={newPhone}
+                onChangeText={setPhone}
+              />
             </View>
-        </View>
+            
+          </View>
+        </ScrollView>
 
         <View style={styles.buttonContainer}>
-          <SetButton 
-            btnText={'確認送出'} 
-            btnStatus={'primary'} 
-            onPress={handleRegisterUpdate}
-          />
+          <CheckoutBar btnText={'確認送出'} iconName={"checkbox-outline"} onPress={handleRegisterUpdate} />
         </View>
 
           
@@ -181,32 +190,40 @@ const ProfileManagement = () => {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    width: width*0.95,
+    width: width * 0.95,
+    flexDirection: 'row',
     justifyContent: "center",
     alignItems: 'center',
-    alignSelf:'center',      
+    alignSelf: 'center',
     paddingHorizontal: 10,
-    marginBottom: 25
-
-    // borderWidth:1
+    marginBottom: 15,
+  },
+  icon: {
+    marginRight: 10,
   },
   pageTitle: {
     fontSize: 28,
     color: "#4F4F4F",
     fontWeight: "bold",
     textAlign: 'left',
-    marginBottom:20,
+    marginBottom: 5,
   },
   userImage: {
     width: 150,
     height: 150,
     borderRadius: 50,
+    alignSelf:'center'
+  },
+  scrollView: {
+    flex: 1,
+    paddingBottom: 80,
   },
   formContainer:{
     width: width*0.95,
     justifyContent:'center',
     alignSelf:'center',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    marginTop: 20,
   },
   label: {
     fontSize: 16,
@@ -228,7 +245,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'center',
     position: 'absolute',
-    bottom: 60,
+    bottom: 0,
   },
   
 });

@@ -6,6 +6,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import ProductItem from "../../components/Believer/ProductItem";
+import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 
 const { width } = Dimensions.get('window');
 
@@ -90,10 +91,14 @@ const OfferingPage = () => {
         flex: 1,
         backgroundColor: "white",
         paddingTop: insets.top + 20,
-        paddingBottom: insets.bottom - 35,
+        paddingBottom: insets.bottom - 40,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
+
+        <View style={styles.buttonContainer}>
+          <DrawlotsButton />
+        </View>
 
         {/* Title */}
         <View style={styles.titleContainer}>
@@ -191,6 +196,14 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 5,
+  },
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: -40,
+    zIndex: 9999,
   },
   noResultsContainer: {
     flex: 1,

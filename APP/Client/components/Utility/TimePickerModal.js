@@ -77,11 +77,17 @@ const styles = StyleSheet.create({
   },
   modalButton: {
     marginTop: 20,
-    backgroundColor: "#FFA042",
+    backgroundColor: "orange",
     padding: 10,
     borderRadius: 10,
     width: "100%",
     alignItems: "center",
+
+    elevation: 5, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   modalButtonText: {
     color: "white",
