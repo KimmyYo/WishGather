@@ -2,6 +2,8 @@ import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useRef } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
@@ -92,7 +94,7 @@ function FoodScanningPage() {
         <SafeAreaProvider>
             <View style={[styles.container, {
                 paddingTop: insets.top + 30,
-                paddingBottom: insets.bottom,
+                paddingBottom: insets.bottom-40,
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }]}>
@@ -102,11 +104,12 @@ function FoodScanningPage() {
                 <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
                     <View style={styles.buttonContainer}>
                         <TouchableOpacity style={styles.button} onPress={takePicture}>
-                            <Text style={styles.text}>Take Picture</Text>
+                            <AntDesign name="camera" size={24} color="#4F4F4F" />
                         </TouchableOpacity>
                     </View>
                 </CameraView>
                 <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+                    <FontAwesome name="cloud-upload" size={24} color="white" />
                     <Text style={styles.text}>Upload Picture</Text>
                 </TouchableOpacity>
             </View>
@@ -133,33 +136,46 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     buttonContainer: {
+        width: 100,
+        height: 100,
+        alignSelf:'center',
+        justifyContent:'center',
         flex: 1,
         flexDirection: 'row',
         backgroundColor: 'transparent',
-        margin: 64,
+        position: 'relative',
+        marginBottom: 40,
     },
     button: {
         flex: 1,
+        flexDirection:'row',
         alignSelf: 'flex-end',
+        alignItems: 'center',
+        justifyContent:'center',
+        backgroundColor: "white",
+        paddingHorizontal: 30,
+        paddingVertical: 15,
+        borderRadius: 20,
+
+        elevation: 5, // For Android shadow
+        shadowColor: '#000', // For iOS shadow
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+    },
+    uploadButton: {
+        flexDirection: 'row',
+        justifyContent:'center',
         alignItems: 'center',
         backgroundColor: "orange",
         paddingHorizontal: 30,
         paddingVertical: 15,
-        borderRadius: 10
-    },
-    uploadButton: {
-        alignItems: 'center',
-        backgroundColor: "lightblue",
-        paddingHorizontal: 30,
-        paddingVertical: 15,
-        borderRadius: 10,
-        marginTop: 10,
-        marginHorizontal: 20,
     },
     text: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: '#333',
+        color: 'white',
+        marginLeft: 10, 
     },
 });
 

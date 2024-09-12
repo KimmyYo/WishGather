@@ -2,11 +2,11 @@ import React from 'react';
 import { Pressable, Image, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-const GoBackButton1 = ({ style, destination }) => {
+const GoBackButton1 = ({ style }) => {  // Removed destination prop
   const navigation = useNavigation();
 
   return (
-    <Pressable onPress={() => navigation.navigate(destination)} style={[styles.backButton, style]}>
+    <Pressable onPress={() => navigation.goBack()} style={[styles.backButton, style]}>
       <Image
         style={styles.goBackIcon}
         contentFit="cover"
