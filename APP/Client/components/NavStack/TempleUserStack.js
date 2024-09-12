@@ -2,7 +2,7 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import UserPage  from '../../screens/Common/UserPage';
+import TempleUserPage  from '../../screens/Temple/TempleUserPage';
 import TemplesByOffering from '../../screens/Believer/TemplesByOffering';
 import OrderConfirmationPage from '../../screens/Believer/OrderConfirmationPage';
 import OrderSuccess from '../../screens/Believer/OrderSuccess';
@@ -13,15 +13,20 @@ import ProfileManagement from '../../screens/Common/ProfileManagement';
 
 const Stack = createNativeStackNavigator();
 
-function BelieverUserStack(){
+function TempleUserStack(){
   return (
     <Stack.Navigator
         screenOption = {{ headerShown: false }}
-        initialRouteName='UserPage'
+        initialRouteName='TempleUserPage'
     >
        <Stack.Screen
-        name = 'UserPage'
-        component = { UserPage }
+        name = 'TempleUserPage'
+        component = { TempleUserPage }
+        options = {{ headerShown: false }}
+      />
+      <Stack.Screen
+        name = 'ProfileManagement'
+        component = { ProfileManagement }
         options = {{ headerShown: false }}
       /> 
       <Stack.Screen
@@ -44,14 +49,10 @@ function BelieverUserStack(){
         component = { SavedTemples }
         options = {{ headerShown: false }}
       />
-      <Stack.Screen
-        name = 'ProfileManagement'
-        component = { ProfileManagement }
-        options = {{ headerShown: false }}
-      />
+      
       
     </Stack.Navigator>
   )
 }
 
-export default BelieverUserStack;
+export default TempleUserStack;

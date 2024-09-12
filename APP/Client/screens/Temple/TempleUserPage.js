@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { StyleSheet, Pressable, View, Text, Modal, SafeAreaView, TouchableOpacity, Alert, Dimensions } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 
 import { StatusBar } from 'expo-status-bar';
@@ -14,8 +14,6 @@ const { width, height } = Dimensions.get('window');
 import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
-import Ionicons from "@expo/vector-icons/Ionicons";
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 const Tab = createBottomTabNavigator();
 
 
@@ -24,7 +22,7 @@ import axios from 'axios';
 //把API抓進來-都固定用專案教室IP
 const API=require('../config/DBconfig')
 
-const UserPage = () => {
+const TempleUserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
 
@@ -153,15 +151,15 @@ const UserPage = () => {
               onPress={() => navigation.navigate("OrderHistoryPage")}
             >
               <MaterialCommunityIcons name="history" size={24} color="#4f4f4f" />
-              <Text style={styles.buttonText}>歷史訂單</Text>
+              <Text style={styles.buttonText}>歷史紀錄</Text>
             </Pressable>
 
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
               onPress={() => navigation.navigate("SavedTemples")}
             >
-              <MaterialCommunityIcons name="heart" size={24} color="#4f4f4f" />
-              <Text style={styles.buttonText}>我的收藏</Text>
+              <Ionicons name="gift-sharp" size={24} color="#4f4f4f" />
+              <Text style={styles.buttonText}>供品上架</Text>
             </Pressable>
             
             <Pressable
@@ -171,10 +169,6 @@ const UserPage = () => {
               <MaterialCommunityIcons name="logout" size={24} color="#4f4f4f" />
               <Text style={styles.buttonText}>登出帳戶</Text>          
             </Pressable>
-          </View>
-
-          <View style={styles.buttonContainer}>
-              <DrawlotsButton />
           </View>
 
         </View>
@@ -313,4 +307,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UserPage;
+export default TempleUserPage;
