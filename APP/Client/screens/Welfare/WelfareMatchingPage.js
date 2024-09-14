@@ -5,14 +5,14 @@ import axios from 'axios';
 const API = require('../config/DBconfig');
 const { width, height } = Dimensions.get('window');
 
-export default function WelfareMatchingPage({ navigation }) {
-   
+export default function WelfareMatchingPage({ navigation }) {   
   const [error, setError] = useState(null); 
 
   // Fetch temple data from API
   const [temples, setTemples] = useState([]);
+
   useEffect(() => {  
-    axios.get(`${API}/temples_info`) // Make sure your API endpoint matches this
+    axios.get(`${API}/temples_info`)
       .then(response => {
         setTemples(response.data);
       })
@@ -39,7 +39,7 @@ export default function WelfareMatchingPage({ navigation }) {
         {/* "查看" Button */}
         <TouchableOpacity 
           style={styles.viewButton} 
-          onPress={() => navigation.navigate('Details', { temple: item })}
+          onPress={() => navigation.navigate('MatchingDetails', { temple: item })}
         >
           <Text style={styles.buttonText}>查看</Text>
         </TouchableOpacity>
