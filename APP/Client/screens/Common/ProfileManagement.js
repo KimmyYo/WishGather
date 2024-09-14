@@ -1,10 +1,11 @@
-import React, { useState ,useContext} from 'react';
+import React, { useState ,useContext,useEffect } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, TextInput, Text, Dimensions, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 import axios from 'axios';
 
@@ -21,13 +22,16 @@ const ProfileManagement = () => {
 
   const insets = useSafeAreaInsets();
 
-  const { userId} = useContext(UserContext);
+  const { userId, userRole,token} = useContext(UserContext);
   
   const [profileImage, setProfileImage] = useState(null);
   const [newName, setName] = useState('');
   const [newPhone, setPhone] = useState('');
   const [newEmail, setEmail] = useState('');
   const [newPassword, setPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [imageKey, setImageKey] = useState(0);
+  
 
   const handleRegisterUpdate = async () => {
     console.log('Current state before submission:', { newName, newPhone, newEmail, newPassword });
@@ -88,30 +92,112 @@ const ProfileManagement = () => {
     }
   };
 
-  const pickImage = async () => {
-    // Request media library permission
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-  
-    if (!permissionResult.granted) {
-      Alert.alert("Permission Required", "Permission to access the camera roll is required!");
-      return;
+  useEffect(() => {
+    fetchProfilePicture();
+  }, []);
+
+  const clearImageCache = async () => {
+    // Clear the cache for the specific image
+    if (profileImage) {
+      await Image.prefetch(profileImage);
     }
-  
-    // Let the user pick an image
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-  
-    if (!result.canceled && result.assets && result.assets.length > 0) {
-      setProfileImage(result.assets[0].uri); // Update the state with the selected image URI
+    // Force re-render of the image component
+    setImageKey(prevKey => prevKey + 1);
+  };
+
+  const fetchProfilePicture = async () => {
+    try {
+      const response = await axios.get(`${API}/user/${userId}/profilePicture`);
+      if (response.data && response.data.imageUrl) {
+        setProfileImage(`${API}${response.data.imageUrl}`);
+        await clearImageCache();
+      }
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+      Alert.alert('Error', 'Failed to fetch profile picture.');
     }
   };
 
 
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.5, // Reduced quality
+      base64: false, // We'll get base64 after resizing
+    });
+
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      const resizedImage = await resizeImage(result.assets[0].uri);
+      await sendProfilePictureToServer(resizedImage);
+    }
+  };
+
+  const resizeImage = async (uri) => {
+    const manipulatedImage = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 300, height: 300 } }], // Resize to 300x300
+      { format: ImageManipulator.SaveFormat.JPEG, compress: 0.8, base64: true }
+    );
+    return manipulatedImage.base64;
+  };
+
+const sendProfilePictureToServer = async (base64Image) => {
+  console.log('Sending profile picture to server...');
+  setIsLoading(true);
+  try {
+    const response = await axios.post(`${API}/user/${userId}/profilePicture`, {
+      photo: base64Image
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    console.log('Server response received:', response.data);
+
+    if (response.data && response.data.imageUrl) {
+      
+      await fetchProfilePicture(); // Fetch the updated profile picture
+      
+      Alert.alert('上傳成功!', '資料照片更新成功.');
+    }
+  } catch (error) {
+    console.error('Error sending profile picture to server:', error);
+    Alert.alert('Error', 'Failed to update profile picture. Please try again.');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
   const navigation = useNavigation();
+
+
+  const renderUserImageSection = () => {
+    if (userRole === '宮廟' || userRole === '社福') {
+      return (
+        <TouchableOpacity onPress={pickImage}>
+          <View style={styles.imageContainer}>
+            <Image
+              key={imageKey}
+              style={styles.userImage}
+              contentFit="cover"
+              source={profileImage ? { uri: profileImage } : `${API}/uploads/profilePictures/default.jpg`}
+            />
+            <View style={styles.imageOverlay}>
+              <AntDesign name="edit" size={30} color="white" style={styles.editIcon} />
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+    return null;
+  };
+
+
+
 
   {/* Style */}
   return (
@@ -131,26 +217,31 @@ const ProfileManagement = () => {
         <View style={styles.titleContainer}>
             <AntDesign name="edit" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>個資維護</Text>
+           
         </View>
         
         {/* TextInput */}
         <ScrollView style={styles.scrollView}>
           <View style={styles.formContainer}>
 
+{/* 判斷用戶決定是否提供更新照片 */}
+          {renderUserImageSection()} 
+
            {/* User Image Section */}
-           <TouchableOpacity onPress={pickImage}>
+           
+           {/* <TouchableOpacity onPress={pickImage}>
               <View style={styles.imageContainer}>
                 <Image
                   style={styles.userImage}
                   contentFit="cover"
                   source={profileImage ? { uri: profileImage } : require("../../assets/ellipse-2.png")} // Default image
                 />
-                {/* Overlay layer */}
+                
                 <View style={styles.imageOverlay}>
                   <AntDesign name="edit" size={30} color="white" style={styles.editIcon} />
                 </View>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
 
             <View style={styles.inputContainer}>
