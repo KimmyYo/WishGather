@@ -47,8 +47,14 @@ const styles = StyleSheet.create({
     padding: 10,
     width: "80%",
     alignItems: "center",
-    backgroundColor: "#FFA042",
+    backgroundColor: "orange",
     borderRadius: 20,
+
+    elevation: 5, // For Android shadow
+    shadowColor: '#000', // For iOS shadow
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
   },
   modalOptionText: {
     fontSize: 16,

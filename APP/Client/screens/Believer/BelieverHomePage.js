@@ -8,7 +8,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import TempleDistance from "../../components/Believer/TempleDistance";
 import AddressOverlay from "../../components/Believer/AddressOverlay";
-
+import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 
 import * as Location from 'expo-location';
 
@@ -84,10 +84,13 @@ const BelieverHomePage = () => {
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: insets.top,
-        paddingBottom: insets.bottom - 35,
+        paddingBottom: insets.bottom -40,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
+        <View style={styles.buttonContainer}>
+          <DrawlotsButton />
+        </View>
 
         {/* Location */}
         <View style={styles.locationContainer}>
@@ -127,9 +130,7 @@ const BelieverHomePage = () => {
               distance={item.distance}
               date1={item.date1}
               date2={item.date2}
-
               onPress={() => navigation.navigate("OfferingsByTemple")}
-
             />
           )}
           keyExtractor={(item) => item.id}
@@ -159,6 +160,14 @@ const BelieverHomePage = () => {
 };
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: -40,
+    zIndex: 9999,
+  },
   locationContainer: {
     width:"95%",
     height: 55,
@@ -191,9 +200,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
   },
   activityContainer: {
-    width:"90%",
-    alignItems: "center",
-    paddingButtom: 80,
+    paddingVertical: 10,
+    justifyContent:'center',
+    alignItems: 'center',
+    paddingBottom:60,
   },
   overlay: {
     flex: 1,

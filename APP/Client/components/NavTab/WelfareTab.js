@@ -6,8 +6,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 import WelfareTransportPage from '../../screens/Welfare/WelfareTransportPage';
 import WelfareUserPage from '../../screens/Welfare/WelfareUserPage';
-import WelfareHomePage from '../../screens/Welfare/WelfareHomePage';
-
+import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
+import UserPage from '../../screens/Common/UserPage';
 
 
 
@@ -48,12 +48,13 @@ function WelfareTab(){
          
           <Tab.Screen
             name="使用者"
-            component={WelfareUserPage}
+            component={UserPage}
             options={{
               tabBarLabel: '使用者',
               tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={26}/>)
             }}
           />
+
       </Tab.Navigator>
     )
 }

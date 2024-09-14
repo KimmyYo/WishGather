@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, TextInput, Text, Dimensions, Alert } from 'react-native';
+import { StyleSheet, View, ScrollView, TouchableOpacity, TextInput, Text, Dimensions, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import AntDesign from '@expo/vector-icons/AntDesign';
+import * as ImagePicker from 'expo-image-picker';
 
 import axios from 'axios';
 
-
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
-import SetButton from '../../components/Utility/SetButton';
+import CheckoutBar from '../../components/Believer/CheckoutBar';
 
 const API=require('../config/DBconfig')
 
@@ -17,6 +18,7 @@ const { width, height } = Dimensions.get('window');
 const ProfileManagement = () => {
 
   const insets = useSafeAreaInsets();
+  const [profileImage, setProfileImage] = useState(null);
   const [newName, setName] = useState('');
   const [newPhone, setPhone] = useState('');
   const [newEmail, setEmail] = useState('');
@@ -81,6 +83,27 @@ const ProfileManagement = () => {
     }
   };
 
+  const pickImage = async () => {
+    // Request media library permission
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  
+    if (!permissionResult.granted) {
+      Alert.alert("Permission Required", "Permission to access the camera roll is required!");
+      return;
+    }
+  
+    // Let the user pick an image
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+  
+    if (!result.canceled && result.assets && result.assets.length > 0) {
+      setProfileImage(result.assets[0].uri); // Update the state with the selected image URI
+    }
+  };
   const navigation = useNavigation();
 
   {/* Style */}
@@ -90,72 +113,85 @@ const ProfileManagement = () => {
           flex: 1,
           backgroundColor: "white",
           paddingTop: insets.top,
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom - 40,
           paddingLeft: insets.left,
           paddingRight: insets.right
         }}>
           
-        <GoBackButton1  destination="UserPage" />
+        <GoBackButton1 />
 
+        {/* Page Title */}
         <View style={styles.titleContainer}>
+            <AntDesign name="edit" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>個資維護</Text>
-
-            {/* 待修改 : 增加更換照片功能 */}
-            <Image
-            style={styles.userImage}
-            contentFit="cover"
-            source={require("../../assets/ellipse-2.png")}
-            />
         </View>
-       
+        
         {/* TextInput */}
-        <View style={styles.formContainer}>
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.formContainer}>
+
+           {/* User Image Section */}
+           <TouchableOpacity onPress={pickImage}>
+              <View style={styles.imageContainer}>
+                <Image
+                  style={styles.userImage}
+                  contentFit="cover"
+                  source={profileImage ? { uri: profileImage } : require("../../assets/ellipse-2.png")} // Default image
+                />
+                {/* Overlay layer */}
+                <View style={styles.imageOverlay}>
+                  <AntDesign name="edit" size={30} color="white" style={styles.editIcon} />
+                </View>
+              </View>
+            </TouchableOpacity>
+
 
             <View style={styles.inputContainer}>
-              <Text style={styles.label}>姓名 :</Text>
+              <Text style={styles.label}>名稱 :</Text>
               <TextInput 
-              placeholder=" 中文姓名" 
-              style={styles.input} 
-              value={newName}
-              onChangeText={setName}/>
+                placeholder=" 中文名稱" 
+                style={styles.input} 
+                value={newName}
+                onChangeText={setName}
+              />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>電子郵件 :</Text>
               <TextInput
-              placeholder=" 電子郵件" 
-              style={styles.input} 
-              value={newEmail}
-              onChangeText={setEmail}/>
+                placeholder=" 電子郵件" 
+                style={styles.input} 
+                value={newEmail}
+                onChangeText={setEmail}
+              />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>密碼 :</Text>
               <TextInput 
-              placeholder=" 密碼" 
-              style={styles.input} 
-              secureTextEntry 
-              value={newPassword}
-              onChangeText={setPassword}/>
+                placeholder=" 密碼" 
+                style={styles.input} 
+                secureTextEntry 
+                value={newPassword}
+                onChangeText={setPassword}
+              />
             </View>
 
             <View style={styles.inputContainer}>
               <Text style={styles.label}>連絡電話 :</Text>
               <TextInput 
-              placeholder=" 連絡電話" 
-              style={styles.input}
-              value={newPhone}
-              onChangeText={setPhone}
-               />
+                placeholder=" 連絡電話" 
+                style={styles.input}
+                value={newPhone}
+                onChangeText={setPhone}
+              />
             </View>
-        </View>
+            
+          </View>
+        </ScrollView>
 
         <View style={styles.buttonContainer}>
-          <SetButton 
-            btnText={'確認送出'} 
-            btnStatus={'primary'} 
-            onPress={handleRegisterUpdate}
-          />
+          <CheckoutBar btnText={'確認送出'} iconName={"checkbox-outline"} onPress={handleRegisterUpdate} />
         </View>
 
           
@@ -181,32 +217,62 @@ const ProfileManagement = () => {
 
 const styles = StyleSheet.create({
   titleContainer: {
-    width: width*0.95,
+    width: width * 0.95,
+    flexDirection: 'row',
     justifyContent: "center",
     alignItems: 'center',
-    alignSelf:'center',      
+    alignSelf: 'center',
     paddingHorizontal: 10,
-    marginBottom: 25
-
-    // borderWidth:1
+    marginBottom: 15,
+  },
+  icon: {
+    marginRight: 10,
   },
   pageTitle: {
     fontSize: 28,
     color: "#4F4F4F",
     fontWeight: "bold",
     textAlign: 'left',
-    marginBottom:20,
+    marginBottom: 5,
+  },
+  imageContainer: {
+    position: 'relative',
+    width: 160,
+    height: 160,
+    alignSelf: 'center',
+    marginBottom: 20,
   },
   userImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 50,
+    width: '100%',
+    height: '100%',
+    borderRadius: 80,
+  },
+  imageOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.3)', // Gray with 30% opacity
+    borderRadius: 80,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  editIcon: {
+    color: 'white',
+  },
+  scrollView: {
+    flex: 1,
+    paddingBottom: 80,
   },
   formContainer:{
     width: width*0.95,
     justifyContent:'center',
     alignSelf:'center',
-    paddingHorizontal: 15
+    paddingHorizontal: 15,
+    marginTop: 20,
+    paddingBottom: 80,
+    
   },
   label: {
     fontSize: 16,
@@ -228,7 +294,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'center',
     position: 'absolute',
-    bottom: 60,
+    bottom: 0,
   },
   
 });

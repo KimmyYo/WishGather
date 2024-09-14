@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 import TempleCard from "../../components/Believer/TempleCard";
 import GoBackButton1 from "../../components/Utility/GoBackButton1";
-
+import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 
 const { width } = Dimensions.get('window');
 
@@ -100,12 +100,15 @@ const TemplesByOffering = () => {
           flex: 1,
           backgroundColor: "white",
           paddingTop: insets.top,
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom - 40,
           paddingLeft: insets.left,
           paddingRight: insets.right
         }}>
            <GoBackButton1 destination="OfferingPage4" />
 
+           <View style={styles.buttonContainer}>
+            <DrawlotsButton />
+          </View>
           {/* Header */}
           {/* Title */}
           {/* 需抓取前面的OfferingPage4所選的供品類別 */}
@@ -205,6 +208,14 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: 'center',
     paddingBottom:60,
+  },
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: -40,
+    zIndex: 9999,
   },
   noResultsContainer: {
     flex: 1,
