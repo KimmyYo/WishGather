@@ -31,7 +31,7 @@ function SignIn() {
 
   const [isLoading, setIsLoading] = useState(false);
   const [isChecked, setChecked] = useState(false);
-  const { setUserId } = useContext(UserContext);
+  const { setUserId,setUserRole } = useContext(UserContext);
   const { showAlertDialog, renderAlertDialog } = useAlertDialog();
   const {
     validateUserEmail,
@@ -60,6 +60,7 @@ function SignIn() {
         const { userId, role } = response.data;
         setRole(role);
         setUserId(userId); // 設定global userId (會員table)
+        setUserRole(role); // 設定global userId (會員table)
         // 根據角色導航
         if (role === '信眾') {
           navigation.replace('BelieverTab');
