@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect ,useContext} from "react";
 import { Image } from "expo-image";
 import { StyleSheet, Pressable, View, Text, Modal, SafeAreaView, TouchableOpacity, Alert, Dimensions } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -14,6 +14,8 @@ const { width, height } = Dimensions.get('window');
 import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
+
+import { UserContext } from '../../components/Context/UserContext';//for id
 const Tab = createBottomTabNavigator();
 
 
@@ -25,6 +27,11 @@ const API=require('../config/DBconfig')
 const TempleUserPage = () => {
   const [textVisible, setTextVisible] = useState(false);
   const navigation = useNavigation();
+
+  const { userId, userRole} = useContext(UserContext);
+
+  const [profileImage, setProfileImage] = useState(null);//大頭貼
+
 
   //token
   const [token, setToken] = useState(null);
@@ -91,6 +98,27 @@ const TempleUserPage = () => {
     setIsLoading(false);
   };
 
+  //IMG-part-start
+  useEffect(() => {
+    fetchProfilePicture();
+  }, []);
+
+
+
+  const fetchProfilePicture = async () => {
+    try {
+      const response = await axios.get(`${API}/user/${userId}/profilePicture`);
+      if (response.data && response.data.imageUrl) {
+        setProfileImage(`${API}${response.data.imageUrl}`);
+        // await clearImageCache();
+      }
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+      Alert.alert('Error', 'Failed to fetch profile picture.');
+    }
+  };
+ //IMG-part-send
+
   const handleSignOut = async () => {
     setToken(null);
     setProfile(null);
@@ -122,7 +150,7 @@ const TempleUserPage = () => {
             <Image
               style={styles.userPageChild}
               contentFit="cover"
-              source={require("../../assets/ellipse-2.png")}
+              source={profileImage ? { uri: profileImage } : `${API}/uploads/profilePictures/default.jpg`}
             />
 
             {/* User Name */}
