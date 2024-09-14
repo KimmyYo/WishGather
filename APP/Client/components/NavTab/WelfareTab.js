@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import WelfareMatchingPage from '../../screens/WelfareMatchingPage';
+import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 import WelfareTransportPage from '../../screens/Welfare/WelfareTransportPage';
 import WelfareUserPage from '../../screens/Welfare/WelfareUserPage';
 import WelfareHomePage from '../../screens/Welfare/WelfareHomePage';

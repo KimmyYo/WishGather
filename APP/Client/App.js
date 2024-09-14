@@ -6,6 +6,7 @@ import SignUp from "./screens/Common/SignUp"
 import SignIn from "./screens/Common/SignIn"
 import TempleTab from "./components/NavTab/TempleTab.js"
 import BelieverTab from "./components/NavTab/BelieverTab.js"
+import WelfareTab from "./components/NavTab/WelfareTab.js"
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet} from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
@@ -65,11 +66,11 @@ const App = () => {
                 component = { BelieverTab }
                 options = {{ headerShown: false }}
               />
-              {/* <Stack.Screen
+               <Stack.Screen
                 name = "WelfareTab"
                 component = { WelfareTab }
                 options = {{ headerShown: false }}
-              /> */}
+              /> 
             </Stack.Navigator>
           </NavigationContainer>
         </GestureHandlerRootView>
