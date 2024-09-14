@@ -3,22 +3,19 @@ import { View, Text, StyleSheet, Dimensions, FlatList } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import axios from 'axios';
-
 import SectionHeader from '../../components/Utility/SectionHeader';
 
 const API = require('../config/DBconfig');
-
 const { width, height } = Dimensions.get('window');
 
-
 export default function WelfareHomePage({ navigation }) {
+
   const insets = useSafeAreaInsets();
   const [error, setError] = useState(null);
   
   //捐贈品運送的API
   const [temples, setTemples] = useState([]);
   useEffect(() => {
-
     axios.get(`${API}/temples`)
       .then(response => {
         setTemples(response.data);
@@ -29,11 +26,11 @@ export default function WelfareHomePage({ navigation }) {
   }, []);
 
 
-  const [anotherData, setAnotherData] = useState([]);
+  const [activity, setActivity] = useState([]);
   useEffect(() => {
     axios.get(`${API}/anotherDataTable`) 
       .then(response => {
-        setAnotherData(response.data);
+        setActivity(response.data);
       })
       .catch(error => {
         setError(error);
@@ -50,8 +47,8 @@ export default function WelfareHomePage({ navigation }) {
 
   const matchingItem = ({ item }) => (
     <View style={styles.anotherItemContainer}>
-      <Text style={styles.anotherItemText}>Field1: {item.FIELD1}</Text>
-      <Text style={styles.anotherItemText}>Field2: {item.FIELD2}</Text>
+      <Text style={styles.anotherItemText}>Field1: {item.TEMPLE_NAME}</Text>
+      <Text style={styles.anotherItemText}>Field2: {item.EVENT_NAME}</Text>
     </View>
   );
   
@@ -87,7 +84,7 @@ export default function WelfareHomePage({ navigation }) {
         
         <View>
           <FlatList
-            data={anotherData}
+            data={activity}
             renderItem={matchingItem}
             keyExtractor={(item, index) => index.toString()}
           />

@@ -2,11 +2,10 @@ import React from 'react'
 import { StyleSheet } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-
+import WelfareHomePage from '../../screens/Welfare/WelfareHomePage';
 import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 import WelfareTransportPage from '../../screens/Welfare/WelfareTransportPage';
 import WelfareUserPage from '../../screens/Welfare/WelfareUserPage';
-import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 import UserPage from '../../screens/Common/UserPage';
 
 
@@ -42,7 +41,7 @@ function WelfareTab(){
             component={WelfareTransportPage}
             options={{
               tabBarLabel: '運送',
-              tabBarIcon: ({color}) => (<MaterialCommunityIcons name="emoji-transportation" color={color} size={26}/>)
+              tabBarIcon: ({color}) => (<MaterialCommunityIcons name="truck" color={color} size={26}/>)
             }} 
           />
          
