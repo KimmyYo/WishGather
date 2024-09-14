@@ -6,7 +6,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 import WelfareTransportPage from '../../screens/Welfare/WelfareTransportPage';
 import WelfareUserPage from '../../screens/Welfare/WelfareUserPage';
-import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
+// import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 import UserPage from '../../screens/Common/UserPage';
 
 
