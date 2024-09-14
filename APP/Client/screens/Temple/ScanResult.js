@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect,useContext } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Dimensions } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,11 +8,15 @@ import axios from 'axios';
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import CheckoutBar from '../../components/Utility/CheckoutBar';
 
+import { UserContext } from '../../components/Context/UserContext';//for id
+
 const { width } = Dimensions.get('window');
 
 const API = require('../config/DBconfig');
 
 const ScanResult = ({ route }) => {
+
+    const { userId } = useContext(UserContext);
     const { objectCounts } = route.params;
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
@@ -94,7 +98,7 @@ const ScanResult = ({ route }) => {
     const handleSubmit = async () => {
         try {
             const submitData = {
-                userId: profile.userId,
+                userId: userId,
                 items: items.map(item => ({
                     name: item.name,
                     count: item.count
@@ -163,11 +167,11 @@ const ScanResult = ({ route }) => {
 
                     {/* <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>送出</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity>*/}
 
                     <TouchableOpacity style={styles.rescanButton} onPress={() => navigation.navigate("FoodScanningPage")}>
                         <Text style={styles.buttonText}>重新掃描?</Text>
-                    </TouchableOpacity> */}
+                    </TouchableOpacity>
 
                 </ScrollView>
             </View>

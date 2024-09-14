@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext} from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, TextInput, Text, Dimensions, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
@@ -11,6 +11,8 @@ import axios from 'axios';
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import CheckoutBar from '../../components/Believer/CheckoutBar';
 
+import { UserContext } from '../../components/Context/UserContext';//for id
+
 const API=require('../config/DBconfig')
 
 const { width, height } = Dimensions.get('window');
@@ -18,6 +20,9 @@ const { width, height } = Dimensions.get('window');
 const ProfileManagement = () => {
 
   const insets = useSafeAreaInsets();
+
+  const { userId} = useContext(UserContext);
+  
   const [profileImage, setProfileImage] = useState(null);
   const [newName, setName] = useState('');
   const [newPhone, setPhone] = useState('');
@@ -104,6 +109,8 @@ const ProfileManagement = () => {
       setProfileImage(result.assets[0].uri); // Update the state with the selected image URI
     }
   };
+
+
   const navigation = useNavigation();
 
   {/* Style */}
