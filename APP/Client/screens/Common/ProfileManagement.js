@@ -21,76 +21,69 @@ const { width, height } = Dimensions.get('window');
 const ProfileManagement = () => {
 
   const insets = useSafeAreaInsets();
+  const { userId, userRole, token } = useContext(UserContext);
 
-  const { userId, userRole,token} = useContext(UserContext);
-  
   const [profileImage, setProfileImage] = useState(null);
   const [newName, setName] = useState('');
   const [newPhone, setPhone] = useState('');
   const [newEmail, setEmail] = useState('');
   const [newPassword, setPassword] = useState('');
+  const [newAddress, setAddress] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [imageKey, setImageKey] = useState(0);
-  
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleRegisterUpdate = async () => {
-    console.log('Current state before submission:', { newName, newPhone, newEmail, newPassword });
-
-    if (!newName.trim()) {
-      Alert.alert('Error', 'Name is required');
-      return;
-    }
-
-    if (!newEmail.trim()) {
-      Alert.alert('Error', 'Email is required');
-      return;
-    }
-
-    if (!newPassword) {
-      Alert.alert('Error', 'Password is required ');
-      return;
-    }
-
-    //API後面放要作用的後端
-    const api = `${API}/believersUpdate`;
+	// 從後端取得User的資料
+  const fetchUserData = async () => {
     try {
-      const user = {
-        NAME: newName.trim(),
-        PHONE: newPhone.trim(),
-        EMAIL: newEmail.trim(),
-        PASSWORD: newPassword,
-      };
+      setLoading(true);
+      const response = await axios.get(`${API}/updateInfo/${userId}`);
+      const userData = response.data;
 
-      console.log('User data being sent:', user);
-      console.log('User data being sent:', JSON.stringify(user));
-
-      const result = await axios.post(api, user
-        ,{
-          headers: {
-            'Content-Type': 'application/json',
-          },
-    }
-  );
-      console.log('Registration successful:', result.data);
-      Alert.alert('更新成功', '您的個資已更新!');
-      navigation.navigate('SignIn');   //修改成功前往登入頁面
-
-
-    } catch (error) {
-      console.error('Registration error:', error);
-      if (error.response) {
-        console.log('Error data:', error.response.data);
-        console.log('Error status:', error.response.status);
-        Alert.alert('Registration Failed', error.response.data.error || 'Unknown error');
-      } else if (error.request) {
-        console.log('No response received:', error.request);
-        Alert.alert('Connection Error', 'No response from server. Check your connection.');
-      } else {
-        console.log('Error', error.message);
-        Alert.alert('Error', 'An unexpected error occurred.');
-      }
+      setName(userData.NAME || '');
+      setEmail(userData.EMAIL || '');
+      setPhone(userData.PHONE_NUM || '');
+      setPassword(userData.PASSWORD || '');
+      setAddress(userData.ADDRESS || '');
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      Alert.alert('Error', 'Failed to fetch user data');
     }
   };
+
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const handleRegisterUpdate = async () => {
+    const api = `${API}/updateUser`;
+  
+    const user = {
+      mID: userId,
+      NAME: newName.trim(),
+      PHONE: newPhone.trim(),
+      EMAIL: newEmail.trim(),
+      PASSWORD: newPassword,
+      ADDRESS: newAddress.trim(),
+      ROLE: userRole, // 根據用戶角色設定
+    };
+  
+    try {
+      const result = await axios.post(api, user, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      Alert.alert('更新成功', '您的個資已更新!');
+      navigation.navigate('SignIn');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update user data');
+    }
+  };
+  
+  
 
   useEffect(() => {
     fetchProfilePicture();
@@ -282,6 +275,16 @@ const sendProfilePictureToServer = async (base64Image) => {
                 style={styles.input}
                 value={newPhone}
                 onChangeText={setPhone}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>地址 :</Text>
+              <TextInput
+                placeholder=" 地址" 
+                style={styles.input} 
+                value={newAddress}
+                onChangeText={setAddress}
               />
             </View>
             
