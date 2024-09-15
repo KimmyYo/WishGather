@@ -1,13 +1,25 @@
-import React, { useState, useCallback, useEffect } from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert } from 'react-native';
+import React, { useState, useCallback, useEffect,useContext } from 'react';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Dimensions } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
+import CheckoutBar from '../../components/Utility/CheckoutBar';
+
+import { UserContext } from '../../components/Context/UserContext';//for id
+import {translateToChinese } from '../../components/Utility/translations';
+
+const { width } = Dimensions.get('window');
 
 const API = require('../config/DBconfig');
 
 const ScanResult = ({ route }) => {
+
+    const { userId } = useContext(UserContext);
     const { objectCounts } = route.params;
+    const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const [token, setToken] = useState(null);
     const [profile, setProfile] = useState(null);
@@ -35,7 +47,10 @@ const ScanResult = ({ route }) => {
 
     useEffect(() => {
         // Convert initialObjectCounts to array of objects
-        const initialItems = Object.entries(objectCounts).map(([name, count]) => ({ name, count }));
+        const initialItems = Object.entries(objectCounts).map(([name, count]) => ({
+            name: translateToChinese(name),// from tag to real name in tw-ZH
+            count
+          }));
         setItems(initialItems);
     }, [objectCounts]);
 
@@ -87,7 +102,7 @@ const ScanResult = ({ route }) => {
     const handleSubmit = async () => {
         try {
             const submitData = {
-                userId: profile.userId,
+                userId: userId,
                 items: items.map(item => ({
                     name: item.name,
                     count: item.count
@@ -104,49 +119,67 @@ const ScanResult = ({ route }) => {
     };
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <Text style={styles.title}>{profile ? profile.name || 'User' : 'Loading...'}您的照片中共有:</Text>
-            {items.map((item, index) => (
-                <View key={index} style={styles.itemContainer}>
-                    <Text style={styles.itemName}>{item.name}:</Text>
-                    <TextInput
-                        style={styles.input}
-                        value={item.count.toString()}
-                        onChangeText={(newCount) => handleCountChange(index, newCount)}
-                        keyboardType="numeric"
-                    />
-                    <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteItem(index)}>
-                        <Text style={styles.buttonText}>刪除</Text>
-                    </TouchableOpacity>
+        <SafeAreaProvider>
+            <View style={[styles.container, {
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom-20,
+                paddingLeft: insets.left,
+                paddingRight: insets.right
+            }]}>
+                <View style={{width:'100%'}}>
+                  <GoBackButton1 />
                 </View>
-            ))}
-            <View style={styles.addItemContainer}>
-                <TextInput
-                    style={styles.input}
-                    value={newItemName}
-                    onChangeText={setNewItemName}
-                    placeholder="新品項名稱"
-                />
-                <TextInput
-                    style={styles.input}
-                    value={newItemCount}
-                    onChangeText={setNewItemCount}
-                    placeholder="數量"
-                    keyboardType="numeric"
-                />
-                <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
-                    <Text style={styles.buttonText}>新增</Text>
-                </TouchableOpacity>
+                
+
+                <ScrollView contentContainerStyle={styles.container}>
+                    <Text style={styles.title}>{profile ? profile.name || 'User' : 'Loading...'} 您的照片中共有:</Text>
+                    {items.map((item, index) => (
+                        <View key={index} style={styles.itemContainer}>
+                            <Text style={styles.itemName}>{item.name}:</Text>
+                            <TextInput
+                                style={styles.input}
+                                value={item.count.toString()}
+                                onChangeText={(newCount) => handleCountChange(index, newCount)}
+                                keyboardType="numeric"
+                            />
+                            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteItem(index)}>
+                                <Text style={styles.buttonText}>刪除</Text>
+                            </TouchableOpacity>
+                        </View>
+                    ))}
+                    <View style={styles.itemContainer}>
+                        <TextInput
+                            style={[styles.input, { width: '50%', textAlign: 'center'}]}
+                            value={newItemName}
+                            onChangeText={setNewItemName}
+                            placeholder="新品項名稱"
+                        />
+                        <TextInput
+                            style={styles.input}
+                            value={newItemCount}
+                            onChangeText={setNewItemCount}
+                            placeholder="數量"
+                            keyboardType="numeric"
+                        />
+                        <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
+                            <Text style={styles.buttonText}>新增</Text>
+                        </TouchableOpacity>
+                    </View>
+                    <View style={styles.buttonContainer}>
+                        <CheckoutBar btnText={"送出"} iconName={"checkbox-outline"} onPress={handleSubmit} />
+                    </View>
+
+                    {/* <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+                        <Text style={styles.buttonText}>送出</Text>
+                    </TouchableOpacity>*/}
+
+                    <TouchableOpacity style={styles.rescanButton} onPress={() => navigation.navigate("FoodScanningPage")}>
+                        <Text style={styles.buttonText}>重新掃描?</Text>
+                    </TouchableOpacity>
+
+                </ScrollView>
             </View>
-            <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                <Text style={styles.buttonText}>送出</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity style={styles.rescanButton} onPress={() => navigation.navigate("FoodScanningPage")}>
-                <Text style={styles.buttonText}>重新掃描?</Text>
-            </TouchableOpacity>
-
-        </ScrollView>
+        </SafeAreaProvider>
     );
 };
 
@@ -158,6 +191,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     title: {
+        color:'#4F4F4F',
         fontSize: 24,
         fontWeight: 'bold',
         marginBottom: 20,
@@ -176,12 +210,14 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 5,
-        width: 50,
+        padding: 8,
+        width: 100,
         textAlign: 'center',
+        marginRight: 10,
     },
-    addItemContainer: {
+    itemContainer: {
         flexDirection: 'row',
+        justifyContent:'space-between',
         alignItems: 'center',
         marginTop: 20,
         marginBottom: 20,
@@ -200,11 +236,11 @@ const styles = StyleSheet.create({
         marginLeft: 10,
     },
     submitButton: {
-        backgroundColor: '#2196F3',
+        backgroundColor: 'orange',
         padding: 15,
         borderRadius: 5,
         alignItems: 'center',
-        width: '100%',
+        width: '80%',
     },
     rescanButton: {
         backgroundColor: '#FFA042',
@@ -214,6 +250,13 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         width: '100%',
+    },
+    buttonContainer: {
+        width: width,
+        justifyContent: "center",
+        alignItems: 'center',
+        position: 'absolute',
+        bottom: 0,
     },
     buttonText: {
         color: 'white',

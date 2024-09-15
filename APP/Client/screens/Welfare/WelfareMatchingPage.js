@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 const API = require('../config/DBconfig');
 
-export default function WelfareMatchingPage({ navigation }) {
-
+function WelfareMatchingPage()  {
+  const navigation = useNavigation();
   const { height } = Dimensions.get('window'); 
   const [error, setError] = useState(null); 
 
@@ -87,3 +88,4 @@ const styles = StyleSheet.create({
     top:'20%',
   },
 });
+export default WelfareMatchingPage;

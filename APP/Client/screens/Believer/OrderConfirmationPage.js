@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, Pressable, ScrollView, Image, Dimensions, TextInput, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import ConfirmItem from '../../components/Believer/ConfirmItem';
@@ -11,7 +12,7 @@ import DatePickerModal from '../../components/Utility/DatePickerModal';
 import TimePickerModal from '../../components/Utility/TimePickerModal';
 import PaymentMethodModal from '../../components/Believer/PaymentMethodModal';
 import ConfirmModal from '../../components/Believer/ConfirmModal'; 
-import SetButton from '../../components/Utility/SetButton';
+import CheckoutBar from '../../components/Believer/CheckoutBar';
 
 
 const { width } = Dimensions.get('window');
@@ -26,6 +27,8 @@ const OrderConfirmationPage = () => {
   const calculateTotalPrice = () => {
     return items.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
+  
+  const totalPrice = calculateTotalPrice();
 
   const [note, setNote] = useState('');
 
@@ -57,7 +60,7 @@ const OrderConfirmationPage = () => {
   const handleConfirmOrder = () => {
     setConfirmModalVisible(false);
     Alert.alert("訂單已送出");
-    navigation.navigate('HomePage');
+    navigation.navigate('BelieverHomePage');
   };
 
 
@@ -104,6 +107,8 @@ const OrderConfirmationPage = () => {
     pickupDate: pickupDate.toISOString().split('T')[0],
     pickupTime: `${pickupTime.hour}:${pickupTime.minute}`,
     paymentMethod: paymentMethod,
+    totalPrice: totalPrice,
+
   };
 
   return (
@@ -112,7 +117,7 @@ const OrderConfirmationPage = () => {
         flex: 1,
         backgroundColor: "white",
         paddingTop: insets.top, 
-        paddingBottom: insets.bottom, 
+        paddingBottom: insets.bottom-40, 
         paddingLeft: insets.left, 
         paddingRight: insets.right 
       }}>
@@ -122,6 +127,7 @@ const OrderConfirmationPage = () => {
         <ScrollView contentContainerStyle={styles.scrollViewContent}>
           {/* Title */}
           <View style={styles.titleContainer}>
+            <FontAwesome5 name="file-alt" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>訂單明細</Text>
           </View>
 
@@ -141,19 +147,22 @@ const OrderConfirmationPage = () => {
           
           {/* Donation Choose*/}
           <View style={styles.titleContainer}>
+            <MaterialIcons name="volunteer-activism" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>捐贈選擇</Text>
           </View>
 
           {items.map((item, index) => (
             <View style={styles.itemsContainer}>
-              <DonationItem key={item.id} quantity={item.quantity} title={item.title} price={item.price} />
+              <DonationItem key={item.id} title={item.title} />
             </View>
           ))}
 
           {/* Note */}
           <View style={styles.titleContainer}>
+            <MaterialIcons name="add-comment" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>新增備註</Text>
           </View>
+
           <View style={styles.noteContainer}>
             <TextInput
               style={styles.noteInput}
@@ -171,7 +180,7 @@ const OrderConfirmationPage = () => {
         
         {/* Confirm Button */}
         <View style={styles.buttonContainer}>
-          <SetButton btnText={'送出訂單'} btnStatus={'primary'} onPress={handleOrderSubmit}/>
+           <CheckoutBar btnText={"送出訂單"} iconName={"checkbox-outline"} onPress={handleOrderSubmit} />
         </View>
 
         {/* Confirmation Modal */}
@@ -212,17 +221,17 @@ const OrderConfirmationPage = () => {
 };
 
 const styles = StyleSheet.create({
-  goBackIcon: {
-    width: 28,
-    height: 28,
-    marginLeft: 10,
-  },
   titleContainer: {
-    width: width*0.95,
-    justifyContent: "center",
-    alignItems: 'flex-start',
-    marginTop: 10,       
+    width: width * 0.95,
+    flexDirection:'row',
+    justifyContent: "flex-start",
+    alignItems: 'center',
+    marginTop: 15,
+    marginBottom: 5,     
     paddingHorizontal: 10,
+  },
+  icon: {
+    marginRight: 10, 
   },
   pageTitle: {
     fontSize: 26,
@@ -241,6 +250,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'center',
     marginTop: 5,
+    marginBottom: 10,
   },
   noteContainer: {
     width: width*0.95,
@@ -279,7 +289,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'center',
     position: 'absolute',
-    bottom: 20,
+    bottom: 0,
   },
 });
 

@@ -4,9 +4,11 @@ import { Image } from 'expo-image';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import CheckoutBar from '../../components/Believer/CheckoutBar';
 import OfferingItem from "../../components/Believer/OfferingItem"; 
 import CloseButton from "../../components/Utility/CloseButton";
-import SetButton from '../../components/Utility/SetButton';
+import DrawlotsButton from '../../components/Believer/DrawlotsButton';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -79,10 +81,11 @@ const OfferingsByTemple = () => {
         flex: 1,
         backgroundColor: "white",
         paddingTop: insets.top -50,
-        paddingBottom: insets.bottom,
+        paddingBottom: insets.bottom - 40,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
+        
         <View>
           <Image style={styles.headerImage} contentFit="cover" source={require("../../assets/rectangle-3.png")} />
           <CloseButton />
@@ -120,7 +123,11 @@ const OfferingsByTemple = () => {
         )}
         
         <View style={styles.buttonContainer}>
-          <SetButton onPress={handleCheckout} btnText={'前往結帳'} btnStatus={'primary'} />
+           <CheckoutBar btnText={"前往結帳"} iconName={"cart-outline"} onPress={handleCheckout} />
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <DrawlotsButton />
         </View>
       </View>
     </SafeAreaProvider>
@@ -172,7 +179,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: 'center',
     position: 'absolute',
-    bottom: 20,
+    bottom: 0,
   },
 });
 

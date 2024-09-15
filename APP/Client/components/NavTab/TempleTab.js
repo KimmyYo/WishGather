@@ -9,6 +9,7 @@ import MatchingPage from '../../screens/Temple/MatchingPage';
 import FoodScanningPage from '../../screens/Temple/FoodScanningPage';
 import TempleEventPage from '../../screens/Temple/TempleEventPage';
 import UserPage from '../../screens/Common/UserPage';
+import TempleUserStack from '../NavStack/TempleUserStack';
 
 
 
@@ -58,7 +59,7 @@ function TempleTab(){
          
           <Tab.Screen
             name="使用者"
-            component={UserPage}
+            component={TempleUserStack}
             options={{
               tabBarLabel: '使用者',
               tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={26}/>)

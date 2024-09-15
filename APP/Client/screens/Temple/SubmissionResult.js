@@ -41,7 +41,7 @@ const SubmissionResult = ({ route }) => {
       <View style={styles.footer}>
         <Pressable
           style={styles.returnHomeButton}
-          onPress={() => navigation.navigate("UserPage")}
+          onPress={() => navigation.navigate("TempleHomePage")}
         >
           <Text style={styles.returnHomeText}>返回首頁</Text>
         </Pressable>

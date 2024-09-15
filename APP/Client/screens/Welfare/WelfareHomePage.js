@@ -1,24 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect, useRef, useContext } from 'react';
 import { View, Text, StyleSheet, Dimensions, FlatList } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
+import WelfareMatchingPage from './WelfareMatchingPage';
 import SectionHeader from '../../components/Utility/SectionHeader';
+
+import {UserContext} from '../../components/Context/UserContext';
 
 const API = require('../config/DBconfig');
 
 const { width, height } = Dimensions.get('window');
 
 
-export default function WelfareHomePage({ navigation }) {
+function WelfareHomePage()  {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const { userId } = useContext(UserContext);
+  const [temples, setTemples] = useState([]);
+  const [welfares, setWelfaresData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   
   //捐贈品運送的API
-  const [temples, setTemples] = useState([]);
   useEffect(() => {
-
     axios.get(`${API}/temples`)
       .then(response => {
         setTemples(response.data);
@@ -28,7 +36,20 @@ export default function WelfareHomePage({ navigation }) {
       });
   }, []);
 
+  useEffect(() => {
+    if (userId) {
+      console.log("User ID:", userId); // 檢查 userId
+      axios.get(`${API}/sw_organization/${userId}`)
+        .then(response => {
+          setWelfaresData(response.data[0]);
+        })
+        .catch(error => {
+          setError(error);
+        });
+    }
+  }, [userId]);
 
+  
   const [anotherData, setAnotherData] = useState([]);
   useEffect(() => {
     axios.get(`${API}/anotherDataTable`) 
@@ -66,11 +87,11 @@ export default function WelfareHomePage({ navigation }) {
         
         <View style={{width: width*0.95, flexDirection: 'row', justifyContent: 'flex-start', alignSelf: 'center', marginBottom: 35}}>
           <MaterialCommunityIcons name="home-heart" size={30} color="orange" style={{marginRight: 8}} />
-          <Text style={{fontSize: 24, fontWeight: 'bold', color: '#4F4F4F'}}>歡迎回來 ! 陽光基金會</Text>
+          <Text style={{fontSize: 24, fontWeight: 'bold', color: '#4F4F4F'}}>{'歡迎回來 ! '}{welfares.NAME}</Text>
         </View>
 
         <View style={styles.infoContainer}>
-          <SectionHeader title="捐贈運送狀態" onPress={() => navigation.navigate('Welfare_TransportPage')} />
+          <SectionHeader title="捐贈運送狀態" onPress={() => navigation.navigate('WelfareTransportPage')} />
           <FlatList
             data={temples}
             renderItem={transportItem}
@@ -82,7 +103,7 @@ export default function WelfareHomePage({ navigation }) {
         </View>
 
         <View style={styles.infoContainer}>
-          <SectionHeader title="媒合確認" onPress={() => navigation.navigate('Welfare_MatchingPage')} />
+          <SectionHeader title="媒合確認" onPress={() => navigation.navigate('WelfareMatchingPage')} />
         </View>
         
         <View>
@@ -102,7 +123,7 @@ export default function WelfareHomePage({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#f2f2f2',
     justifyContent: 'start',
     alignItems: 'start',
   },
@@ -120,7 +141,6 @@ const styles = StyleSheet.create({
   },
   infoContainer: {
     width: width * 0.95,
-    backgroundColor: 'white',
     justifyContent: 'center',
     alignSelf: 'center',
     paddingHorizontal: 10,
@@ -162,3 +182,4 @@ const styles = StyleSheet.create({
     top:'20%',
   },
 });
+export default WelfareHomePage;

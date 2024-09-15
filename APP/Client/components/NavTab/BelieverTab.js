@@ -4,6 +4,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 import BelieverHomeStack from '../NavStack/BelieverHomeStack';
 import BelieverOfferingStack from '../NavStack/BelieverOfferingStack';
+import BelieverUserStack from '../NavStack/BelieverUserStack';
 import CartPage from '../../screens/Believer/CartPage';
 import UserPage from '../../screens/Common/UserPage';
 
@@ -44,7 +45,7 @@ function BelieverTab(){
           />
           <Tab.Screen
             name = "使用者"
-            component = { UserPage }
+            component = { BelieverUserStack }
             options={{
                 tabBarLabel: '使用者',
                 tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={26} />)

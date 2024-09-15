@@ -2,9 +2,8 @@ import React from 'react';
 import { StyleSheet, View, Text, Pressable, Dimensions } from 'react-native';
 import { Image } from "expo-image";
 import { LinearGradient } from 'expo-linear-gradient';
-import { Border, Color, FontSize, FontFamily } from "../../GlobalStyles";
 
-const { width, height } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 const TempleDistance = ({ imageSource, date1, date2, temple, event, onPress }) => {
   return (
@@ -37,10 +36,9 @@ const TempleDistance = ({ imageSource, date1, date2, temple, event, onPress }) =
 
 const styles = StyleSheet.create({
   container: {
-    height: 200,
     width: width * 0.9,
+    height: 200,
     marginBottom: 10,
-    overflow: 'hidden',
     backgroundColor: "#FFFFFF",
   },
   imageContainer: {
@@ -50,7 +48,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.5,
     shadowRadius: 3,
     elevation: 3,
-    position: 'relative',
   },
   image: {
     height: "100%",
