@@ -100,7 +100,7 @@ function FoodScanningPage() {
                 paddingRight: insets.right
             }]}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.titleText}>辨識</Text>
+                    <Text style={styles.titleText}>供品辨識</Text>
                 </View>
                 <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
                     <View style={styles.buttonContainer}>
