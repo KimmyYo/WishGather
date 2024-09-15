@@ -88,17 +88,19 @@ const SignUp = () => {
       colors={['#EA7500','#FFFAF4']}
       style={styles.container}
     >
-      <NavigateBack />
+      <View style={styles.btncontainer}>
+          <NavigateBack />
+        </View>
       <View style={styles.pageTitleContainer}>
-        <Text style={{color:"#272727", fontSize: 35, marginBottom: 15, fontWeight: '500'}}>註冊</Text>
-        <Text style={{color:"#272727", fontSize: 25, marginBottom: 50}}>Registration</Text>
+        <Text style={{color:"#4F4F4F", fontSize: 35, marginBottom: 15, fontWeight: '500'}}>註冊</Text>
+        <Text style={{color:"#4F4F4F", fontSize: 25, marginBottom: 50}}>Registration</Text>
       </View>
       {!role && 
         <View>
           <View style={styles.formContainer}>
             <TextInputBox
               inputType='text'
-              placeholder="輸入姓名"
+              placeholder="輸入名稱"
               textValue={name}
               onChangeText={(text) => {
                 setName(text);
@@ -180,6 +182,7 @@ const SignUp = () => {
 
     { role == 'A' && 
       <View style={styles.formContainer}>
+        <PageTitle titleText={'歡迎加入'}/>
         <PageTitle titleText={name}/>
         <TextInputBox
           inputType='text'
@@ -198,6 +201,7 @@ const SignUp = () => {
 
     { role == 'B' && 
       <View style={styles.formContainer}>
+        <PageTitle titleText={'歡迎加入'}/>
         <PageTitle titleText={name}/>
         <TextInputBox
           inputType='text'
@@ -216,6 +220,7 @@ const SignUp = () => {
 
     { role == 'C' && 
       <View style={styles.formContainer}>
+        <PageTitle titleText={'歡迎加入'}/>
         <PageTitle titleText={name}/>
         <TextInputBox
           inputType='text'
@@ -249,19 +254,19 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#F5F5F5',
   },
-  title: {
-    fontSize: 30,
-    fontFamily:"Roboto",
-    marginBottom: 5,
-
-    color: '#272727',
-    fontSize: 35,
-    marginBottom: 15,
-    fontWeight: '500',
+  btncontainer:{
+    position: 'absolute',
+    top: 60,
+  },
+  pageTitleContainer:{
+    justifyContent: 'center',
+    alignItems: 'center',
 
   },
   formContainer: {
     flexDirection: 'column',
+    justifyContent:'center',
+    alignItems:'center',
     gap: 10,
     marginBottom: 25
 
@@ -277,6 +282,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#FFA500',
     borderRadius: 20,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   roleButtonSelected: {
     backgroundColor: '#FF8500',
@@ -286,8 +297,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    
-
     width: '35%',
     height: 50,
     backgroundColor: '#FFA500',
