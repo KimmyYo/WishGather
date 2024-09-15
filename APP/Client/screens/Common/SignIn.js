@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { StyleSheet, View, TextInput, TouchableOpacity, Text, SafeAreaView, Alert ,Pressable} from 'react-native';
 
 //儲存空間用來放token(類似php session那種感覺)
@@ -22,7 +23,7 @@ const API = require('../config/DBconfig');
 
 function SignIn() {
   const navigation = useNavigation();
-
+  const insets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState(null);
@@ -156,58 +157,62 @@ function SignIn() {
   }
 
   return (
-    <LinearGradient
-      colors={['#EA7500', '#FFFAF4']}
-      style={styles.container}
-    >
-      <NavigateBack />
-      <Text style={{ color: "#272727", fontSize: 35, marginBottom: 10, fontWeight: '500'}}>登入</Text>
-      <Text style={{ color: "#272727", fontSize: 25, fontFamily:"Roboto", marginBottom: 50}}>Login</Text>
+    <SafeAreaProvider>
+      <LinearGradient
+        colors={['#EA7500', '#FFFAF4']}
+        style={styles.container}
+      >
+        <View style={styles.btncontainer}>
+          <NavigateBack />
+        </View>
+        
+        <Text style={{ color: "#4F4F4F", fontSize: 35, marginBottom: 10, fontWeight: '500'}}>登入</Text>
+        <Text style={{ color: "#4F4F4F", fontSize: 25, fontFamily:"Roboto", marginBottom: 50}}>Login</Text>
 
-      <TextInputBox
-          inputType='email'
-          placeholder="輸入電子郵件"
-          textValue={email}
-          onChangeText={(text) => {
-            setEmail(text);
-            validateUserEmail(text);
-          }}
-          validState={!userEmailError}
-          invalidInput={userEmailError || ''}
-      />
-      <TextInputBox
-        inputType='password'
-        placeholder="設定密碼"
-        textValue={password}
-        onChangeText={(text) => {
-          setPassword(text);
-          validateUserPassword(text);
-        }}
-        validState={!userPasswordError}
-        invalidInput={userPasswordError || ''}
-      />
-
-    <View style={styles.rememberme}>
-        <Checkbox
-          style={styles.checkbox}
-          value={isChecked}
-          onValueChange={setChecked}
-          color={isChecked ? '#FFA500' : undefined}
+        <TextInputBox
+            inputType='email'
+            placeholder="輸入電子郵件"
+            textValue={email}
+            onChangeText={(text) => {
+              setEmail(text);
+              validateUserEmail(text);
+            }}
+            validState={!userEmailError}
+            invalidInput={userEmailError || ''}
         />
-        <Text style={styles.paragraph}>記住我</Text>
-    </View>
+        <TextInputBox
+          inputType='password'
+          placeholder="設定密碼"
+          textValue={password}
+          onChangeText={(text) => {
+            setPassword(text);
+            validateUserPassword(text);
+          }}
+          validState={!userPasswordError}
+          invalidInput={userPasswordError || ''}
+        />
 
-    <Pressable style={styles.button} onPress={handleSignIn}>
-        <Text style={styles.buttonText}>登入</Text>
-    </Pressable>
+      {/* <View style={styles.rememberme}>
+          <Checkbox
+            style={styles.checkbox}
+            value={isChecked}
+            onValueChange={setChecked}
+            color={isChecked ? '#FFA500' : undefined}
+          />
+          <Text style={styles.paragraph}>記住我</Text>
+      </View> */}
 
-    <Pressable style={styles.button} onPress={() => navigation.navigate("SignUp")}>
-        <Text style={styles.buttonText}>前往註冊</Text>
-    </Pressable>
-    
-    {renderAlertDialog()}
-    </LinearGradient>
-    
+      <Pressable style={styles.button} onPress={handleSignIn}>
+          <Text style={styles.buttonText}>登入</Text>
+      </Pressable>
+
+      <Pressable style={styles.button} onPress={() => navigation.navigate("SignUp")}>
+          <Text style={styles.buttonText}>前往註冊</Text>
+      </Pressable>
+      
+      {renderAlertDialog()}
+      </LinearGradient>
+    </SafeAreaProvider>
   );
 };
 
@@ -219,6 +224,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 20,
     backgroundColor: '#F5F5F5',
+  },
+  btncontainer:{
+    position: 'absolute',
+    top: 60,
   },
   input: {
     width: '90%',
@@ -247,7 +256,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     borderRadius: 20,
-    marginVertical: 20,
+    marginVertical: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
