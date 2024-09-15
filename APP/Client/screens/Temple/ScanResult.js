@@ -9,6 +9,7 @@ import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import CheckoutBar from '../../components/Utility/CheckoutBar';
 
 import { UserContext } from '../../components/Context/UserContext';//for id
+import {translateToChinese } from '../../components/Utility/translations';
 
 const { width } = Dimensions.get('window');
 
@@ -46,7 +47,10 @@ const ScanResult = ({ route }) => {
 
     useEffect(() => {
         // Convert initialObjectCounts to array of objects
-        const initialItems = Object.entries(objectCounts).map(([name, count]) => ({ name, count }));
+        const initialItems = Object.entries(objectCounts).map(([name, count]) => ({
+            name: translateToChinese(name),// from tag to real name in tw-ZH
+            count
+          }));
         setItems(initialItems);
     }, [objectCounts]);
 
