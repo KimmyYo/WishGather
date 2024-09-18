@@ -1,28 +1,51 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TextInput, Pressable, Modal, StyleSheet, FlatList, Dimensions } from "react-native";
 import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
+import axios from 'axios';
+import { LinearGradient } from 'expo-linear-gradient';
 
 import TempleDistance from "../../components/Believer/TempleDistance";
 import AddressOverlay from "../../components/Believer/AddressOverlay";
 import DrawlotsButton from "../../components/Believer/DrawlotsButton";
+import {UserContext} from '../../components/Context/UserContext';
+const API = require('../config/DBconfig');
+import mbxGeocoding from '@mapbox/mapbox-sdk/services/geocoding';
+const mapboxClient = mbxGeocoding({ accessToken: 'sk.eyJ1IjoibWlzMzI2aGYiLCJhIjoiY20wcTc0emo5MDdyMDJrcGw0NW1waHA4aiJ9.KZ47S01i_71SN-VkrSFETw' });
 
 import * as Location from 'expo-location';
 
-const { width } = Dimensions.get('window');
-
+const { width, height } = Dimensions.get('window');
+const axiosInstance = axios.create({
+  baseURL: API,
+  timeout: 10000, // 設置 10 秒超時（默認是 0，表示無限等待）
+});
 
 const BelieverHomePage = () => {
   const [locationIconVisible, setLocationIconVisible] = useState(false);
   const [text1Visible, setText1Visible] = useState(false);
   const [searchText, setSearchText] = useState("");
   const [currentAddress, setCurrentAddress] = useState("定位中...");
-
+  const [nearbyTemples, setNearbyTemples] = useState([]);
+  const [allTemples, setAllTemples] = useState([]);
+  const [userLocation, setUserLocation] = useState(null);
+  const { userId } = useContext(UserContext);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const [error, setError] = useState(null);
+
+// 從API獲取所有宮廟數據
+useEffect(() => {
+  axios.get(`${API}/temples`)
+    .then(response => {
+      setAllTemples(response.data);
+    })
+    .catch(error => {
+      setError(error);
+    });
+}, []);
 
   const openLocationIcon = useCallback(() => {
     setLocationIconVisible(true);
@@ -41,7 +64,9 @@ const BelieverHomePage = () => {
   }, []);
 
   const handleAddressSubmit = useCallback((newAddress) => {
-    setCurrentAddress(newAddress);
+    if (newAddress) {
+      setCurrentAddress(newAddress);
+    }
     setLocationIconVisible(false);
     setText1Visible(false);
   }, []);
@@ -55,6 +80,12 @@ const BelieverHomePage = () => {
       }
 
       let location = await Location.getCurrentPositionAsync({});
+      if (location) {
+        setUserLocation(location.coords); // 確保 userLocation 被正確設置
+      } else {
+        setCurrentAddress('無法獲取位置信息');
+      }
+
       let result = await Location.reverseGeocodeAsync({
         latitude: location.coords.latitude,
         longitude: location.coords.longitude
@@ -68,13 +99,126 @@ const BelieverHomePage = () => {
     })();
   }, []);
 
-  const temples = [
-    { id: '1', imageSource: require("../../assets/rectangle-2.png"), temple: "左營仁濟宮", event: "燈花供養祈福", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-    { id: '2', imageSource: require("../../assets/rectangle-21.png"), temple: "鳳邑雷府大將廟", event: "犒軍儀式", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-    { id: '3', imageSource: require("../../assets/rectangle-22.png"), temple: "左營金鑾殿", event: "工地動土科儀",  date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-    { id: '4', imageSource: require("../../assets/rectangle-2.png"), temple: "府城三山國王廟", event: "巾山國王聖壽", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-    // Add more temple data as needed (database)
-  ];
+  const geocodeAddress = async (address) => {
+    const accessToken = 'sk.eyJ1IjoibWlzMzI2aGYiLCJhIjoiY20wcTc0emo5MDdyMDJrcGw0NW1waHA4aiJ9.KZ47S01i_71SN-VkrSFETw';  // 使用你的 Mapbox API 金鑰
+    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${accessToken}`;
+  
+    try {
+      const response = await axios.get(url);
+      if (response.data.features.length > 0) {
+        const { center } = response.data.features[0];
+        return { latitude: center[1], longitude: center[0] }; // 注意緯度和經度的位置
+      } else {
+        console.error('地理編碼失敗：找不到對應的地址');
+        return null;
+      }
+    } catch (error) {
+      console.error('地理編碼失敗：', error);
+      return null;
+    }
+  };
+  
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const d = R * c; // Distance in km
+    return d;
+  };
+
+  const deg2rad = (deg) => {
+    return deg * (Math.PI/180);
+  };
+
+  // const findNearbyTemples = () => {
+  //   if (!userLocation) {
+  //     alert('無法獲取宮廟資訊');
+  //     return;
+  //   }
+    
+  //     const templesWithDistance = allTemples.map(temple => {
+  //       // 檢查 COORDINATE 是否存在且不是 null
+  //       if (temple.COORDINATE) {
+  //         const [lat, lon] = temple.COORDINATE.split(',').map(Number);
+  //         const distance = calculateDistance(userLocation.latitude, userLocation.longitude, lat, lon);
+  //         return { ...temple, distance };
+  //       } else {
+  //         // 如果 COORDINATE 為 null，則返回一個 distance 為 Infinity 的項目
+  //         return { ...temple, distance: Infinity };
+  //       }
+  //     });
+    
+  //     const sortedTemples = templesWithDistance.sort((a, b) => a.distance - b.distance);
+  //     const nearestFiveTemples = sortedTemples.slice(0, 5);
+    
+  //     // 只更新附近宮廟的名稱
+  //     setNearbyTemples(nearestFiveTemples.map(temple => ({ name: temple.NAME })));
+  //   };
+
+  const findNearbyTemples = async () => {
+    if (!userLocation) {
+      alert('無法獲取宮廟資訊');
+      return;
+    }
+  
+    console.log("User location:", userLocation);  // 確認 userLocation 是否存在
+  
+    try {
+      const templesWithDistance = await Promise.all(allTemples.map(async temple => {
+        if (temple.COORDINATE && typeof temple.COORDINATE === 'string') {
+          const [lat, lon] = temple.COORDINATE.split(',').map(Number);
+          if (!isNaN(lat) && !isNaN(lon)) {
+            const distance = calculateDistance(userLocation.latitude, userLocation.longitude, lat, lon);
+            console.log(`Distance to ${temple.NAME}: ${distance}`);
+            return { ...temple, distance };
+          }
+        }
+        
+        if (temple.ADDRESS) {
+          const coordinates = await geocodeAddress(temple.ADDRESS);
+          if (coordinates) {
+            const distance = calculateDistance(userLocation.latitude, userLocation.longitude, coordinates.latitude, coordinates.longitude);
+            console.log(`Distance to ${temple.NAME} (from address): ${distance}`);
+            return { ...temple, distance };
+          }
+        }
+  
+        return { ...temple, distance: Infinity };
+      }));
+  
+      const sortedTemples = templesWithDistance.sort((a, b) => a.distance - b.distance);
+      const nearestFiveTemples = sortedTemples.slice(0, 5);
+  
+      setNearbyTemples(nearestFiveTemples);
+      console.log("Nearby temples:", nearestFiveTemples);  // 確認 temple 的排序結果
+    } catch (error) {
+      console.error("Error in findNearbyTemples:", error);  // 如果出錯，將錯誤打印出來
+    }
+  };
+  
+
+  const renderTempleItem = ({ item }) => (
+    <TempleDistance
+      imageSource={{ uri: item.IMAGE }}
+      temple={item.NAME}
+      distance={`${item.distance.toFixed(2)} km`}
+      onPress={() => navigation.navigate("OfferingsByTemple", { templeId: item.tID })}
+    />
+  );
+
+  // const temples = [
+  //   { id: '1', imageSource: require("../../assets/rectangle-2.png"), temple: "左營仁濟宮", event: "燈花供養祈福", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+  //   { id: '2', imageSource: require("../../assets/rectangle-21.png"), temple: "鳳邑雷府大將廟", event: "犒軍儀式", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+  //   { id: '3', imageSource: require("../../assets/rectangle-22.png"), temple: "左營金鑾殿", event: "工地動土科儀",  date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+  //   { id: '4', imageSource: require("../../assets/rectangle-2.png"), temple: "府城三山國王廟", event: "巾山國王聖壽", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
+  //   // Add more temple data as needed (database)
+  // ];
 
   return (
     <SafeAreaProvider>
@@ -117,10 +261,22 @@ const BelieverHomePage = () => {
             onChangeText={setSearchText}
           />
         </View>
+        {/* Find Nearby Temples Button */}
+          <Pressable style={styles.findNearbyButton} onPress={findNearbyTemples}>
+            <Text style={styles.findNearbyButtonText}>查詢附近宮廟</Text>
+          </Pressable>
+        {/* Temples List */}
+        <FlatList
+          data={nearbyTemples}
+          renderItem={renderTempleItem}
+          // keyExtractor={(item) => item.tID.toString()}
+          style={styles.templeList}
+          // contentContainerStyle={styles.templeListContent}
+        />
 
         {/* Temple */}
         
-        <FlatList
+        {/* <FlatList
           data={temples}
           renderItem={({ item }) => (
             <TempleDistance
@@ -135,7 +291,7 @@ const BelieverHomePage = () => {
           )}
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.activityContainer}
-        />
+        /> */}
 
         {/*Modal - address modify*/}
         <Modal animationType="fade" transparent visible={locationIconVisible}>
@@ -151,7 +307,6 @@ const BelieverHomePage = () => {
             <AddressOverlay onClose={closeText1} onSubmit={handleAddressSubmit} />
           </View>
         </Modal>
-
 
 
       </View>
@@ -191,6 +346,18 @@ const styles = StyleSheet.create({
     marginBottom:10,
     // borderWidth:1 //Test
   },
+  findNearbyButton: {
+    backgroundColor: '#FF9224',
+    padding: 10,
+    borderRadius: 20,
+    marginBottom: 10,
+  },
+  findNearbyButtonText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+
   input: {
     width:"100%",
     height: 40,
@@ -224,6 +391,6 @@ const styles = StyleSheet.create({
   },
 });
 
-
 export default BelieverHomePage;
+
 
