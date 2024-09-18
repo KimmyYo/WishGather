@@ -9,3 +9,5 @@ APP/Server/Photo_process/flask-app/*
 APP/Server/uploads/image.png
 
 APP/Server/index.js
+
+APP/Client/.env

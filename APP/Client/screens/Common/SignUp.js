@@ -19,9 +19,8 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
-  // 宮廟資訊
-  // 社福機構資訊
   const [address, setAddress] = useState('');
+
   // HOOKS
   const navigation = useNavigation();
   const { showAlertDialog, renderAlertDialog } = useAlertDialog();
@@ -40,7 +39,22 @@ const SignUp = () => {
     userRoleError,
     addressError
   } = useValidation();
-  
+
+  // 抓取使用者地址function
+  const getGeoCoordinates = async (address) => {
+    try {
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/search/geocode/v6/forward?q=${address}&proximity=ip&access_token=${process.env.EXPO_PUBLIC_API_TOKEN}`);
+      const result = response.data;
+      const [longitude, latitude] = result["features"][0]["geometry"]["coordinates"];
+      return { latitude, longitude }; 
+    }
+    catch(err){
+      console.log('API error:'+err);
+      return { latitude: null, longitude: null }; 
+    }
+    
+  }
+
   const handleRegister = async () => {
     const isUserNameValid = validateUserName(name),
           isPhoneNumberValid = validatePhoneNumber(phone),
@@ -48,6 +62,11 @@ const SignUp = () => {
           isPasswordValid = validateUserPassword(password),
           isRoleValid = validateUserRole(role),
           isAddressValid = validateAddress(address);
+      
+    let coordinates = { latitude: null, longitude: null };
+    if (isAddressValid && address) {
+      coordinates = await getGeoCoordinates(address);
+    }
     
     const userInputData = {
       NAME: name,
@@ -55,7 +74,9 @@ const SignUp = () => {
       EMAIL: email.trim(),
       PASSWORD: password,
       ROLE: role,
-      ADDRESS: address ?? ''
+      ADDRESS: address ?? '',
+      LONGTITUDE: coordinates.longitude,
+      LATITUDE: coordinates.latitude
     }
     console.log(userInputData);
     // 
@@ -70,7 +91,6 @@ const SignUp = () => {
         },
       })
       .then((response) => {
-        console.log("here");
           showAlertDialog('註冊成功', '歡迎登入');
           // 廟方或社福機構導向註冊頁
           navigation.navigate('SignIn');
