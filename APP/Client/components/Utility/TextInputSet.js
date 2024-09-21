@@ -1,15 +1,23 @@
 import { React, useState } from 'react'
 import { View, Text, TextInput, StyleSheet, Dimensions, Button } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
-function TextInputSet({ labelName, defaultValue, multiLine, placeholder}){
-    const [text, onChangeText] =  useState(defaultValue);
+function TextInputSet({ labelName, defaultValue, multiLine, placeholder, onChange}){
+    // const [text, onChangeText] =  useState(defaultValue);
+
+    const handleTextChange = (newText) => {
+        // onChangeText(newText);  // Update internal state
+        if (onChange) {
+            onChange(newText);  // Call parent's handler if provided
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.label}>{labelName}</Text>
             <TextInput style={[styles.input, multiLine ? styles.multiLine : null]} 
                        placeholder={placeholder}
-                       value={text} 
-                       onChangeText={onChangeText}  
+                       value={defaultValue} 
+                       onChangeText={handleTextChange}  
                        multiline={multiLine ? true : false}/>
         </View>
     )

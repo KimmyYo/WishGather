@@ -10,6 +10,7 @@ import EventCard from '../../components/Temple/EventCard';
 import PageTitle  from '../../components/Utility/PageTitle';
 import Loading from '../../components/Utility/Loading';
 import { UserContext } from '../../components/Context/UserContext';
+import { useAlertDialog } from '../../components/CustomHook/useAlertDialog';
 
 
 const API = require('../config/DBconfig')
@@ -21,6 +22,7 @@ function TempleEventPage({route}){
     const [eventData, setEventData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const { showAlertDialog, renderAlertDialog } = useAlertDialog();
     
     useEffect(() => {
         // Replace with your API endpoint
@@ -35,6 +37,26 @@ function TempleEventPage({route}){
             });
     }, []);
 
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            // Fetch or reload your data here
+            if (route.params?.refresh) {
+                // Call your fetch function
+                axios.get(`${API}/ceremony/${userId}`)
+                .then(response => {
+                    setEventData(response.data);
+                    setLoading(false);
+                })
+                .catch(error => {
+                    setError(error);
+                    setLoading(false);
+                });
+            }
+        });
+    
+        return unsubscribe;
+    }, [navigation, route.params]);
+
     if (loading) return <Loading />;
     if (error) return <Text>Error: {error.message}</Text>;
     return(
@@ -46,7 +68,7 @@ function TempleEventPage({route}){
                 alignItems: 'start',
                 // Paddings to handle safe area
                 paddingTop: insets.top,
-                paddingBottom: insets.bottom,
+                paddingBottom: insets.bottom + 150,
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }}>
@@ -69,13 +91,13 @@ function TempleEventPage({route}){
                            onPress={() => 
                                     navigation.navigate('EditTempleInfoPage', 
                                     { 
-                                        event: { date: date },
+                                        event: { date: date.toISOString() },
                                         forEdit: false
                                     })}>
                                     {/* should get newest id from db? after or before add succeed*/}
                     <Ionicons name="add-outline" color={"white"} size={30}/>
                 </Pressable>
-
+                
             </View>
         </SafeAreaProvider>
     )
@@ -87,7 +109,7 @@ let screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
     flatListContainer: {
         width: screenWidth,
-        height: screenHeight,
+        height: screenHeight * 0.7,
     },
     flatList:{
         flex: 1

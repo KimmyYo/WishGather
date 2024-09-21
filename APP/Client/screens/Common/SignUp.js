@@ -7,6 +7,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import NavigateBack from '../../components/Utility/NavigateBack';
 import TextInputBox from '../../components/Utility/TextInputBox';
 import PageTitle from '../../components/Utility/PageTitle';
+import DropDown from '../../components/Utility/DropDown';
 import { useValidation } from '../../components/CustomHook/useValidateInput';
 import { useAlertDialog } from '../../components/CustomHook/useAlertDialog';
 const base = require('../config/DBconfig');
@@ -20,6 +21,8 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
   const [address, setAddress] = useState('');
+  const [dropDownOpen, setDropDownOpen] = useState(false);
+  const [preferences, setPreferences] = useState([]);
 
   // HOOKS
   const navigation = useNavigation();
@@ -76,7 +79,8 @@ const SignUp = () => {
       ROLE: role,
       ADDRESS: address ?? '',
       LONGTITUDE: coordinates.longitude,
-      LATITUDE: coordinates.latitude
+      LATITUDE: coordinates.latitude,
+      PREFERENCES: preferences.filter(pref => pref !== null).join(',')
     }
     console.log(userInputData);
     // 
@@ -253,6 +257,11 @@ const SignUp = () => {
           validState={!addressError}
           invalidInput={addressError || ''}
         />
+        <DropDown 
+          open={dropDownOpen} 
+          setOpen={setDropDownOpen}
+          value={preferences}
+          setValue={setPreferences}/>
         {/* TODO: 營業時間 */}
       </View>
     }
