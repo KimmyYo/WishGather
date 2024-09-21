@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Image } from "expo-image";
 import axios from 'axios';
-import { StyleSheet, Pressable, Text, View ,SafeAreaView } from "react-native";
+import { StyleSheet, Pressable, Text, View ,SafeAreaView, Dimensions } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
-import { FontSize, FontFamily, Color, Border } from "../../GlobalStyles";
-import { Dimensions } from 'react-native';
+import GoBackButton1 from "../../components/Utility/GoBackButton1";
 
 
 const { width, height } = Dimensions.get("window");
@@ -15,6 +15,7 @@ const API=require('../config/DBconfig')
 
 const OrderSuccess = () => {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const [transaction, setTransaction] = useState([]);
 
   useEffect(() => {
@@ -30,26 +31,41 @@ const OrderSuccess = () => {
 
   return (
     <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
+      <View style={{
+        flex: 1,
+        backgroundColor: "orange",
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom -40,
+        paddingLeft: insets.left,
+        paddingRight: insets.right
+      }}>
+        <View style={styles.btncontainer}><GoBackButton1 /></View>
+
         {/* Whole White Block */}
         <View style={styles.recieptBlock}>
-          <Text style={styles.orderStatus}>訂單成立</Text>
+          <View style={{flexDirection:'row'}}>
+            <Ionicons name="checkmark-done-circle-outline" size={36} color="orange" />
+            <Text style={styles.orderStatus}>訂單成立</Text>
+          </View>
+          
 
           <View style={styles.infoContainer}>
             {transaction.map((transaction, index) => (
             <View key={index} style={styles.infoContainer}>
               <Text style={styles.infoText}>
-                <Text style={styles.infoLabel}>宮廟名稱: </Text>
+                <Text style={styles.infoLabel}>宮廟名稱 : </Text>
                 <Text style={styles.infoContent}>{transaction.tNO}{"\n"}</Text>
-                <Text style={styles.infoLabel}>交易時間: </Text>
+                <Text style={styles.infoLabel}>交易時間 : </Text>
                 <Text style={styles.infoContent}>{transaction.TRANSACTION_TIME}{"\n"}</Text>
-                <Text style={styles.infoLabel}>交易方式: </Text>
+                <Text style={styles.infoLabel}>交易方式 : </Text>
                 <Text style={styles.infoContent}>{transaction.TRANSACTION_METHOD}{"\n"}</Text>
-                <Text style={styles.infoLabel}>銀行代碼: </Text>
+                <Text style={styles.infoLabel}>銀行代碼 : </Text>
                 <Text style={styles.infoContent}>${transaction.BANK_CODE}{"\n"}</Text>
-                <Text style={styles.infoLabel}>銀行名稱: </Text>
+                <Text style={styles.infoLabel}>銀行名稱 : </Text>
                 <Text style={styles.infoContent}>{transaction.BANK_NAME}{"\n"}</Text>
-                <Text style={styles.infoLabel}>領取時間: </Text>
+                <Text style={styles.infoLabel}>領取時間 : </Text>
                 <Text style={styles.infoContent}>{transaction.EXPIRATION_DATE}</Text>
               </Text>
             </View>
@@ -83,17 +99,16 @@ const OrderSuccess = () => {
             <Text style={styles.confirmButtonText}>回首頁</Text>
           </Pressable> */}
         </View>
-      </SafeAreaView>
+      </View>
     </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#FFD1A4",
-    justifyContent: "center",
-    alignItems: "center",
+  btncontainer:{
+    position: 'absolute',
+    top: 60,
+    left: 10,
   },
   recieptBlock: {
     width: width * 0.9,
@@ -102,7 +117,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "white",
-    borderRadius: Border.br_3xs,
+    borderRadius: 15,
+
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.25,
@@ -111,44 +127,25 @@ const styles = StyleSheet.create({
   },
   orderStatus: {
     fontSize: 32,
-    fontWeight: "600",
-    color: Color.colorDimgray_200,
+    fontWeight: "bold",
+    color: '#4F4F4F',
+    marginLeft: 10,
     marginBottom: 20,
   },
   infoContainer: {
+    height: height*0.3,
     alignItems: "flex-start",
   },
   infoText: {
-    fontSize: FontSize.size_md,
-    color: Color.colorBlack,
-    lineHeight: 28,
+    fontSize: 16,
+    color: '#4F4F4F',
+    lineHeight: 40,
   },
   infoLabel: {
     fontWeight: "bold",
   },
   infoContent: {
     marginBottom: 10,
-  },
-  confirmButton: {
-    width: 300,
-    height: 70,
-    borderRadius: Border.br_xl,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 20,
-  },
-  confirmButtonBackground: {
-    width: "100%",
-    height: "100%",
-    borderRadius: Border.br_xl,
-  },
-  confirmButtonText: {
-    position: "absolute",
-    fontSize: FontSize.size_11xl,
-    fontFamily: FontFamily.interSemiBold,
-    fontWeight: "600",
-    color: Color.colorWhite,
-    textAlign: "center",
   },
 });
 

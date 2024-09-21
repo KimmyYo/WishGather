@@ -1,7 +1,8 @@
 import React, {useState, useEffect, useRef, useContext } from 'react';
-import {Button, Text, SafeAreaView, View, StyleSheet, FlatList} from 'react-native';
+import {Button, Text, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import AntDesign from '@expo/vector-icons/AntDesign';
 import axios from 'axios';
 
 import SectionHeader from '../../components/Utility/SectionHeader';
@@ -52,20 +53,32 @@ function OfferingHome() {
       <SafeAreaProvider>
         <View style={[styles.container,
           // Paddings to handle safe area
-          {paddingTop: insets.top + 100,
+          {paddingTop: insets.top + 60,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left + 30,
           paddingRight: insets.right + 30} 
         ]}>  
-       
-			<View style={styles.sectionContainer}>
-				<SectionHeader title="上架供品" onPress={() => navigation.navigate('OfferingUpload')}/>
 
-			</View>
-			<View style={styles.sectionContainer}>
-				<SectionHeader title="配送供品" onPress={() => navigation.navigate('FoodScanningPage')}/>
+			<View style={styles.titleContainer}>
+                <Text style={styles.titleText}>功能選擇</Text>
+            </View>
+			
+			<TouchableOpacity
+				style={styles.button}
+				onPress={() => navigation.navigate('OfferingUpload')}
+			>
+				<AntDesign name="caretright" size={24} color="white" />
+				<Text style={styles.buttonText}>上架供品</Text>
+			</TouchableOpacity>
 
-			</View>
+			
+			<TouchableOpacity
+				style={styles.button}
+				onPress={() => navigation.navigate('FoodScanningPage')}
+			>
+				<AntDesign name="caretright" size={24} color="white" />
+				<Text style={styles.buttonText}>供品辨識</Text>
+			</TouchableOpacity>
         </View>
       </SafeAreaProvider>
     )
@@ -75,10 +88,45 @@ const styles = StyleSheet.create({
 	container: {
 		flex: 1,
 		flexDirection: 'column',
-		gap: 30,
+		justifyContent: 'flex-start',
+		alignItems: 'center',
+		gap: 30,  
+		backgroundColor: '#f2f2f2',
 	},
-	scrollView: {
-		paddingLeft: 16,
+	titleContainer: {
+        justifyContent: "center",
+        alignItems: "center",
+        paddingBottom: 50
+    },
+    titleText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#4F4F4F',
+    },
+	button: {
+		width: '90%',
+		height:'30%',
+		paddingVertical: 15,
+		backgroundColor: '#FFA500',  // 橘色背景
+		borderRadius: 10,
+		alignItems: 'center',
+		justifyContent: 'center',
+		flexDirection:'row',
+
+		// Shadow for iOS
+		shadowColor: '#000',
+		shadowOffset: { width: 0, height: 2 },
+		shadowOpacity: 0.25,
+		shadowRadius: 3.84,
+	
+		// Elevation for Android
+		elevation: 5,
+	},
+	buttonText: {
+		color: 'white',
+		fontSize: 25,
+		fontWeight: 'bold',
+		marginLeft: 10,
 	},
 })
 
