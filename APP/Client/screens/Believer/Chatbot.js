@@ -1,14 +1,53 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import axios from 'axios';
+import drawLotsData from '../../assets/drawLotsData.json';
 
-const WishGatherChatbot = () => {
+const WishGatherChatbot = ({ route }) => {
   const [userMessage, setUserMessage] = useState('');
-  const [messages, setMessages] = useState([{ type: 'bot', text: '歡迎來到解籤！有什麼問題嗎？' }]);
+  const [messages, setMessages] = useState([]);
   const scrollViewRef = useRef();
+  const [currentLot, setCurrentLot] = useState(null);
+
+  useEffect(() => {
+    console.log("drawLotsData:", drawLotsData); // 調試: 輸出整個 drawLotsData
+    const { lotNumber, lotMessage } = route.params || {};
+    console.log("Route params:", { lotNumber, lotMessage }); // 調試: 輸出路由參數
+    if (lotNumber && lotMessage) {
+      const matchedLot = drawLotsData.find(lot => lot.number === `第${lotNumber}籤`);
+      console.log("Matched lot:", matchedLot); // 調試: 輸出匹配的籤
+      setCurrentLot(matchedLot);
+
+      setMessages([
+        { type: 'bot', text: '歡迎來到解籤！您抽到的籤是：' },
+        { type: 'bot', text: `籤號: 第${lotNumber}籤` },
+        { type: 'bot', text: lotMessage },
+        { type: 'bot', text: '您有什麼想問的嗎？' }
+      ]);
+    } else {
+      setMessages([{ type: 'bot', text: '歡迎來到解籤！請輸入您的問題。' }]);
+    }
+  }, [route.params]);
 
   const addMessage = (content, type) => {
     setMessages(prevMessages => [...prevMessages, { type, text: content }]);
+  };
+
+  const retrieveRelevantInfo = (query) => {
+    if (currentLot) {
+      // 如果有當前籤,只返回當前籤的資訊
+      return [currentLot];
+    } else {
+      // 否則搜索所有籤
+      const keywords = query.toLowerCase().split(' ');
+      return drawLotsData.filter(doc => 
+        keywords.some(keyword => 
+          doc.number.toLowerCase().includes(keyword) ||
+          doc.content.toLowerCase().includes(keyword) || 
+          doc.interpretation.toLowerCase().includes(keyword)
+        )
+      );
+    }
   };
 
   const handleSend = async () => {
@@ -17,8 +56,20 @@ const WishGatherChatbot = () => {
     addMessage(userMessage, 'user');
     setUserMessage('');
 
+    const relevantDocs = retrieveRelevantInfo(userMessage);
+    let contextPrompt = '相關的籤詩資訊：\n';
+    relevantDocs.forEach(doc => {
+      contextPrompt += `籤號：${doc.number}\n內容：${doc.content}\n解釋：${doc.interpretation}\n\n`;
+    });
+
+    if (currentLot) {
+      contextPrompt += `用戶當前抽到的籤是：${currentLot.number}\n`;
+    }
+
+    contextPrompt += '請注意，籤詩解釋應該考慮到求籤者的具體情況和問題。解釋應該給出積極、有建設性的建議。\n\n';
+
     try {
-      const apiKey = 'AIzaSyCVwhW9XKHti21w_aqlK5FSdHOgx3LDO04';  // 請在這裡填入你的API Key
+      const apiKey = 'AIzaSyCVwhW9XKHti21w_aqlK5FSdHOgx3LDO04';
       const response = await axios.post(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
         {
@@ -26,7 +77,7 @@ const WishGatherChatbot = () => {
             {
               parts: [
                 {
-                  text: userMessage
+                  text: `${contextPrompt}用戶問題：${userMessage}\n\n請根據以上信息，特別是用戶當前抽到的籤（如果有），給出籤詩的解釋和對用戶問題的回答：`
                 }
               ]
             }
@@ -43,7 +94,7 @@ const WishGatherChatbot = () => {
       addMessage(botMessage, 'bot');
     } catch (error) {
       console.error('Error:', error);
-      addMessage('Error: 無法連線到伺服器。', 'bot');
+      addMessage('錯誤：無法連接到服務器。', 'bot');
     }
   };
 
@@ -85,8 +136,8 @@ const WishGatherChatbot = () => {
               style={styles.input}
               value={userMessage}
               onChangeText={setUserMessage}
-              placeholder="請輸入抽到的籤詩與問題"
-              placeholderTextColor="#a9a9a9" // placeholder 顏色
+              placeholder="請輸入您的問題"
+              placeholderTextColor="#a9a9a9"
             />
             <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
               <Text style={styles.sendButtonText}>Send</Text>
