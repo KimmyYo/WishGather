@@ -1,21 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
 const API = require('../config/DBconfig');
 const { width, height } = Dimensions.get('window');
 
-function WelfareMatchingPage()  {
+function WelfareMatchingPage() {
   const navigation = useNavigation();
-  const { height } = Dimensions.get('window'); 
-  const [error, setError] = useState(null); 
-
-  // Fetch temple data from API
+  const [error, setError] = useState(null);
   const [temples, setTemples] = useState([]);
 
-  useEffect(() => {  
-    axios.get(`${API}/temples_info`)
+  // Fetch temple data from API
+  useEffect(() => {
+    axios.get(`${API}/temples`)  // 使用反引號包裹模板字串
       .then(response => {
         setTemples(response.data);
       })
@@ -23,33 +21,33 @@ function WelfareMatchingPage()  {
         setError(error);
       });
   }, []);
+  
+
+  const handleViewPress = (temple) => {
+    // Navigate to MatchingDetails page and pass the temple name
+    navigation.navigate('MatchingDetails', { templeName: temple.tID});
+  };
 
   const renderTempleItem = ({ item }) => (
     <View style={styles.itemContainer}>
       {/* Temple Image */}
-      <Image 
-        source={{ uri: item.imageUrl }} // Assuming your API provides an image URL
-        style={styles.templeImage}
-      />
+      <Image
+      source={{ uri: `${API}${item.IMAGE}` }} // Assuming the image path is relative to the API base URL
+      style={styles.templeImage}
+    />
       <View style={styles.templeInfo}>
-        <Text style={styles.templeName}>{item.TEMPLE_NAME}</Text>
-        <Text style={styles.templeEvent}>{item.EVENT_NAME}</Text>
-        <Text style={styles.templeTime}>{item.TIME}</Text>
+        <Text style={styles.templeName}>{item.NAME}</Text>
+        <Text style={styles.templeEvent}>{item.ADDRESS}</Text>
       </View>
 
       {/* Buttons */}
       <View style={styles.buttonsContainer}>
         {/* "查看" Button */}
-        <TouchableOpacity 
-          style={styles.viewButton} 
-          onPress={() => navigation.navigate('MatchingDetails', { temple: item })}
+        <TouchableOpacity
+          style={styles.viewButton}
+          onPress={() => handleViewPress(item)}
         >
           <Text style={styles.buttonText}>查看</Text>
-        </TouchableOpacity>
-
-        {/* "確認" Button */}
-        <TouchableOpacity style={styles.confirmButton}>
-          <Text style={styles.buttonText}>確認</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -86,8 +84,8 @@ const styles = StyleSheet.create({
   },
   donateListContainer: {
     position: 'absolute',
-    top: '15%',
-    bottom: '20%',
+    top: '18%',
+    bottom: '0%',
     left: '5%',
     right: '5%',
   },
@@ -137,12 +135,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginRight: 10,
   },
-  confirmButton: {
-    backgroundColor: '#FF7A00',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-  },
   buttonText: {
     fontSize: 14,
     color: 'black',
@@ -154,4 +146,5 @@ const styles = StyleSheet.create({
     top: '20%',
   },
 });
+
 export default WelfareMatchingPage;
