@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import axios from 'axios';
 import drawLotsData from '../../assets/drawLotsData.json';
+import { OPENAI_API_KEY } from '@env';
 
 const WishGatherChatbot = ({ route }) => {
   const [userMessage, setUserMessage] = useState('');
@@ -10,22 +11,28 @@ const WishGatherChatbot = ({ route }) => {
   const [currentLot, setCurrentLot] = useState(null);
 
   useEffect(() => {
-    console.log("drawLotsData:", drawLotsData); // 調試: 輸出整個 drawLotsData
+    console.log("Full drawLotsData:", JSON.stringify(drawLotsData, null, 2)); // 完整输出 drawLotsData
     const { lotNumber, lotMessage } = route.params || {};
-    console.log("Route params:", { lotNumber, lotMessage }); // 調試: 輸出路由參數
+    console.log("Route params:", { lotNumber, lotMessage });
+    
     if (lotNumber && lotMessage) {
       const matchedLot = drawLotsData.find(lot => lot.number === `第${lotNumber}籤`);
-      console.log("Matched lot:", matchedLot); // 調試: 輸出匹配的籤
-      setCurrentLot(matchedLot);
-
-      setMessages([
-        { type: 'bot', text: '歡迎來到解籤！您抽到的籤是：' },
-        { type: 'bot', text: `籤號: 第${lotNumber}籤` },
-        { type: 'bot', text: lotMessage },
-        { type: 'bot', text: '您有什麼想問的嗎？' }
-      ]);
+      console.log("Full matched lot:", JSON.stringify(matchedLot, null, 2)); // 完整输出匹配的签
+      
+      if (matchedLot) {
+        setCurrentLot(matchedLot);
+        setMessages([
+          { type: 'bot', text: '歡迎來到解籤！您抽到的籤是：' },
+          { type: 'bot', text: `籤號: ${matchedLot.number}` },
+          { type: 'bot', text: matchedLot.content },
+          { type: 'bot', text: '您可以詢問任何問題，我會根據這支籤為您提供綜合解答。' }
+        ]);
+      } else {
+        console.error(`未找到匹配的签: 第${lotNumber}籤`);
+        setMessages([{ type: 'bot', text: '抱歉，未找到匹配的签。请重新抽签。' }]);
+      }
     } else {
-      setMessages([{ type: 'bot', text: '歡迎來到解籤！請輸入您的問題。' }]);
+      setMessages([{ type: 'bot', text: '歡迎來到解籤！請先抽一支籤。' }]);
     }
   }, [route.params]);
 
@@ -33,68 +40,92 @@ const WishGatherChatbot = ({ route }) => {
     setMessages(prevMessages => [...prevMessages, { type, text: content }]);
   };
 
-  const retrieveRelevantInfo = (query) => {
-    if (currentLot) {
-      // 如果有當前籤,只返回當前籤的資訊
-      return [currentLot];
-    } else {
-      // 否則搜索所有籤
-      const keywords = query.toLowerCase().split(' ');
-      return drawLotsData.filter(doc => 
-        keywords.some(keyword => 
-          doc.number.toLowerCase().includes(keyword) ||
-          doc.content.toLowerCase().includes(keyword) || 
-          doc.interpretation.toLowerCase().includes(keyword)
-        )
-      );
-    }
-  };
-
   const handleSend = async () => {
     if (userMessage.trim() === '') return;
-
+  
     addMessage(userMessage, 'user');
     setUserMessage('');
-
-    const relevantDocs = retrieveRelevantInfo(userMessage);
-    let contextPrompt = '相關的籤詩資訊：\n';
-    relevantDocs.forEach(doc => {
-      contextPrompt += `籤號：${doc.number}\n內容：${doc.content}\n解釋：${doc.interpretation}\n\n`;
-    });
-
-    if (currentLot) {
-      contextPrompt += `用戶當前抽到的籤是：${currentLot.number}\n`;
+  
+    if (!currentLot) {
+      addMessage('抱歉，您還未抽籤或發生了錯誤。請先抽一支籤。', 'bot');
+      return;
     }
+  
+    console.log("Current lot being used:", JSON.stringify(currentLot, null, 2)); 
+  
+    const aspects = ['運勢', '事業', '愛情', '健康', '財務'];
+    const detectedAspect = aspects.find(aspect => userMessage.toLowerCase().includes(aspect.toLowerCase()));
+  
+    let contextPrompt = `用戶抽到的籤：
+  籤號：${currentLot.number}
+  內容：${currentLot.content}
+  解釋：${currentLot.interpretation}
+  關鍵詞：${currentLot.keywords.join(', ')}
+  運勢：${currentLot.aspects.fortune}
+  事業：${currentLot.aspects.career}
+  愛情：${currentLot.aspects.love}
+  健康：${currentLot.aspects.health}
+  財務：${currentLot.aspects.finance}
+  建議：${currentLot.advice}
+  
+  用戶問題：${userMessage}
+  
+  回答指南：
+  0. 如果問「感情」、「愛情」，請根據籤詩的感情狀況回答
+  1. 首先，判斷用戶的問題是否針對特定方面（運勢、事業、感情、健康、財務）。
+  2. 如果問題針對特定方面：
+     - 主要集中在該方面的解讀和建議。
+     - 詳細闡述籤詩中與該方面相關的內容。
+     - 提供具體、實用的建議。
+     - 簡要提及其他可能相關的方面，但不要深入討論。
+  3. 如果問題是廣泛的或不針對特定方面：
+     - 提供全面的籤詩解讀，涵蓋所有相關方面。
+     - 平衡討論各個方面，確保整體性。
+     - 強調籤詩的核心信息和整體意涵。
+  4. 無論哪種情況，都要：
+     - 保持積極正面的語調。
+     - 給出具體、可行的建議。
+     - 鼓勵用戶根據籤詩的指引採取行動。
+ 5.字數不用多 精準即可
+  
+### 回應格式化指南：
 
-    contextPrompt += '請注意，籤詩解釋應該考慮到求籤者的具體情況和問題。解釋應該給出積極、有建設性的建議。\n\n';
+1. **標題：** 使用 \`###\` 來區分不同的方面（如「愛情」、「事業」、「健康」等）。
 
+2. **關鍵建議：** 以 \`⭐️\` 符號來強調重要建議或籤詩的核心內容。
+3. **鼓勵語句：** 使用溫暖正面的語調，如「保持信心」、「展望未來」。
+請根據以上指南，格式化回應用戶的問題：`;
+
+  
+  //我改用open ai的 回答比較開放
     try {
-      const apiKey = 'AIzaSyCVwhW9XKHti21w_aqlK5FSdHOgx3LDO04';
       const response = await axios.post(
-        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`,
+        'https://api.openai.com/v1/chat/completions',
         {
-          contents: [
-            {
-              parts: [
-                {
-                  text: `${contextPrompt}用戶問題：${userMessage}\n\n請根據以上信息，特別是用戶當前抽到的籤（如果有），給出籤詩的解釋和對用戶問題的回答：`
-                }
-              ]
-            }
-          ]
+          model: "gpt-3.5-turbo",
+          messages: [
+            { role: "system", content: "你是專業的解籤人員，根據籤詩資訊回答" },
+            { role: "user", content: contextPrompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 1000,
         },
         {
           headers: {
+            'Authorization': `Bearer ${OPENAI_API_KEY}`,
             'Content-Type': 'application/json',
           },
         }
       );
-
-      const botMessage = response.data.candidates?.[0]?.content?.parts?.[0]?.text || "對不起，我目前無法處理您的請求。";
+  
+      const botMessage = response.data.choices?.[0]?.message?.content || "對不起，我目前無法處理您的請求。";
       addMessage(botMessage, 'bot');
     } catch (error) {
-      console.error('Error:', error);
-      addMessage('錯誤：無法連接到服務器。', 'bot');
+      console.error('Error details:', error.response?.data || error.message);
+      const errorMessage = error.response
+        ? `錯誤：服務器響應異常 (狀態碼: ${error.response.status})`
+        : '錯誤：無法連接到服務器。';
+      addMessage(errorMessage, 'bot');
     }
   };
 
