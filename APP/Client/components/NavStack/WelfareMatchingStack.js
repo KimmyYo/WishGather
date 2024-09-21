@@ -11,7 +11,7 @@ const Stack = createNativeStackNavigator();
 function WelfareMatchingStack(){
   return (
     <Stack.Navigator
-        screenOption = {{ headerShown: false }}
+        screenOptions = {{ headerShown: false }}
         initialRouteName='WelfareMatchingPage'
     >
       <Stack.Screen
