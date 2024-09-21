@@ -7,7 +7,7 @@ import OfferingsByTemple from '../../screens/Believer/OfferingsByTemple';
 import TemplesByOffering from '../../screens/Believer/TemplesByOffering';
 import OrderConfirmationPage from '../../screens/Believer/OrderConfirmationPage';
 import OrderSuccess from '../../screens/Believer/OrderSuccess';
-import ProductInfoPage from '../../screens/Believer/ProductInfoPage'
+import ProductInfoPage from '../../screens/Believer/ProductInfoPage';
 
 
 
