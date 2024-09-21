@@ -50,7 +50,10 @@ const WishGatherChatbot = () => {
     <KeyboardAvoidingView
       style={styles.container}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+<<<<<<< Updated upstream
       keyboardVerticalOffset={Platform.OS === 'ios' ? 35 : 0}
+=======
+>>>>>>> Stashed changes
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.content}>
@@ -59,7 +62,11 @@ const WishGatherChatbot = () => {
             <Text style={styles.subtitle}>歡迎使用WishGather解籤功能</Text>
           </View>
 
+<<<<<<< Updated upstream
           <ScrollView style={styles.messagesArea} contentContainerStyle={{ paddingBottom: 10 }}>
+=======
+          <ScrollView style={styles.messagesArea} contentContainerStyle={{ paddingBottom: 80 }}>
+>>>>>>> Stashed changes
             {messages.map((msg, index) => (
               <View
                 key={index}
@@ -145,6 +152,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#ccc',
     backgroundColor: '#fff',
+<<<<<<< Updated upstream
+=======
+    position: 'absolute', // 固定位置
+    bottom: 0,  // 固定在底部
+    left: 0,
+    right: 0,
+    paddingHorizontal: 20, // 讓左右有些邊距
+>>>>>>> Stashed changes
   },
   input: {
     flex: 1,
