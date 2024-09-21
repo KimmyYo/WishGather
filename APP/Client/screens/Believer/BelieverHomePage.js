@@ -12,8 +12,6 @@ import AddressOverlay from "../../components/Believer/AddressOverlay";
 import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 import {UserContext} from '../../components/Context/UserContext';
 const API = require('../config/DBconfig');
-import mbxGeocoding from '@mapbox/mapbox-sdk/services/geocoding';
-const mapboxClient = mbxGeocoding({ accessToken: 'sk.eyJ1IjoibWlzMzI2aGYiLCJhIjoiY20wcTc0emo5MDdyMDJrcGw0NW1waHA4aiJ9.KZ47S01i_71SN-VkrSFETw' });
 
 import * as Location from 'expo-location';
 
@@ -63,9 +61,13 @@ useEffect(() => {
     setText1Visible(false);
   }, []);
 
-  const handleAddressSubmit = useCallback((newAddress) => {
+  const handleAddressSubmit = useCallback(async (newAddress) => {
     if (newAddress) {
       setCurrentAddress(newAddress);
+      const newLocation = await geocodeAddress(newAddress);
+      if (newLocation) {
+        setUserLocation(newLocation); // 更新 userLocation 為新地址的座標
+      }
     }
     setLocationIconVisible(false);
     setText1Visible(false);
@@ -100,8 +102,7 @@ useEffect(() => {
   }, []);
 
   const geocodeAddress = async (address) => {
-    const accessToken = 'sk.eyJ1IjoibWlzMzI2aGYiLCJhIjoiY20wcTc0emo5MDdyMDJrcGw0NW1waHA4aiJ9.KZ47S01i_71SN-VkrSFETw';  // 使用你的 Mapbox API 金鑰
-    const url = `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${accessToken}`;
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${process.env.EXPO_PUBLIC_API_TOKEN}`;
   
     try {
       const response = await axios.get(url);
@@ -135,31 +136,6 @@ useEffect(() => {
   const deg2rad = (deg) => {
     return deg * (Math.PI/180);
   };
-
-  // const findNearbyTemples = () => {
-  //   if (!userLocation) {
-  //     alert('無法獲取宮廟資訊');
-  //     return;
-  //   }
-    
-  //     const templesWithDistance = allTemples.map(temple => {
-  //       // 檢查 COORDINATE 是否存在且不是 null
-  //       if (temple.COORDINATE) {
-  //         const [lat, lon] = temple.COORDINATE.split(',').map(Number);
-  //         const distance = calculateDistance(userLocation.latitude, userLocation.longitude, lat, lon);
-  //         return { ...temple, distance };
-  //       } else {
-  //         // 如果 COORDINATE 為 null，則返回一個 distance 為 Infinity 的項目
-  //         return { ...temple, distance: Infinity };
-  //       }
-  //     });
-    
-  //     const sortedTemples = templesWithDistance.sort((a, b) => a.distance - b.distance);
-  //     const nearestFiveTemples = sortedTemples.slice(0, 5);
-    
-  //     // 只更新附近宮廟的名稱
-  //     setNearbyTemples(nearestFiveTemples.map(temple => ({ name: temple.NAME })));
-  //   };
 
   const findNearbyTemples = async () => {
     if (!userLocation) {
@@ -211,14 +187,6 @@ useEffect(() => {
       onPress={() => navigation.navigate("OfferingsByTemple", { templeId: item.tID })}
     />
   );
-
-  // const temples = [
-  //   { id: '1', imageSource: require("../../assets/rectangle-2.png"), temple: "左營仁濟宮", event: "燈花供養祈福", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-  //   { id: '2', imageSource: require("../../assets/rectangle-21.png"), temple: "鳳邑雷府大將廟", event: "犒軍儀式", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-  //   { id: '3', imageSource: require("../../assets/rectangle-22.png"), temple: "左營金鑾殿", event: "工地動土科儀",  date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-  //   { id: '4', imageSource: require("../../assets/rectangle-2.png"), temple: "府城三山國王廟", event: "巾山國王聖壽", date1: "國曆113年9月25日", date2: "農曆八月卅拾"},
-  //   // Add more temple data as needed (database)
-  // ];
 
   return (
     <SafeAreaProvider>
@@ -273,25 +241,6 @@ useEffect(() => {
           style={styles.templeList}
           // contentContainerStyle={styles.templeListContent}
         />
-
-        {/* Temple */}
-        
-        {/* <FlatList
-          data={temples}
-          renderItem={({ item }) => (
-            <TempleDistance
-              imageSource={item.imageSource}
-              temple={item.temple}
-              event={item.event}
-              distance={item.distance}
-              date1={item.date1}
-              date2={item.date2}
-              onPress={() => navigation.navigate("OfferingsByTemple")}
-            />
-          )}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.activityContainer}
-        /> */}
 
         {/*Modal - address modify*/}
         <Modal animationType="fade" transparent visible={locationIconVisible}>
