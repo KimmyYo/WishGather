@@ -10,8 +10,10 @@ import ScanResult from '../../screens/Temple/ScanResult';
 import EditTempleInfoPage from '../../screens/Temple/EditTempleInfoPage';
 import MatchingPage from '../../screens/Temple/MatchingPage';
 
-import OfferingHome from '../../screens/Temple/OfferingHome'
-import OfferingUpload from '../../screens/Temple/OfferingUpload'
+import OfferingHome from '../../screens/Temple/OfferingHome';
+import OfferingUpload from '../../screens/Temple/OfferingUpload';
+import SubmissionResult from '../../screens/Temple/SubmissionResult';
+
 
 const Stack = createNativeStackNavigator();
 
@@ -47,6 +49,13 @@ function TempleScanStack(){
                 component={ScanResult}
                 options={{ headerShown: false }}
             />
+
+<Stack.Screen 
+                name="SubmissionResult"
+                component={SubmissionResult}
+                options={{ headerShown: false }}
+            />
+
         </Stack.Navigator>
     )
 }

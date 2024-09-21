@@ -182,6 +182,28 @@ app.post('/signup', async(req, res) => {
 })
 
 
+app.post('/updateUser/:id', async(req, res) => {
+    const userId = req.params.id;
+    // 1. 先SELECT user role 從會員table 
+    const [result] = await db.promise().query('SELECT ROLE FROM 會員 WHERE mID = ?', [userId]);
+    let userRole = result[0].ROLE;
+
+    // 2. 從ROLE選擇需要更改的TABLE
+    let updateTable = userRole == '公廟' ? '公廟' : '社福' // 選擇role對應的table
+    try {
+        await db.promise().beginTransaction();
+        // if else 如果沒有需要個別table改的東
+        // update 會員 
+
+        // update 身份 
+        await db.promise().commit();
+    }
+    catch(error){
+        await db.promise().rollback();
+    }
+})
+
+
 // CartPage
 
 

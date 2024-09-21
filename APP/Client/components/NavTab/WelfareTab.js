@@ -7,6 +7,8 @@ import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 import WelfareTransportPage from '../../screens/Welfare/WelfareTransportPage';
 import WelfareUserPage from '../../screens/Welfare/WelfareUserPage';
 import UserPage from '../../screens/Common/UserPage';
+import WelfareHomeStack from '../NavStack/WelfareHomeStack';
+import WelfareTransportStack from '../NavStack/WelfareTransportStack';
 
 
 
@@ -14,7 +16,7 @@ const Tab = createMaterialBottomTabNavigator();
 function WelfareTab(){
     return (
       <Tab.Navigator
-        initialRouteName='WelfareHomePage'
+        initialRouteName='WelfareHomeStack'
         activeColor="#FF7A00"
         inactiveColor="#CCCCCC"
         shifting={true}
@@ -22,7 +24,7 @@ function WelfareTab(){
       >
           <Tab.Screen   
             name="主頁" 
-            component={WelfareHomePage}
+            component={WelfareHomeStack}
             options={{
               tabBarLabel: '主頁',
               tabBarIcon: ({color}) => (<MaterialCommunityIcons name="home-variant" color={color} size={26} />)
@@ -38,7 +40,7 @@ function WelfareTab(){
           />
           <Tab.Screen 
             name="運送" 
-            component={WelfareTransportPage}
+            component={WelfareTransportStack}
             options={{
               tabBarLabel: '運送',
               tabBarIcon: ({color}) => (<MaterialCommunityIcons name="truck" color={color} size={26}/>)
@@ -50,7 +52,7 @@ function WelfareTab(){
             component={UserPage}
             options={{
               tabBarLabel: '使用者',
-              tabBarIcon: ({color}) => (<MaterialCommunityIcons name="account" color={color} size={26}/>)
+              tabBarIcon: ({color}) => (<MaterialCommunityIcons  name="account" color={color} size={26}/>)
             }}
           />
 

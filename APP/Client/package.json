@@ -48,6 +48,7 @@
     "react-native-svg": "15.2.0",
     "react-native-ui-datepicker": "^2.0.3",
     "react-native-web": "~0.19.10",
-    "react-navigation": "^5.0.0"
+    "react-navigation": "^5.0.0",
+    "expo-image-manipulator": "~12.0.5"
   }
 }

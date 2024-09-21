@@ -1,14 +1,16 @@
 import { React } from 'react'
-import { Pressable, View, Text, StyleSheet } from 'react-native'
+import { Pressable, View, Text, StyleSheet, Dimensions } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons'
 import { useNavigation } from '@react-navigation/native';
+
+const { width } = Dimensions.get('window');
 
 function NavigateBack(){
     const navigation = useNavigation();
 
     return (
-        <View >
-            <Pressable onPress={() => navigation.goBack()} style={styles.container}>
+        <View style={styles.container}>
+            <Pressable onPress={() => navigation.goBack()} style={styles.pressable}>
                 <Ionicons name="chevron-back-outline" size={20} color={"#b87006"}/>
                 <Text style={styles.text}>Back</Text>
             </Pressable>
@@ -18,13 +20,16 @@ function NavigateBack(){
 }
 
 const styles = StyleSheet.create({
-    container: {
+    container:{
+        width:width,
+    },
+    pressable: {
         width: 100,
         flexDirection: "row",
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'flex-start',
         gap: 8,
-        paddingVertical: 10,
+        paddingVertical: 20,
     },
     text: {
         fontSize: 20,

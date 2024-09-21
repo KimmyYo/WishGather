@@ -1,6 +1,6 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
 import { useState, useRef } from 'react';
-import { Button, StyleSheet, Text, TouchableOpacity, View, Alert } from 'react-native';
+import { Button, StyleSheet, Text, TouchableOpacity, View, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -44,6 +44,7 @@ function FoodScanningPage() {
                 await sendPictureToServer(photo.base64);
             } catch (error) {
                 console.error('Error taking picture:', error);
+                Alert.alert('Error', 'Failed to take picture. Please try again.');
             }
         } else {
             Alert.alert('Error', 'Camera reference not available');
@@ -99,19 +100,25 @@ function FoodScanningPage() {
                 paddingRight: insets.right
             }]}>
                 <View style={styles.titleContainer}>
-                    <Text style={styles.text}>辨識</Text>
+                    <Text style={styles.titleText}>供品辨識</Text>
                 </View>
                 <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={takePicture}>
+                        <TouchableOpacity style={styles.button} onPress={takePicture} disabled={isLoading}>
                             <AntDesign name="camera" size={24} color="#4F4F4F" />
                         </TouchableOpacity>
                     </View>
                 </CameraView>
-                <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+                <TouchableOpacity style={styles.uploadButton} onPress={pickImage} disabled={isLoading}>
                     <FontAwesome name="cloud-upload" size={24} color="white" />
-                    <Text style={styles.text}>Upload Picture</Text>
+                    <Text style={styles.buttonText}>Upload Picture</Text>
                 </TouchableOpacity>
+                {isLoading && (
+                    <View style={styles.loadingOverlay}>
+                        <ActivityIndicator size="large" color="#FFA500" />
+                        <Text style={styles.loadingText}>正在處理圖片...</Text>
+                    </View>
+                )}
             </View>
         </SafeAreaProvider>
     );
@@ -131,6 +138,11 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         paddingBottom: 10
+    },
+    titleText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#4F4F4F',
     },
     camera: {
         flex: 1,
@@ -156,9 +168,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         paddingVertical: 15,
         borderRadius: 20,
-
-        elevation: 5, // For Android shadow
-        shadowColor: '#000', // For iOS shadow
+        elevation: 5,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.25,
         shadowRadius: 3.84,
@@ -171,11 +182,22 @@ const styles = StyleSheet.create({
         paddingHorizontal: 30,
         paddingVertical: 15,
     },
-    text: {
-        fontSize: 24,
+    buttonText: {
+        fontSize: 18,
         fontWeight: 'bold',
         color: 'white',
         marginLeft: 10, 
+    },
+    loadingOverlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        color: 'white',
+        fontSize: 18,
+        marginTop: 10,
     },
 });
 

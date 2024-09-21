@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext,useEffect } from 'react';
 import { StyleSheet, View, ScrollView, TouchableOpacity, TextInput, Text, Dimensions, Alert } from 'react-native';
 import { useNavigation } from "@react-navigation/native";
 import { Image } from "expo-image";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 
 import axios from 'axios';
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import CheckoutBar from '../../components/Believer/CheckoutBar';
+
+import { UserContext } from '../../components/Context/UserContext';//for id
 
 const API=require('../config/DBconfig')
 
@@ -18,93 +21,176 @@ const { width, height } = Dimensions.get('window');
 const ProfileManagement = () => {
 
   const insets = useSafeAreaInsets();
+  const { userId, userRole, token } = useContext(UserContext);
+
   const [profileImage, setProfileImage] = useState(null);
   const [newName, setName] = useState('');
   const [newPhone, setPhone] = useState('');
   const [newEmail, setEmail] = useState('');
   const [newPassword, setPassword] = useState('');
+  const [newAddress, setAddress] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [imageKey, setImageKey] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const handleRegisterUpdate = async () => {
-    console.log('Current state before submission:', { newName, newPhone, newEmail, newPassword });
-
-    if (!newName.trim()) {
-      Alert.alert('Error', 'Name is required');
-      return;
-    }
-
-    if (!newEmail.trim()) {
-      Alert.alert('Error', 'Email is required');
-      return;
-    }
-
-    if (!newPassword) {
-      Alert.alert('Error', 'Password is required ');
-      return;
-    }
-
-    //API後面放要作用的後端
-    const api = `${API}/believersUpdate`;
+	// 從後端取得User的資料
+  const fetchUserData = async () => {
     try {
-      const user = {
-        NAME: newName.trim(),
-        PHONE: newPhone.trim(),
-        EMAIL: newEmail.trim(),
-        PASSWORD: newPassword,
-      };
+      setLoading(true);
+      const response = await axios.get(`${API}/updateInfo/${userId}`);
+      const userData = response.data;
 
-      console.log('User data being sent:', user);
-      console.log('User data being sent:', JSON.stringify(user));
-
-      const result = await axios.post(api, user
-        ,{
-          headers: {
-            'Content-Type': 'application/json',
-          },
-    }
-  );
-      console.log('Registration successful:', result.data);
-      Alert.alert('更新成功', '您的個資已更新!');
-      navigation.navigate('SignIn');   //修改成功前往登入頁面
-
-
-    } catch (error) {
-      console.error('Registration error:', error);
-      if (error.response) {
-        console.log('Error data:', error.response.data);
-        console.log('Error status:', error.response.status);
-        Alert.alert('Registration Failed', error.response.data.error || 'Unknown error');
-      } else if (error.request) {
-        console.log('No response received:', error.request);
-        Alert.alert('Connection Error', 'No response from server. Check your connection.');
-      } else {
-        console.log('Error', error.message);
-        Alert.alert('Error', 'An unexpected error occurred.');
-      }
+      setName(userData.NAME || '');
+      setEmail(userData.EMAIL || '');
+      setPhone(userData.PHONE_NUM || '');
+      setPassword(userData.PASSWORD || '');
+      setAddress(userData.ADDRESS || '');
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      Alert.alert('Error', 'Failed to fetch user data');
     }
   };
 
-  const pickImage = async () => {
-    // Request media library permission
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  useEffect(() => {
+    fetchUserData();
+  }, []);
+
+  const handleRegisterUpdate = async () => {
+    const api = `${API}/updateUser`;
   
-    if (!permissionResult.granted) {
-      Alert.alert("Permission Required", "Permission to access the camera roll is required!");
-      return;
+    const user = {
+      mID: userId,
+      NAME: newName.trim(),
+      PHONE: newPhone.trim(),
+      EMAIL: newEmail.trim(),
+      PASSWORD: newPassword,
+      ADDRESS: newAddress.trim(),
+      ROLE: userRole, // 根據用戶角色設定
+    };
+  
+    try {
+      const result = await axios.post(api, user, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      Alert.alert('更新成功', '您的個資已更新!');
+      navigation.navigate('SignIn');
+    } catch (error) {
+      Alert.alert('Error', 'Failed to update user data');
     }
+  };
   
-    // Let the user pick an image
-    const result = await ImagePicker.launchImageLibraryAsync({
+  
+
+  useEffect(() => {
+    fetchProfilePicture();
+  }, []);
+
+  const clearImageCache = async () => {
+    // Clear the cache for the specific image
+    if (profileImage) {
+      await Image.prefetch(profileImage);
+    }
+    // Force re-render of the image component
+    setImageKey(prevKey => prevKey + 1);
+  };
+
+  const fetchProfilePicture = async () => {
+    try {
+      const response = await axios.get(`${API}/user/${userId}/profilePicture`);
+      if (response.data && response.data.imageUrl) {
+        setProfileImage(`${API}${response.data.imageUrl}`);
+        await clearImageCache();
+      }
+    } catch (error) {
+      console.error('Error fetching profile picture:', error);
+      Alert.alert('Error', 'Failed to fetch profile picture.');
+    }
+  };
+
+
+  const pickImage = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
       aspect: [1, 1],
-      quality: 1,
+      quality: 0.5, // Reduced quality
+      base64: false, // We'll get base64 after resizing
     });
-  
+
     if (!result.canceled && result.assets && result.assets.length > 0) {
-      setProfileImage(result.assets[0].uri); // Update the state with the selected image URI
+      const resizedImage = await resizeImage(result.assets[0].uri);
+      await sendProfilePictureToServer(resizedImage);
     }
   };
+
+  const resizeImage = async (uri) => {
+    const manipulatedImage = await ImageManipulator.manipulateAsync(
+      uri,
+      [{ resize: { width: 300, height: 300 } }], // Resize to 300x300
+      { format: ImageManipulator.SaveFormat.JPEG, compress: 0.8, base64: true }
+    );
+    return manipulatedImage.base64;
+  };
+
+const sendProfilePictureToServer = async (base64Image) => {
+  console.log('Sending profile picture to server...');
+  setIsLoading(true);
+  try {
+    const response = await axios.post(`${API}/user/${userId}/profilePicture`, {
+      photo: base64Image
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    console.log('Server response received:', response.data);
+
+    if (response.data && response.data.imageUrl) {
+      
+      await fetchProfilePicture(); // Fetch the updated profile picture
+      
+      Alert.alert('上傳成功!', '資料照片更新成功.');
+    }
+  } catch (error) {
+    console.error('Error sending profile picture to server:', error);
+    Alert.alert('Error', 'Failed to update profile picture. Please try again.');
+  } finally {
+    setIsLoading(false);
+  }
+};
+
+
   const navigation = useNavigation();
+
+
+  const renderUserImageSection = () => {
+    if (userRole === '宮廟' || userRole === '社福') {
+      return (
+        <TouchableOpacity onPress={pickImage}>
+          <View style={styles.imageContainer}>
+            <Image
+              key={imageKey}
+              style={styles.userImage}
+              contentFit="cover"
+              source={profileImage ? { uri: profileImage } : `${API}/uploads/profilePictures/default.jpg`}
+            />
+            <View style={styles.imageOverlay}>
+              <AntDesign name="edit" size={30} color="white" style={styles.editIcon} />
+            </View>
+          </View>
+        </TouchableOpacity>
+      );
+    }
+    return null;
+  };
+
+
+
 
   {/* Style */}
   return (
@@ -124,26 +210,31 @@ const ProfileManagement = () => {
         <View style={styles.titleContainer}>
             <AntDesign name="edit" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>個資維護</Text>
+           
         </View>
         
         {/* TextInput */}
         <ScrollView style={styles.scrollView}>
           <View style={styles.formContainer}>
 
+{/* 判斷用戶決定是否提供更新照片 */}
+          {renderUserImageSection()} 
+
            {/* User Image Section */}
-           <TouchableOpacity onPress={pickImage}>
+           
+           {/* <TouchableOpacity onPress={pickImage}>
               <View style={styles.imageContainer}>
                 <Image
                   style={styles.userImage}
                   contentFit="cover"
                   source={profileImage ? { uri: profileImage } : require("../../assets/ellipse-2.png")} // Default image
                 />
-                {/* Overlay layer */}
+                
                 <View style={styles.imageOverlay}>
                   <AntDesign name="edit" size={30} color="white" style={styles.editIcon} />
                 </View>
               </View>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
 
             <View style={styles.inputContainer}>
@@ -184,6 +275,16 @@ const ProfileManagement = () => {
                 style={styles.input}
                 value={newPhone}
                 onChangeText={setPhone}
+              />
+            </View>
+
+            <View style={styles.inputContainer}>
+              <Text style={styles.label}>地址 :</Text>
+              <TextInput
+                placeholder=" 地址" 
+                style={styles.input} 
+                value={newAddress}
+                onChangeText={setAddress}
               />
             </View>
             

@@ -1,79 +1,138 @@
-import React, {useState, useEffect, useRef, useContext } from 'react';
-import {Button, Text, SafeAreaView, View, StyleSheet, FlatList} from 'react-native';
-import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, { useState, useContext } from 'react';
+import { View, TextInput, Button, Text, Image, StyleSheet, Pressable, Dimensions } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
-import axios from 'axios';
-
-import SectionHeader from '../../components/Utility/SectionHeader';
-import EventCard from '../../components/Temple/EventCard';
-import MatchingCard from '../../components/Temple/MatchingCard';
-import MatchingInfoCard from '../../components/Temple/MatchingInfoCard';
-import TempleEventPage from './TempleEventPage';
-import Loading from '../../components/Utility/Loading';
 import { UserContext } from '../../components/Context/UserContext';
 
-const API = require('../config/DBconfig')
+import CheckoutBar from '../../components/Utility/CheckoutBar';
 
-// TempleHomePage Screen 
+const{ width } = Dimensions.get('window');
 
 function OfferingUpload() {
-    const insets = useSafeAreaInsets();
-	const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const { userId } = useContext(UserContext);
 
-	const { userId } = useContext(UserContext);
-	const [templeData, setTempleData] = useState([]);
+  // State to handle image, name, price, and remark
+  const [imageUri, setImageUri] = useState(null);
+  const [name, setName] = useState('');
+  const [price, setPrice] = useState('');
+  const [remark, setRemark] = useState('');
 
-	const [loading, setLoading] = useState(true);
-	const [error, setError] = useState(null);
+  // Image picker function
+  const selectImage = async () => {
+    // Request permission to access media library
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
-	var response;
-	const fetchData = async () => {
-		try { 
-			response = await axios.get(`${API}/temples_info/${userId}`);
-			setTempleData(response.data[0]);
+    if (!permissionResult.granted) {
+      alert('Permission to access gallery is required!');
+      return;
+    }
 
+    // Launch image picker
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-			setLoading(false);
-		} catch (err) {
-			setLoading(false); 
-			setError(err); 
-		} 
-	};
+    if (!result.canceled) {
+      setImageUri(result.assets[0].uri);  // Use result.assets[0].uri to get the image URI
+    }
+  };
 
-    useEffect(() => {
-		// Get pId from db 
-        fetchData();
-    }, []); // Add templeID as a dependency
-  
-	if (loading) return <Loading />;
-	if (error) return <Text>Error: {error.message}</Text>;
+  {/* 進資料庫動作 */}
+  const handleSubmit = () => {
+   
+  };
 
-    return (
-      <SafeAreaProvider>
-        <View style={[styles.container,
-          // Paddings to handle safe area
-          {paddingTop: insets.top + 100,
-          paddingBottom: insets.bottom,
-          paddingLeft: insets.left + 30,
-          paddingRight: insets.right + 30} 
-        ]}>  
-       <Text>供品商品上架頁面(待加)</Text>
+  return (
+    <SafeAreaProvider>
+      <View
+        style={[
+          styles.container,
+          {
+            paddingTop: insets.top + 20,
+            paddingBottom: insets.bottom,
+            paddingLeft: insets.left + 30,
+            paddingRight: insets.right + 30,
+          },
+        ]}>
+        <Text style={styles.header}>供品上傳</Text>
 
-	
+        {/* Image Upload Section */}
+        <Pressable style={styles.imagePicker} onPress={selectImage}>
+          {imageUri ? (
+            <Image source={{ uri: imageUri }} style={styles.image} />
+          ) : (
+            <Text style={styles.imagePickerText}>點擊上傳圖片</Text>
+          )}
+        </Pressable>
+
+        {/* Offering Name Input */}
+        <TextInput style={styles.input} placeholder="供品名稱" value={name} onChangeText={setName}/>
+
+        {/* Offering Price Input */}
+        <TextInput style={styles.input} placeholder="供品價錢" value={price} keyboardType="numeric" onChangeText={setPrice}/>
+
+        {/* Offering Remark Input */}
+        <TextInput style={styles.input} placeholder="供品備註" value={remark} onChangeText={setRemark} />
+        
+
+		<View style={styles.buttonContainer}>
+          <CheckoutBar btnText={'確認送出'} iconName={"checkbox-outline"} onPress={handleSubmit} />
         </View>
-      </SafeAreaProvider>
-    )
+      </View>
+    </SafeAreaProvider>
+  );
 }
 
 const styles = StyleSheet.create({
-	container: {
-		flex: 1,
-		flexDirection: 'column',
-		gap: 30,
-	},
-	scrollView: {
-		paddingLeft: 16,
-	},
-})
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  imagePicker: {
+    backgroundColor: '#F0F0F0',
+    height: 300,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 20,
+    borderRadius: 10,
+  },
+  imagePickerText: {
+    fontSize: 18,
+    color: '#888',
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    borderRadius: 10,
+  },
+  input: {
+    height: 50,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 10,
+    paddingHorizontal: 15,
+    marginBottom: 20,
+    fontSize: 16,
+  },
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+  },
+});
 
 export default OfferingUpload;

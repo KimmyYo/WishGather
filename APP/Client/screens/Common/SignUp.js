@@ -19,9 +19,8 @@ const SignUp = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('');
-  // 宮廟資訊
-  // 社福機構資訊
   const [address, setAddress] = useState('');
+
   // HOOKS
   const navigation = useNavigation();
   const { showAlertDialog, renderAlertDialog } = useAlertDialog();
@@ -40,7 +39,22 @@ const SignUp = () => {
     userRoleError,
     addressError
   } = useValidation();
-  
+
+  // 抓取使用者地址function
+  const getGeoCoordinates = async (address) => {
+    try {
+      const response = await axios.get(`${process.env.EXPO_PUBLIC_API_URL}/search/geocode/v6/forward?q=${address}&proximity=ip&access_token=${process.env.EXPO_PUBLIC_API_TOKEN}`);
+      const result = response.data;
+      const [longitude, latitude] = result["features"][0]["geometry"]["coordinates"];
+      return { latitude, longitude }; 
+    }
+    catch(err){
+      console.log('API error:'+err);
+      return { latitude: null, longitude: null }; 
+    }
+    
+  }
+
   const handleRegister = async () => {
     const isUserNameValid = validateUserName(name),
           isPhoneNumberValid = validatePhoneNumber(phone),
@@ -48,6 +62,11 @@ const SignUp = () => {
           isPasswordValid = validateUserPassword(password),
           isRoleValid = validateUserRole(role),
           isAddressValid = validateAddress(address);
+      
+    let coordinates = { latitude: null, longitude: null };
+    if (isAddressValid && address) {
+      coordinates = await getGeoCoordinates(address);
+    }
     
     const userInputData = {
       NAME: name,
@@ -55,7 +74,9 @@ const SignUp = () => {
       EMAIL: email.trim(),
       PASSWORD: password,
       ROLE: role,
-      ADDRESS: address ?? ''
+      ADDRESS: address ?? '',
+      LONGTITUDE: coordinates.longitude,
+      LATITUDE: coordinates.latitude
     }
     console.log(userInputData);
     // 
@@ -70,7 +91,6 @@ const SignUp = () => {
         },
       })
       .then((response) => {
-        console.log("here");
           showAlertDialog('註冊成功', '歡迎登入');
           // 廟方或社福機構導向註冊頁
           navigation.navigate('SignIn');
@@ -88,17 +108,19 @@ const SignUp = () => {
       colors={['#EA7500','#FFFAF4']}
       style={styles.container}
     >
-      <NavigateBack />
+      <View style={styles.btncontainer}>
+          <NavigateBack />
+        </View>
       <View style={styles.pageTitleContainer}>
-        <Text style={{color:"#272727", fontSize: 35, marginBottom: 15, fontWeight: '500'}}>註冊</Text>
-        <Text style={{color:"#272727", fontSize: 25, marginBottom: 50}}>Registration</Text>
+        <Text style={{color:"#4F4F4F", fontSize: 35, marginBottom: 15, fontWeight: '500'}}>註冊</Text>
+        <Text style={{color:"#4F4F4F", fontSize: 25, marginBottom: 50}}>Registration</Text>
       </View>
       {!role && 
         <View>
           <View style={styles.formContainer}>
             <TextInputBox
               inputType='text'
-              placeholder="輸入姓名"
+              placeholder="輸入名稱"
               textValue={name}
               onChangeText={(text) => {
                 setName(text);
@@ -180,6 +202,7 @@ const SignUp = () => {
 
     { role == 'A' && 
       <View style={styles.formContainer}>
+        <PageTitle titleText={'歡迎加入'}/>
         <PageTitle titleText={name}/>
         <TextInputBox
           inputType='text'
@@ -198,6 +221,7 @@ const SignUp = () => {
 
     { role == 'B' && 
       <View style={styles.formContainer}>
+        <PageTitle titleText={'歡迎加入'}/>
         <PageTitle titleText={name}/>
         <TextInputBox
           inputType='text'
@@ -216,6 +240,7 @@ const SignUp = () => {
 
     { role == 'C' && 
       <View style={styles.formContainer}>
+        <PageTitle titleText={'歡迎加入'}/>
         <PageTitle titleText={name}/>
         <TextInputBox
           inputType='text'
@@ -249,19 +274,19 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#F5F5F5',
   },
-  title: {
-    fontSize: 30,
-    fontFamily:"Roboto",
-    marginBottom: 5,
-
-    color: '#272727',
-    fontSize: 35,
-    marginBottom: 15,
-    fontWeight: '500',
+  btncontainer:{
+    position: 'absolute',
+    top: 60,
+  },
+  pageTitleContainer:{
+    justifyContent: 'center',
+    alignItems: 'center',
 
   },
   formContainer: {
     flexDirection: 'column',
+    justifyContent:'center',
+    alignItems:'center',
     gap: 10,
     marginBottom: 25
 
@@ -277,6 +302,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     backgroundColor: '#FFA500',
     borderRadius: 20,
+
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   roleButtonSelected: {
     backgroundColor: '#FF8500',
@@ -286,8 +317,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: {
-    
-
     width: '35%',
     height: 50,
     backgroundColor: '#FFA500',
