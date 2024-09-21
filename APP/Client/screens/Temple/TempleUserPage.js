@@ -3,7 +3,7 @@ import { Image } from "expo-image";
 import { StyleSheet, Pressable, View, Text, Modal, SafeAreaView, TouchableOpacity, Alert, Dimensions } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, MaterialIcons, Ionicons } from '@expo/vector-icons';
 
 
 import { StatusBar } from 'expo-status-bar';
@@ -176,18 +176,18 @@ const TempleUserPage = () => {
 
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("OrderHistoryPage")}
+              onPress={() => navigation.navigate("OfferingUpload")}
             >
-              <MaterialCommunityIcons name="history" size={24} color="#4f4f4f" />
-              <Text style={styles.buttonText}>歷史紀錄</Text>
+              <Ionicons name="gift" size={24} color="#4f4f4f" />
+              <Text style={styles.buttonText}>供品上架</Text>
             </Pressable>
 
             <Pressable
               style={[styles.pressable, styles.pressablePosition]}
-              onPress={() => navigation.navigate("SavedTemples")}
+              onPress={() => navigation.navigate("OfferingEditPage")}
             >
-              <Ionicons name="gift-sharp" size={24} color="#4f4f4f" />
-              <Text style={styles.buttonText}>供品上架</Text>
+              <MaterialIcons name="edit" size={24} color="#4f4f4f" />
+              <Text style={styles.buttonText}>供品編輯</Text>
             </Pressable>
             
             <Pressable
