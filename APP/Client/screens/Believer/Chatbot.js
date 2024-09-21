@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import axios from 'axios';
 
 const WishGatherChatbot = () => {
   const [userMessage, setUserMessage] = useState('');
   const [messages, setMessages] = useState([{ type: 'bot', text: '歡迎來到解籤！有什麼問題嗎？' }]);
+  const scrollViewRef = useRef();
 
   const addMessage = (content, type) => {
     setMessages(prevMessages => [...prevMessages, { type, text: content }]);
@@ -49,11 +50,7 @@ const WishGatherChatbot = () => {
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-<<<<<<< Updated upstream
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 35 : 0}
-=======
->>>>>>> Stashed changes
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.content}>
@@ -62,11 +59,12 @@ const WishGatherChatbot = () => {
             <Text style={styles.subtitle}>歡迎使用WishGather解籤功能</Text>
           </View>
 
-<<<<<<< Updated upstream
-          <ScrollView style={styles.messagesArea} contentContainerStyle={{ paddingBottom: 10 }}>
-=======
-          <ScrollView style={styles.messagesArea} contentContainerStyle={{ paddingBottom: 80 }}>
->>>>>>> Stashed changes
+          <ScrollView 
+            ref={scrollViewRef} 
+            style={styles.messagesArea} 
+            contentContainerStyle={{ paddingBottom: 100 }}
+            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+          >
             {messages.map((msg, index) => (
               <View
                 key={index}
@@ -108,7 +106,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     padding: 20,
-    marginTop: 55,
   },
   header: {
     marginBottom: 20,
@@ -152,14 +149,11 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#ccc',
     backgroundColor: '#fff',
-<<<<<<< Updated upstream
-=======
     position: 'absolute', // 固定位置
     bottom: 0,  // 固定在底部
     left: 0,
     right: 0,
     paddingHorizontal: 20, // 讓左右有些邊距
->>>>>>> Stashed changes
   },
   input: {
     flex: 1,
