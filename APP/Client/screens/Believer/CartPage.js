@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { StyleSheet, View, Text, FlatList, Dimensions } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import CartItem from "../../components/Believer/CartItem";
+import { UserContext } from '../../components/Context/UserContext'; //取得 userId
+
 
 import axios from 'axios';
 
@@ -15,18 +17,27 @@ const API = require('../config/DBconfig');
 const CartPage = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const { userId } = useContext(UserContext); //取得 userId
   const [cartItems, setCartItems] = useState([]);
-  const userId = 1; // 假設目前已登入的使用者ID為1
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    axios.get(`${API}/test`, { params: { userId } })
-      .then(response => {
-        setCartItems(response.data);
-      })
-      .catch(error => {
-        console.error('Error fetching cart data:', error);
-      });
+    fetchCartData();
   }, []);
+
+  const fetchCartData = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.get(`${API}/cartItems/${userId}`, { params: { userId } });
+      setCartItems(response.data);
+      setIsLoading(false);
+    } catch (error) {
+      console.error('獲取購物車資料時發生錯誤:', error);
+      setError('無法載入購物車資料。');
+      setIsLoading(false);
+    }
+  };
 
   const renderItem = ({ item }) => (
     <CartItem
