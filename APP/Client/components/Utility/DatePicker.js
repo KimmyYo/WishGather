@@ -35,7 +35,7 @@ function DatePicker({ dateValue, isLunar, editable, onChange }) {
           />
           {editable && (
             <Pressable onPress={() => setDatePickerVisible(true)}>
-              <Ionicons name="calendar-number-outline" size={30} />
+              <Ionicons name="calendar-number-outline" size={24} />
             </Pressable>
           )}
         </View>
@@ -59,23 +59,24 @@ let screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
         container: {
           width: screenWidth * 0.9,
-          backgroundColor: '#dbdbdb',
+          backgroundColor: 'white',
           borderWidth: 1,
-          borderColor: '#dbdbdb',
-          borderRadius: 10,
-          padding: 20,
+          borderColor: '#ccc',
+          borderRadius: 5,
+          padding: 15,
           flexDirection: 'row',
           justifyContent: 'space-between',
           alignItems: 'center',
         },
         input:{
-           fontSize: 20,
+           fontSize: 16,
       
         },
         label: {
-          color:"#4F4F4F",
-          fontWeight:'bold',
-          fontSize: 20
+          fontSize: 16,
+          fontWeight: 'bold',
+          marginBottom: 10,
+          color: '#4F4F4F',
         },
         labelContainer: {
           marginRight: screenWidth / 2 + 80,

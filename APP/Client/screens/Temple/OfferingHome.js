@@ -5,11 +5,9 @@ import { useNavigation } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import axios from 'axios';
 
-import SectionHeader from '../../components/Utility/SectionHeader';
-import EventCard from '../../components/Temple/EventCard';
-import MatchingCard from '../../components/Temple/MatchingCard';
-import MatchingInfoCard from '../../components/Temple/MatchingInfoCard';
-import TempleEventPage from './TempleEventPage';
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
+import PageTitle from '../../components/Utility/PageTitle';
+
 import Loading from '../../components/Utility/Loading';
 import { UserContext } from '../../components/Context/UserContext';
 
@@ -53,24 +51,30 @@ function OfferingHome() {
       <SafeAreaProvider>
         <View style={[styles.container,
           // Paddings to handle safe area
-          {paddingTop: insets.top + 60,
+          {paddingTop: insets.top + 30,
           paddingBottom: insets.bottom,
           paddingLeft: insets.left + 30,
           paddingRight: insets.right + 30} 
         ]}>  
 
-			<View style={styles.titleContainer}>
-                <Text style={styles.titleText}>功能選擇</Text>
-            </View>
+			<View style={styles.btncontainer}><GoBackButton1 /></View>
+			<PageTitle iconName="outbox" titleText="功能選擇" />
 			
 			<TouchableOpacity
 				style={styles.button}
 				onPress={() => navigation.navigate('OfferingUpload')}
 			>
 				<AntDesign name="caretright" size={24} color="white" />
-				<Text style={styles.buttonText}>上架供品</Text>
+				<Text style={styles.buttonText}>供品上架</Text>
 			</TouchableOpacity>
 
+			<TouchableOpacity
+				style={styles.button}
+				onPress={() => navigation.navigate('OfferingUpload')}
+			>
+				<AntDesign name="caretright" size={24} color="white" />
+				<Text style={styles.buttonText}>供品編輯</Text>
+			</TouchableOpacity>
 			
 			<TouchableOpacity
 				style={styles.button}
@@ -85,6 +89,11 @@ function OfferingHome() {
 }
 
 const styles = StyleSheet.create({
+	btncontainer:{
+		position: 'absolute',
+		top: 60,
+		left: 10,
+	  },
 	container: {
 		flex: 1,
 		flexDirection: 'column',
@@ -93,19 +102,9 @@ const styles = StyleSheet.create({
 		gap: 30,  
 		backgroundColor: '#f2f2f2',
 	},
-	titleContainer: {
-        justifyContent: "center",
-        alignItems: "center",
-        paddingBottom: 50
-    },
-    titleText: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#4F4F4F',
-    },
 	button: {
 		width: '90%',
-		height:'30%',
+		height: 180,
 		paddingVertical: 15,
 		backgroundColor: '#FFA500',  // 橘色背景
 		borderRadius: 10,

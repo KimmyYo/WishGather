@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useContext } from 'react'
-import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, TextInput } from 'react-native'
+import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, ScrollView } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../../components/Context/UserContext';
@@ -8,10 +8,10 @@ import { formatDate, convertSolarDateToLunarDate } from '../../components/Utilit
 import axios from 'axios';
 
 import TextInputSet from '../../components/Utility/TextInputSet';
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
-import SetButton from '../../components/Utility/SetButton';
 import DatePicker from '../../components/Utility/DatePicker';
-import NavigateBack from '../../components/Utility/NavigateBack';
+import CheckoutBar from '../../components/Utility/CheckoutBar';
 
 const base = require('../config/DBconfig');
 const insertEventApi = `${base}/temple_event`;
@@ -66,7 +66,10 @@ function EditTempleInfoPage(){
         console.log(selectedDate, eventDesc, eventName);
     }
     const handleAddSucceedAlert = () => {
-        setAlertDialogVisible(false); // Close the first dialog
+        setAlertDialogVisible(false); 
+        setTimeout(() => {
+            setDialogVisible(true); 
+        }, 600); 
     };
     
     const renderConfirmDialog = () => {
@@ -75,7 +78,12 @@ function EditTempleInfoPage(){
                 <Dialog.Title>是否繼續新增法會？</Dialog.Title>
                 <Dialog.Description>
                 </Dialog.Description>
-                <Dialog.Button label="取消新增" onPress={() => navigation.navigate('TempleEventPage', { refresh: true })}/>
+                <Dialog.Button label="取消新增" onPress={() => {
+                    setEventDesc('');
+                    setEventName('');
+                    setSelectedDate(new Date());
+                    setDialogVisible(false);
+                    navigation.navigate('TempleEventPage', { refresh: true })}}/>
                 <Dialog.Button label="繼續新增" onPress={handleConfirmKeepAdding}/>
             </Dialog.Container>
         )
@@ -95,10 +103,11 @@ function EditTempleInfoPage(){
             <View
                 style={{
                     flex: 1,
-                    justifyContent: 'flex-start',
-                    alignItems: 'center',
-                    paddingTop: insets.top,
-                    paddingBottom: insets.bottom,
+                    backgroundColor:'#f2f2f2',
+                    justifyContent: 'start',
+                    alignItems: 'start',
+                    paddingTop: insets.top+20,
+                    paddingBottom: insets.bottom-40,
                     paddingLeft: insets.left ,
                     paddingRight: insets.right
                 }}
@@ -107,13 +116,13 @@ function EditTempleInfoPage(){
                     <Pressable onPress={() => navigation.navigate('TempleEventPage', { refresh: true })}>
                         <Text style={styles.textDanger}>取消</Text>
                     </Pressable>
-                    <Pressable onPress={() => setDialogVisible(true)}>
+                    <Pressable onPress={insertTempleEvent}>
                         <Text style={styles.textSucceed}>完成</Text>
                     </Pressable>
                 </View>
                 
                 <PageTitle  iconName ={forEdit ? "edit" : "add"} titleText={forEdit ? "編輯法會資訊" : "新增法會資訊"}></PageTitle>
-                
+                <ScrollView style={{alignSelf:'center'}}>
                 <View style={styles.formContainer}>
                     <TextInputSet 
                         labelName={'法會名稱'} 
@@ -135,11 +144,7 @@ function EditTempleInfoPage(){
                         onChange={(newDescription) => setEventDesc(newDescription)}
                     />
                 </View>
-                <SetButton
-                    btnText = '確定'
-                    btnStatus = 'primary'
-                    onPress={insertTempleEvent}
-                />
+                </ScrollView>
                 {renderConfirmDialog()}      
                 {renderAlertDialog()}
                 
@@ -153,8 +158,10 @@ const styles = StyleSheet.create({
         flex: 2,
         flexDirection: "column",
         justifyContent: "flex-start",
-        alignItems: "center",
-        gap: 8,
+        alignItems: "flex-start",
+        alignSelf:'center',
+        gap: 15,
+        marginTop: 20,
     },
     buttonPosition: {
         marginTop: 30,
@@ -171,7 +178,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     textSucceed: {
-        color: "blue",
+        color: "orange",
         fontWeight: "bold"
     }
    

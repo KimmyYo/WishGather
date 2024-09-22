@@ -3,17 +3,17 @@ import { StyleSheet, View, Text, Pressable, ScrollView, Image, Dimensions, TextI
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
+import RadioButton from "expo-checkbox"; // You may use a Radio Button library for better control.
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import ConfirmItem from '../../components/Believer/ConfirmItem';
-import DonationItem from '../../components/Believer/DonationItem';
 import OrderInfo from '../../components/Believer/OrderInfo';
 import DatePickerModal from '../../components/Utility/DatePickerModal';
 import TimePickerModal from '../../components/Utility/TimePickerModal';
 import PaymentMethodModal from '../../components/Believer/PaymentMethodModal';
 import ConfirmModal from '../../components/Believer/ConfirmModal'; 
 import CheckoutBar from '../../components/Believer/CheckoutBar';
-import { CheckBox } from 'react-native-elements';
+
 
 import { UserContext } from '../../components/Context/UserContext'; //取得 userId
 import axios from 'axios';
@@ -212,9 +212,28 @@ const OrderConfirmationPage = () => {
             <MaterialIcons name="volunteer-activism" size={24} color="orange" style={styles.icon} />
             <Text style={styles.pageTitle}>捐贈選擇</Text>
           </View>
+        
+          <View style={styles.donationButtonContainer}>
+            {/* 捐赠按钮 */}
+            <Pressable
+              style={[styles.donationButton, donation ? styles.selectedButton : null]}
+              onPress={() => setDonation(true)} // 设置为捐赠
+            >
+              <Text style={[styles.donationButtonText, donation ? styles.selectedButtonText : null]}>捐贈</Text>
+            </Pressable>
 
+            {/* 不捐赠按钮 */}
+            <Pressable
+              style={[styles.donationButton, !donation ? styles.selectedButton : null]}
+              onPress={() => setDonation(false)} // 设置为不捐赠
+            >
+              <Text style={[styles.donationButtonText, !donation ? styles.selectedButtonText : null]}>不捐贈</Text>
+            </Pressable>  
+          </View>
+          
+        
         {/* Add Donation Button */}
-        <View style={styles.donationButtonContainer}>
+        {/* <View style={styles.donationButtonContainer}>
           <Pressable
             style={[styles.donationButton, donation ? styles.selectedButton : null]}
             onPress={() => setDonation(!donation)} // Toggle donation status
@@ -223,13 +242,9 @@ const OrderConfirmationPage = () => {
               {donation ? '捐贈' : '不捐贈'}
             </Text>
           </Pressable>
-        </View>
+        </View> */}
 
-          {items.map((item, index) => (
-            <View style={styles.itemsContainer}>
-              <DonationItem key={item.id} title={item.title} />
-            </View>
-          ))}
+        
 
           {/* Note */}
           <View style={styles.titleContainer}>
@@ -371,21 +386,28 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginVertical: 10,
+    gap: 10,
   },
   donationButton: {
     padding: 10,
     borderRadius: 5,
     borderWidth: 1,
     borderColor: '#E0E0E0',
-    width: width * 0.5,
+    width: width * 0.4,
     alignItems: 'center',
     backgroundColor: '#f9f9f9',
   },
   selectedButton: {
-    backgroundColor: '#ffcc80', // Highlight the button when selected
+    backgroundColor: 'orange',
+    color:'white', 
+  },
+  selectedButtonText:{
+    color:'white',
+
   },
   donationButtonText: {
     fontSize: 16,
+    fontWeight:'bold',
     color: '#4F4F4F',
   },
   
