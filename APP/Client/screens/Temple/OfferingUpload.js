@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState ,useContext, useEffect } from 'react';
 import { View, TextInput, Text, Image, StyleSheet, Pressable, Dimensions, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,6 +9,9 @@ import { MaterialIcons } from '@expo/vector-icons'; // Importing the icon
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
 import CheckoutBar from '../../components/Utility/CheckoutBar';
+
+const API=require('../config/DBconfig')
+import axios from 'axios';
 
 const { width } = Dimensions.get('window');
 
@@ -21,6 +24,7 @@ const OfferingUpload = () => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [remark, setRemark] = useState('');
+  const [amount, setAmount] = useState('');
 
   // Image picker function
   const selectImage = async () => {
@@ -43,24 +47,31 @@ const OfferingUpload = () => {
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!name || isNaN(price)) {
       Alert.alert('請輸入有效的供品名稱及金額');
       return;
     }
-
+  
     const newOffering = {
-      userId,
       imageUri,
       name,
       price: parseFloat(price),
       remark,
+      amount,
     };
-
-    // Send the new offering data to the server or handle it as necessary
-    Alert.alert('供品已上傳！', JSON.stringify(newOffering));
-    navigation.goBack();
+  
+    try {
+      // 使用 await 來處理 axios 請求
+      const response = await axios.post(`${API}/uploadOffering/${userId}`, newOffering);
+      Alert.alert('供品已上傳！', response.data.message);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error uploading offering:', error);
+      Alert.alert('供品上傳失敗', '請稍後再試');
+    }
   };
+  
 
   return (
     <SafeAreaProvider>
@@ -116,6 +127,15 @@ const OfferingUpload = () => {
             style={styles.input}
             value={remark}
             onChangeText={setRemark}
+            placeholder="輸入備註 (選填)"
+            multiline
+          />
+
+          <Text style={styles.label}>存貨數量</Text>
+          <TextInput
+            style={styles.input}
+            value={amount}
+            onChangeText={setAmount}
             placeholder="輸入備註 (選填)"
             multiline
           />
