@@ -9,19 +9,15 @@ const AddressOverlay = ({ onClose, onSubmit }) => {
   return (
     <View style={styles.addressLayout}>
       {/* Header */}
-      <View style={{ marginBottom: 10 }}>
-        <Text style={styles.headerText}>修改地址</Text>
-      </View>
+      <Text style={styles.headerText}>修改地址</Text>
 
       {/* Location input */}
-      <View style={{ width: "100%", justifyContent: "center", alignItems: "center" }}>
-        <TextInput
-          style={styles.addressInput}
-          placeholder="請輸入地址..."
-          value={address}
-          onChangeText={setAddress}
-        />
-      </View>
+      <TextInput
+        style={styles.addressInput} // 固定高度
+        placeholder="請輸入地址..."
+        value={address}
+        onChangeText={setAddress}
+      />
 
       {/* Confirm / Cancel Button */}
       <View style={styles.buttonContainer}>
@@ -39,58 +35,67 @@ const AddressOverlay = ({ onClose, onSubmit }) => {
 
 const styles = StyleSheet.create({
   addressLayout: {
-    height: 230,
-    width: width * 0.75,
+    height: 180,
+    width: 300,
     backgroundColor: "white",
     borderRadius: 15,
     paddingTop: 20,
-    justifyContent: "flex-start",
     alignItems: "center",
-    flexDirection: "column",
+    paddingHorizontal: 20,
+
+    // Shadow for iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+
+    // Elevation for Android
+    elevation: 5,
   },
   headerText: {
-    textAlign: "center",
-    fontWeight: "500",
-    fontSize: 24,
+    color:'#4f4f4f',
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   addressInput: {
-    width: "85%",
-    height: 100,
-    textAlignVertical:'top',
-    borderRadius: 20,
-    borderWidth: 1,
+    width: "100%",
+    borderRadius: 10,
+    borderWidth: 0.5,
     borderColor: "#ccc",
-    paddingHorizontal: 10,
-    fontSize: 14,
+    padding: 10,
+    fontSize: 16, // 調整字體大小
+    marginBottom: 20,
+    height: 55, // 固定高度
   },
   buttonContainer: {
+    position: 'absolute',
+    bottom: 0,
     flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    height:50,
-    marginTop: 20,
+    justifyContent: "space-between",
+    width: 300,
     borderTopWidth: 0.3,
-    borderColor:"#ccc"
+    borderColor: "#ccc",
+    marginTop: 10,
   },
   button: {
-    width: "50%",
-    height:"100%",
+    flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-  },
-  confirmButton: {
-    borderLeftWidth:0.3,
-    borderColor:"#ccc",
+    paddingVertical: 10,
   },
   buttonText: {
     fontSize: 16,
-    fontWeight:'bold',
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    borderRightWidth: 0.3,
+    borderColor: "#ccc",
   },
   cancelButtonText: {
     color: 'red',
   },
   confirmButtonText: {
-    color: 'blue',
+    color: '#007AFF',
   },
 });
 

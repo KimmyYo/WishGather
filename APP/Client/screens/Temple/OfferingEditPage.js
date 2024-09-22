@@ -82,33 +82,42 @@ const OfferingEditPage = () => {
 
   const renderOfferingItem = ({ item }) => {
     return (
-      
-      <View style={{ padding: 10, borderBottomWidth: 1 }}>
-        {/* 顯示圖片 */}
-        <Image 
-          source={{ uri: item.IMAGE }}
-          style={{ width: 100, height: 100, marginBottom: 10 }}
-        />
-        {/* 顯示供品資訊 */}
-        <Text>名稱: {item.NAME}</Text>
-        <Text>金額: ${item.PRICE}</Text>
-        <Text>備註: {item.DESCRIPTION}</Text>
-  
-        {/* 編輯按鈕 */}
-        <Button 
-          title="編輯"
-          onPress={() => handleEdit(item)} 
-        />
-  
-        {/* 刪除按鈕 */}
-        <Button 
-          title="刪除"
-          color="red"
-          onPress={() => handleOfferingDelete(item.offering_id)}
-        />
-      </View>
+      <OfferingEditBlock
+        offering={item}
+        onEdit={() => handleEdit(item)}
+        onDelete={() => handleOfferingDelete(item.offering_id)}
+      />
     );
   };
+  // const renderOfferingItem = ({ item }) => {
+  //   return (
+      
+  //     <View style={{ padding: 10, borderBottomWidth: 1 }}>
+  //       {/* 顯示圖片 */}
+  //       <Image 
+  //         source={{ uri: item.IMAGE }}
+  //         style={{ width: 100, height: 100, marginBottom: 10 }}
+  //       />
+  //       {/* 顯示供品資訊 */}
+  //       <Text>名稱: {item.NAME}</Text>
+  //       <Text>金額: ${item.PRICE}</Text>
+  //       <Text>備註: {item.DESCRIPTION}</Text>
+  
+  //       {/* 編輯按鈕 */}
+  //       <Button 
+  //         title="編輯"
+  //         onPress={() => handleEdit(item)} 
+  //       />
+  
+  //       {/* 刪除按鈕 */}
+  //       <Button 
+  //         title="刪除"
+  //         color="red"
+  //         onPress={() => handleOfferingDelete(item.offering_id)}
+  //       />
+  //     </View>
+  //   );
+  // };
   
 
   return (
@@ -134,7 +143,7 @@ const OfferingEditPage = () => {
                 data={offerings}
                 renderItem={renderOfferingItem}
                 keyExtractor={(item, index) => {
-                  return item.offering_id ? item.offering_id.toString() : index.toString();
+                return item.offering_id ? item.offering_id.toString() : index.toString();
                 }}
                 
               />
@@ -156,51 +165,8 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
-  offeringBlock: {
-    width: width * 0.95,
-    height: 140,
-    alignItems:'center',
-    flexDirection: 'row',
-    padding: 15,
-    marginBottom: 10,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
-    elevation: 3,
-  },
-  offeringImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 10,
-  },
-  offeringInfo: {
-    flex: 1,
-    paddingLeft: 10,
-  },
-  offeringName: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  offeringPrice: {
-    fontSize: 16,
-    marginBottom: 5,
-  },
-  offeringStock: {
-    fontSize: 14,
-    marginBottom: 5,
-    color: '#555',
-  },
-  offeringRemark: {
-    fontSize: 14,
-    color: '#777',
-  },
-  buttonContainer: {
-    justifyContent: 'space-between',
-  },
+  
+  
 });
 
 export default OfferingEditPage;

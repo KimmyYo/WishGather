@@ -131,14 +131,14 @@ const OfferingUpload = () => {
             multiline
           />
 
-          <Text style={styles.label}>存貨數量</Text>
+          {/* <Text style={styles.label}>存貨數量</Text>
           <TextInput
             style={styles.input}
             value={amount}
             onChangeText={setAmount}
             placeholder="輸入備註 (選填)"
             multiline
-          />
+          /> */}
         </ScrollView>
 
         <CheckoutBar btnText={'確認送出'} iconName={'arrow-forward-circle-outline'} onPress={handleSubmit} />
@@ -167,6 +167,7 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
   },
   input: {
+    backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#ccc',
     borderRadius: 5,
@@ -175,7 +176,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   imagePicker: {
-    backgroundColor: '#F0F0F0',
+    backgroundColor: '#fff',
     width: 200,
     height: 200,
     alignSelf: 'center',

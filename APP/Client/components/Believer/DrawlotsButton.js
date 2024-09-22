@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     right: 20,
     bottom: 60,
     backgroundColor: 'orange',
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 70,
+    height: 70,
+    borderRadius: 35,
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 9999, // Ensure it's on the top layer

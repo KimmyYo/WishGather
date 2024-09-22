@@ -63,7 +63,7 @@ function TempleEventPage({route}){
         <SafeAreaProvider>
             <View style={{
                 flex: 1,
-                backgroundColor: 'white',
+                backgroundColor: '#f2f2f2',
                 justifyContent: 'start',
                 alignItems: 'start',
                 // Paddings to handle safe area
@@ -72,7 +72,7 @@ function TempleEventPage({route}){
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }}>
-                <GoBackButton1 destination="TempleHomePage" />
+                <GoBackButton1 />
 
                 <PageTitle titleText="法會資訊" iconName="event" /> 
 

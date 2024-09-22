@@ -1,11 +1,10 @@
 import React, { useState, useCallback, useEffect, useContext } from "react";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { View, Text, TextInput, Pressable, Modal, StyleSheet, FlatList, Dimensions } from "react-native";
-import { Image } from "expo-image";
 import { useNavigation } from "@react-navigation/native";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import axios from 'axios';
-import { LinearGradient } from 'expo-linear-gradient';
+
 
 import TempleDistance from "../../components/Believer/TempleDistance";
 import AddressOverlay from "../../components/Believer/AddressOverlay";
@@ -192,7 +191,7 @@ useEffect(() => {
     <SafeAreaProvider>
       <View style={{
         flex: 1,
-        backgroundColor: "white",
+        backgroundColor: "#f2f2f2",
         justifyContent: 'center',
         alignItems: 'center',
         paddingTop: insets.top,
@@ -229,10 +228,13 @@ useEffect(() => {
             onChangeText={setSearchText}
           />
         </View>
+
         {/* Find Nearby Temples Button */}
           <Pressable style={styles.findNearbyButton} onPress={findNearbyTemples}>
+            <Entypo name="chevron-small-down" size={24} color="white" />
             <Text style={styles.findNearbyButtonText}>查詢附近宮廟</Text>
           </Pressable>
+
         {/* Temples List */}
         <FlatList
           data={nearbyTemples}
@@ -264,7 +266,7 @@ useEffect(() => {
 };
 
 const styles = StyleSheet.create({
-  buttonContainer: {
+  buttonContainer: { //Drawlots
     width: width,
     justifyContent: "center",
     alignItems: 'center',
@@ -285,18 +287,22 @@ const styles = StyleSheet.create({
     height: 25,
   },
   locationText: {
-    color: "#898989",
+    color: "#4F4F4F",
     fontSize: 16,
   },
   searchContainer: {
-    width: width*0.90,
+    width: width*0.95,
     height:50,
     justifyContent:"center",
     marginBottom:10,
+    paddingHorizontal: 10,
     // borderWidth:1 //Test
   },
   findNearbyButton: {
-    backgroundColor: '#FF9224',
+    backgroundColor: 'orange',
+    flexDirection: 'row',
+    justifyContent:'center',
+    alignItems:'center',
     padding: 10,
     borderRadius: 20,
     marginBottom: 10,
@@ -315,10 +321,10 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     paddingHorizontal: 10,
   },
-  activityContainer: {
-    paddingVertical: 10,
-    justifyContent:'center',
-    alignItems: 'center',
+  templeList: {
+    width: width*0.95,
+    alignSelf:'center',
+    padding: 10,
     paddingBottom:60,
   },
   overlay: {

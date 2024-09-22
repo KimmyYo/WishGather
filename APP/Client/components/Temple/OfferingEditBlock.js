@@ -4,13 +4,13 @@ import { Swipeable } from 'react-native-gesture-handler';
 
 const { width } = Dimensions.get('window');
 
-const OfferingEditBlock = ({ item, handleEdit, handleDelete }) => {
+const OfferingEditBlock = ({ offering, onEdit, onDelete  }) => {
   const renderRightActions = () => (
     <View style={styles.rightActionContainer}>
-      <TouchableOpacity style={styles.editButton} onPress={() => handleEdit(item)}>
+      <TouchableOpacity style={styles.editButton} onPress={() => onEdit(offering)}>
         <Text style={styles.actionText}>編輯</Text>
       </TouchableOpacity>
-      <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item.id)}>
+      <TouchableOpacity style={styles.deleteButton} onPress={() => onDelete(offering.offering_id)}>
         <Text style={styles.actionText}>刪除</Text>
       </TouchableOpacity>
     </View>
@@ -19,12 +19,12 @@ const OfferingEditBlock = ({ item, handleEdit, handleDelete }) => {
   return (
     <Swipeable renderRightActions={renderRightActions}>
       <View style={styles.offeringBlock}>
-        <Image source={{ uri: item.imageUrl }} style={styles.offeringImage} />
+        <Image source={{ uri: offering.IMAGE }} style={styles.offeringImage} />
         <View style={styles.offeringInfo}>
-          <Text style={styles.offeringName}>{item.name}</Text>
-          <Text style={styles.offeringPrice}>金額: ${item.price}</Text>
-          <Text style={styles.offeringStock}>庫存數量: {item.stock}</Text>
-          <Text style={styles.offeringRemark}>備註: {item.remark || '無'}</Text>
+          <Text style={styles.offeringName}>{offering.NAME}</Text>
+          <Text style={styles.offeringPrice}>金額: ${offering.PRICE}</Text>
+          {/* <Text style={styles.offeringStock}>庫存數量: {offering.stock}</Text> */}
+          <Text style={styles.offeringRemark}>備註: {offering.DESCRIPTION || '無'}</Text>
         </View>
       </View>
     </Swipeable>
@@ -33,7 +33,7 @@ const OfferingEditBlock = ({ item, handleEdit, handleDelete }) => {
 
 const styles = StyleSheet.create({
   offeringBlock: {
-    width: width * 0.95,
+    width: width * 0.9,
     height: 140,
     alignItems:'center',
     flexDirection: 'row',
@@ -42,9 +42,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 10,
     shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 5 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3.84,
+    shadowOffset: { width: 0, height: 2 },
     elevation: 3,
   },
   offeringImage: {

@@ -1,14 +1,16 @@
 // CheckoutBar.js
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons'; 
 
-const CheckoutBar = ({ btnText, iconName ,onPress }) => {
+const CheckoutBar = ({ btnText, iconName , iconName_M, onPress }) => {
   return (
     <View style={styles.barContainer}>
      
       <TouchableOpacity style={styles.cartButton} onPress={onPress}>
         <Ionicons name={ iconName } size={24} color="white" />
+        <MaterialCommunityIcons name={ iconName_M } size={24} color="white" />
+
         <Text style={styles.cartText}>{ btnText }</Text>
       </TouchableOpacity>
     </View>
