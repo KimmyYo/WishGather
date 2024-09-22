@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState ,useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Button, Dimensions, Alert } from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
@@ -6,49 +6,56 @@ import { useNavigation } from '@react-navigation/native';
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
 import OfferingEditBlock from '../../components/Temple/OfferingEditBlock';
+import { UserContext } from '../../components/Context/UserContext'; // for userId
 
 const {width, height} = Dimensions.get('window');
 
-const mockOfferings = [
-  {
-    id: 1,
-    name: '供品 A',
-    price: 100,
-    stock: 10,
-    remark: '這是一個測試供品 A',
-    imageUrl: 'https://via.placeholder.com/80',
-  },
-  {
-    id: 2,
-    name: '供品 B',
-    price: 200,
-    stock: 5,
-    remark: '這是一個測試供品 B',
-    imageUrl: 'https://via.placeholder.com/80',
-  },
-  {
-    id: 3,
-    name: '供品 C',
-    price: 150,
-    stock: 8,
-    remark: '這是一個測試供品 C',
-    imageUrl: 'https://via.placeholder.com/80',
-  },
-];
+const API=require('../config/DBconfig')
+import axios from 'axios';
 
 const OfferingEditPage = () => {
   const [offerings, setOfferings] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const { userId } = useContext(UserContext);
+
+  // 從後端取得temple offering的資料
+  const fetchTempleOfferingData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API}/get_temple_offering/${userId}`);
+      setOfferings(response.data); 
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      Alert.alert('Error', 'Failed to fetch temple offerings');
+    }
+  };
 
   useEffect(() => {
-    
-    setTimeout(() => {
-      setOfferings(mockOfferings);
-      setLoading(false);
-    }, 1000); 
+    fetchTempleOfferingData();
   }, []);
+
+   // 刪除供品邏輯
+   const handleOfferingDelete = (offeringId) => {
+    Alert.alert(
+      '刪除供品',
+      '確定要刪除此供品嗎？',
+      [
+        { text: '取消', style: 'cancel' },
+        { text: '確定', onPress: async () => {
+          try {
+            await axios.delete(`${API}/temple_offering/${offeringId}`);
+            setOfferings(prevOfferings => prevOfferings.filter(item => item.offering_id !== offeringId));
+            Alert.alert('刪除成功', '供品已刪除');
+          } catch (error) {
+            Alert.alert('Error', 'Failed to delete offering');
+          }
+        }},
+      ]
+    );
+  };  
 
   const handleDelete = (offeringId) => {
     Alert.alert(
@@ -62,8 +69,7 @@ const OfferingEditPage = () => {
         {
           text: '確定',
           onPress: () => {
-            // 刪除供品邏輯，從假資料中移除
-            setOfferings(prevOfferings => prevOfferings.filter(item => item.id !== offeringId));
+            handleOfferingDelete();
           },
         },
       ]
@@ -74,9 +80,36 @@ const OfferingEditPage = () => {
     navigation.navigate('EditOfferingInfoPage', { offering });
   };
 
-  const renderOfferingItem = ({ item }) => (
-    <OfferingEditBlock item={item} handleEdit={handleEdit} handleDelete={() => handleDelete(item.id)} />
-  );
+  const renderOfferingItem = ({ item }) => {
+    return (
+      
+      <View style={{ padding: 10, borderBottomWidth: 1 }}>
+        {/* 顯示圖片 */}
+        <Image 
+          source={{ uri: item.IMAGE }}
+          style={{ width: 100, height: 100, marginBottom: 10 }}
+        />
+        {/* 顯示供品資訊 */}
+        <Text>名稱: {item.NAME}</Text>
+        <Text>金額: ${item.PRICE}</Text>
+        <Text>備註: {item.DESCRIPTION}</Text>
+  
+        {/* 編輯按鈕 */}
+        <Button 
+          title="編輯"
+          onPress={() => handleEdit(item)} 
+        />
+  
+        {/* 刪除按鈕 */}
+        <Button 
+          title="刪除"
+          color="red"
+          onPress={() => handleOfferingDelete(item.offering_id)}
+        />
+      </View>
+    );
+  };
+  
 
   return (
     <SafeAreaProvider>
@@ -97,11 +130,14 @@ const OfferingEditPage = () => {
             {loading ? (
             <Text>Loading...</Text>
             ) : (
-            <FlatList
+              <FlatList
                 data={offerings}
                 renderItem={renderOfferingItem}
-                keyExtractor={(item) => item.id.toString()}
-            />
+                keyExtractor={(item, index) => {
+                  return item.offering_id ? item.offering_id.toString() : index.toString();
+                }}
+                
+              />
             )}
       </View>
     </SafeAreaProvider>
