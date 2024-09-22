@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState ,useContext, useEffect } from 'react';
 import { View, Text, TextInput, Alert, Image, StyleSheet, Dimensions, ScrollView, Pressable } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as ImagePicker from 'expo-image-picker';
@@ -9,6 +9,10 @@ import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
 import CheckoutBar from '../../components/Believer/CheckoutBar';
 
+const API=require('../config/DBconfig')
+import axios from 'axios';
+import { UserContext } from '../../components/Context/UserContext';
+
 const { width } = Dimensions.get('window');
 
 const EditOfferingInfoPage = () => {
@@ -16,12 +20,16 @@ const EditOfferingInfoPage = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { offering } = route.params;
+  const { userId } = useContext(UserContext);
 
-  const [image, setImage] = useState(offering.imageUrl);
-  const [name, setName] = useState(offering.name);
-  const [price, setPrice] = useState(offering.price.toString());
-  const [stock, setStock] = useState(offering.stock.toString());
-  const [remark, setRemark] = useState(offering.remark);
+  const [image, setImage] = useState(offering.IMAGE); 
+  const [name, setName] = useState(offering.NAME); 
+  const [price, setPrice] = useState(offering.PRICE.toString()); 
+  const [stock, setStock] = useState(offering.AMOUNT.toString()); 
+  const [remark, setRemark] = useState(offering.DESCRIPTION || ''); 
+  const offering_id = offering.offering_id;
+
+
 
   const pickImage = async () => {
     let result = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -42,7 +50,7 @@ const EditOfferingInfoPage = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () =>{
     if (!name || isNaN(price) || isNaN(stock)) {
       Alert.alert('請輸入有效的供品名稱、金額和庫存數量');
       return;
@@ -53,12 +61,20 @@ const EditOfferingInfoPage = () => {
       imageUrl: image,
       name,
       price: parseFloat(price),
-      stock: parseInt(stock),
+      amount: parseInt(stock),
       remark,
     };
+    
 
-    Alert.alert('供品已更新！', JSON.stringify(updatedOffering));
-    navigation.goBack();
+    try {
+      // 使用 await 來處理 axios 請求
+      const response = await axios.post(`${API}/edit_temple_offering/${offering_id}`, updatedOffering);
+      Alert.alert('供品已更新！', response.data.message);
+      navigation.navigate('OfferingEditPage');
+    } catch (error) {
+      console.error('Error uploading offering:', error);
+      Alert.alert('供品更新失敗', '請稍後再試');
+    }
   };
 
   return (
