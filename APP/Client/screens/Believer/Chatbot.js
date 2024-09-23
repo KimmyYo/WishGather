@@ -1,11 +1,22 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, KeyboardAvoidingView, Platform, TouchableWithoutFeedback, Keyboard } from 'react-native';
-import axios from 'axios';
-import drawLotsData from '../../assets/drawLotsData.json';
-import { OPENAI_API_KEY } from '@env';
+import React, { useState, useRef, useEffect } from "react";
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ScrollView,
+  StyleSheet,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from "react-native";
+import axios from "axios";
+import drawLotsData from "../../assets/drawLotsData.json";
+import { OPENAI_API_KEY } from "@env";
 
 const WishGatherChatbot = ({ route }) => {
-  const [userMessage, setUserMessage] = useState('');
+  const [userMessage, setUserMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const scrollViewRef = useRef();
   const [currentLot, setCurrentLot] = useState(null);
@@ -14,53 +25,62 @@ const WishGatherChatbot = ({ route }) => {
     console.log("Full drawLotsData:", JSON.stringify(drawLotsData, null, 2)); // 完整输出 drawLotsData
     const { lotNumber, lotMessage } = route.params || {};
     console.log("Route params:", { lotNumber, lotMessage });
-    
+
     if (lotNumber && lotMessage) {
-      const matchedLot = drawLotsData.find(lot => lot.number === `第${lotNumber}籤`);
+      const matchedLot = drawLotsData.find(
+        (lot) => lot.number === `第${lotNumber}籤`
+      );
       console.log("Full matched lot:", JSON.stringify(matchedLot, null, 2)); // 完整输出匹配的签
-      
+
       if (matchedLot) {
         setCurrentLot(matchedLot);
         setMessages([
-          { type: 'bot', text: '歡迎來到解籤！您抽到的籤是：' },
-          { type: 'bot', text: `籤號: ${matchedLot.number}` },
-          { type: 'bot', text: matchedLot.content },
-          { type: 'bot', text: '您可以詢問任何問題，我會根據這支籤為您提供綜合解答。' }
+          { type: "bot", text: "歡迎來到解籤！您抽到的籤是：" },
+          { type: "bot", text: `籤號: ${matchedLot.number}` },
+          { type: "bot", text: matchedLot.content },
+          {
+            type: "bot",
+            text: "您可以詢問任何問題，我會根據這支籤為您提供綜合解答。",
+          },
         ]);
       } else {
         console.error(`未找到匹配的签: 第${lotNumber}籤`);
-        setMessages([{ type: 'bot', text: '抱歉，未找到匹配的签。请重新抽签。' }]);
+        setMessages([
+          { type: "bot", text: "抱歉，未找到匹配的签。请重新抽签。" },
+        ]);
       }
     } else {
-      setMessages([{ type: 'bot', text: '歡迎來到解籤！請先抽一支籤。' }]);
+      setMessages([{ type: "bot", text: "歡迎來到解籤！請先抽一支籤。" }]);
     }
   }, [route.params]);
 
   const addMessage = (content, type) => {
-    setMessages(prevMessages => [...prevMessages, { type, text: content }]);
+    setMessages((prevMessages) => [...prevMessages, { type, text: content }]);
   };
 
   const handleSend = async () => {
-    if (userMessage.trim() === '') return;
-  
-    addMessage(userMessage, 'user');
-    setUserMessage('');
-  
+    if (userMessage.trim() === "") return;
+
+    addMessage(userMessage, "user");
+    setUserMessage("");
+
     if (!currentLot) {
-      addMessage('抱歉，您還未抽籤或發生了錯誤。請先抽一支籤。', 'bot');
+      addMessage("抱歉，您還未抽籤或發生了錯誤。請先抽一支籤。", "bot");
       return;
     }
-  
-    console.log("Current lot being used:", JSON.stringify(currentLot, null, 2)); 
-  
-    const aspects = ['運勢', '事業', '愛情', '健康', '財務'];
-    const detectedAspect = aspects.find(aspect => userMessage.toLowerCase().includes(aspect.toLowerCase()));
-  
+
+    console.log("Current lot being used:", JSON.stringify(currentLot, null, 2));
+
+    const aspects = ["運勢", "事業", "愛情", "健康", "財務"];
+    const detectedAspect = aspects.find((aspect) =>
+      userMessage.toLowerCase().includes(aspect.toLowerCase())
+    );
+
     let contextPrompt = `用戶抽到的籤：
   籤號：${currentLot.number}
   內容：${currentLot.content}
   解釋：${currentLot.interpretation}
-  關鍵詞：${currentLot.keywords.join(', ')}
+  關鍵詞：${currentLot.keywords.join(", ")}
   運勢：${currentLot.aspects.fortune}
   事業：${currentLot.aspects.career}
   愛情：${currentLot.aspects.love}
@@ -96,43 +116,44 @@ const WishGatherChatbot = ({ route }) => {
 3. **鼓勵語句：** 使用溫暖正面的語調，如「保持信心」、「展望未來」。
 請根據以上指南，格式化回應用戶的問題：`;
 
-  
-  //我改用open ai的 回答比較開放
+    //我改用open ai的 回答比較開放
     try {
       const response = await axios.post(
-        'https://api.openai.com/v1/chat/completions',
+        "https://api.openai.com/v1/chat/completions",
         {
           model: "gpt-3.5-turbo",
           messages: [
             { role: "system", content: "你是專業的解籤人員，根據籤詩資訊回答" },
-            { role: "user", content: contextPrompt }
+            { role: "user", content: contextPrompt },
           ],
           temperature: 0.7,
           max_tokens: 1000,
         },
         {
           headers: {
-            'Authorization': `Bearer ${OPENAI_API_KEY}`,
-            'Content-Type': 'application/json',
+            Authorization: `Bearer ${OPENAI_API_KEY}`,
+            "Content-Type": "application/json",
           },
         }
       );
-  
-      const botMessage = response.data.choices?.[0]?.message?.content || "對不起，我目前無法處理您的請求。";
-      addMessage(botMessage, 'bot');
+
+      const botMessage =
+        response.data.choices?.[0]?.message?.content ||
+        "對不起，我目前無法處理您的請求。";
+      addMessage(botMessage, "bot");
     } catch (error) {
-      console.error('Error details:', error.response?.data || error.message);
+      console.error("Error details:", error.response?.data || error.message);
       const errorMessage = error.response
         ? `錯誤：服務器響應異常 (狀態碼: ${error.response.status})`
-        : '錯誤：無法連接到服務器。';
-      addMessage(errorMessage, 'bot');
+        : "錯誤：無法連接到服務器。";
+      addMessage(errorMessage, "bot");
     }
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.content}>
@@ -141,21 +162,31 @@ const WishGatherChatbot = ({ route }) => {
             <Text style={styles.subtitle}>歡迎使用WishGather解籤功能</Text>
           </View>
 
-          <ScrollView 
-            ref={scrollViewRef} 
-            style={styles.messagesArea} 
+          <ScrollView
+            ref={scrollViewRef}
+            style={styles.messagesArea}
             contentContainerStyle={{ paddingBottom: 100 }}
-            onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+            onContentSizeChange={() =>
+              scrollViewRef.current.scrollToEnd({ animated: true })
+            }
+            removeClippedSubviews={true}
+            keyboardShouldPersistTaps="handled"
           >
             {messages.map((msg, index) => (
               <View
                 key={index}
                 style={[
                   styles.messageBox,
-                  msg.type === 'user' ? styles.userMessageBox : styles.botMessageBox
+                  msg.type === "user"
+                    ? styles.userMessageBox
+                    : styles.botMessageBox,
                 ]}
               >
-                <Text style={msg.type === 'user' ? styles.userMessage : styles.botMessage}>
+                <Text
+                  style={
+                    msg.type === "user" ? styles.userMessage : styles.botMessage
+                  }
+                >
                   {msg.text}
                 </Text>
               </View>
@@ -183,7 +214,7 @@ const WishGatherChatbot = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: "#fff",
   },
   content: {
     flex: 1,
@@ -194,68 +225,71 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
+    marginTop: 30, 
   },
   subtitle: {
     fontSize: 16,
-    color: '#888',
+    color: "#888",
+    marginTop: 10,
   },
   messagesArea: {
     flex: 1,
     marginBottom: 10,
   },
   messageBox: {
-    maxWidth: '80%',
+    maxWidth: "80%",
     borderRadius: 10,
     padding: 10,
     marginVertical: 5,
   },
   userMessageBox: {
-    alignSelf: 'flex-end',
-    backgroundColor: 'rgb(135,24,68)',
+    alignSelf: "flex-end",
+    backgroundColor: "rgb(135,24,68)",
   },
   botMessageBox: {
-    alignSelf: 'flex-start',
-    backgroundColor: 'rgb(237,225,217)',
+    alignSelf: "flex-start",
+    backgroundColor: "rgb(237,225,217)",
   },
   userMessage: {
-    color: 'rgb(237,225,217)',
+    color: "rgb(237,225,217)",
   },
   botMessage: {
-    color: '#000',
+    color: "#000",
   },
   typingArea: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     paddingVertical: 10,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#fff',
-    position: 'absolute', // 固定位置
-    bottom: 0,  // 固定在底部
+    // borderTopWidth: 1.5,
+    borderBottomWidth: 0.5,
+    borderColor: "#ccc",
+    backgroundColor: "#fff",
+    position: "absolute", // 固定位置
+    bottom: 0, // 固定在底部
     left: 0,
     right: 0,
-    paddingHorizontal: 20, // 讓左右有些邊距
+    paddingHorizontal: 10, // 讓左右有些邊距
   },
   input: {
     flex: 1,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 5,
+    borderColor: "#ccc",
+    borderWidth: 1.5,
+    borderRadius: 13,
     padding: 10,
     marginRight: 10,
-    backgroundColor: '#d3d3d3', // 淺灰背景
+    backgroundColor: "#E8E9EB", 
   },
   sendButton: {
-    backgroundColor: '#007BFF', // 藍色背景
-    borderRadius: 5, // 邊角圓角
+    backgroundColor: "#F89880", 
+    borderRadius: 13, 
     paddingVertical: 10,
     paddingHorizontal: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   sendButtonText: {
-    color: '#fff', // 白色文字
+    color: "#fff", 
     fontSize: 16,
   },
 });
