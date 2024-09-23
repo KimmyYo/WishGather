@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
     // borderWidth:1 //Test
   },
   findNearbyButton: {
-    backgroundColor: '#FF9224',
+    backgroundColor: 'orange',
     padding: 10,
     borderRadius: 20,
     marginBottom: 10,
