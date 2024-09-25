@@ -1,9 +1,13 @@
-import { React, useState, useRef } from 'react';
+import { React, useState, useRef, useContext } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, Animated} from 'react-native';
 import { Swipeable, TouchableOpacity } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native';
 import  Dialog  from "react-native-dialog";
 import Lunar from '@tony801015/chinese-lunar';
+import axios from 'axios';
+import { UserContext } from '../Context/UserContext';
+import { useAlertDialog } from '../CustomHook/useAlertDialog';
+import { convertSolarDateToLunarDate } from '../Utility/DateUtils';
 
 
 function getCardSize(shape){
@@ -42,8 +46,10 @@ function EventCard ({ event, size }){
     const navigation = useNavigation();
     const [dialogVisible, setDialogVisible] = useState(false);
     const swipeableRef = useRef(null);
-    
-
+    const { userId } = useContext(UserContext);
+    const { showAlertDialog, renderAlertDialog } = useAlertDialog();
+    const API = require('../../screens/config/DBconfig');
+    const deleteEventApi = `${API}/delete_event`;
 
     const showDialog = () => {
       setDialogVisible(true);
@@ -56,19 +62,17 @@ function EventCard ({ event, size }){
     const handleDelete = () => {
       setDialogVisible(false);
       swipeableRef.current?.close();
-      // Add delete the event at this part
+      let eID = event.eID;
+      axios.post(deleteEventApi, { eID })
+           .then((response) => {
+                showAlertDialog('通知', '刪除成功');
+                navigation.navigate('TempleEventPage', { refresh: true });
+           })
+           .catch((err) => {
+                console.log(err);
+           })
     };
-    const convertSolarDateToLunarDate = (date) => {
-        const gregorianDate = date 
-        const [year, month, day] = gregorianDate.split('/');
-        if (year && month && day) {
-            const lunarData = Lunar(year, month, day).getJson();
-            return `${lunarData.lunarMonth}${lunarData.lunarDay}`;
-          }
-        return date; 
-    }
 
-    
     const goEdit = () => {
         swipeableRef.current?.close();
         navigation.navigate('EditTempleInfoPage', 
@@ -100,13 +104,13 @@ function EventCard ({ event, size }){
                             source={event.IMAGE ? { uri: event.IMAGE } : require('../../assets/adaptive-icon.png')}
                             style={styles.image} 
                         />
-                        <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.DATE)}</Text>
+                        <Text style={styles.overlayText}>{event.NAME} {convertSolarDateToLunarDate(event.DATE)}</Text>
                     </View>
                 </Swipeable>  
                 <Dialog.Container visible={dialogVisible}>
-                    <Dialog.Title>Account delete</Dialog.Title>
+                    <Dialog.Title>刪除</Dialog.Title>
                     <Dialog.Description>
-                    Do you want to delete this account? You cannot undo this action.
+                    確定刪除此法會？
                     </Dialog.Description>
                     <Dialog.Button label="Cancel" onPress={handleCancel}/>
                     <Dialog.Button label="Delete" onPress={handleDelete}/>

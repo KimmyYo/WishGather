@@ -1,36 +1,40 @@
-import React, { useState, useContext } from 'react';
-import { View, TextInput, Button, Text, Image, StyleSheet, Pressable, Dimensions } from 'react-native';
+import React, { useState ,useContext, useEffect } from 'react';
+import { View, TextInput, Text, Image, StyleSheet, Pressable, Dimensions, ScrollView, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../../components/Context/UserContext';
+import { MaterialIcons } from '@expo/vector-icons'; // Importing the icon
 
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
+import PageTitle from '../../components/Utility/PageTitle';
 import CheckoutBar from '../../components/Utility/CheckoutBar';
 
-const{ width } = Dimensions.get('window');
+const API=require('../config/DBconfig')
+import axios from 'axios';
 
-function OfferingUpload() {
+const { width } = Dimensions.get('window');
+
+const OfferingUpload = () => {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { userId } = useContext(UserContext);
 
-  // State to handle image, name, price, and remark
   const [imageUri, setImageUri] = useState(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [remark, setRemark] = useState('');
+  const [amount, setAmount] = useState('');
 
   // Image picker function
   const selectImage = async () => {
-    // Request permission to access media library
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
 
     if (!permissionResult.granted) {
-      alert('Permission to access gallery is required!');
+      Alert.alert('相機需要存取權限!請更改設定');
       return;
     }
 
-    // Launch image picker
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
@@ -39,99 +43,169 @@ function OfferingUpload() {
     });
 
     if (!result.canceled) {
-      setImageUri(result.assets[0].uri);  // Use result.assets[0].uri to get the image URI
+      setImageUri(result.assets[0].uri);
     }
   };
 
-  {/* 進資料庫動作 */}
-  const handleSubmit = () => {
-   
+  const handleSubmit = async () => {
+    if (!name || isNaN(price)) {
+      Alert.alert('請輸入有效的供品名稱及金額');
+      return;
+    }
+  
+    const newOffering = {
+      imageUri,
+      name,
+      price: parseFloat(price),
+      remark,
+      amount,
+    };
+  
+    try {
+      // 使用 await 來處理 axios 請求
+      const response = await axios.post(`${API}/uploadOffering/${userId}`, newOffering);
+      Alert.alert('供品已上傳！', response.data.message);
+      navigation.goBack();
+    } catch (error) {
+      console.error('Error uploading offering:', error);
+      Alert.alert('供品上傳失敗', '請稍後再試');
+    }
   };
+  
 
   return (
     <SafeAreaProvider>
       <View
-        style={[
-          styles.container,
-          {
-            paddingTop: insets.top + 20,
-            paddingBottom: insets.bottom,
-            paddingLeft: insets.left + 30,
-            paddingRight: insets.right + 30,
-          },
-        ]}>
-        <Text style={styles.header}>供品上傳</Text>
+        style={{
+          flex: 1,
+          backgroundColor: '#f2f2f2',
+          justifyContent: 'start',
+          alignItems: 'center',
+          paddingTop: insets.top + 30,
+          paddingBottom: insets.bottom - 40,
+          paddingLeft: insets.left,
+          paddingRight: insets.right,
+        }}
+      >
+        <View style={styles.btncontainer}><GoBackButton1 /></View>
+        <PageTitle iconName="cloud-upload" titleText="供品上傳" />
 
-        {/* Image Upload Section */}
-        <Pressable style={styles.imagePicker} onPress={selectImage}>
-          {imageUri ? (
-            <Image source={{ uri: imageUri }} style={styles.image} />
-          ) : (
-            <Text style={styles.imagePickerText}>點擊上傳圖片</Text>
-          )}
-        </Pressable>
+        <ScrollView contentContainerStyle={styles.container}>
+          <Pressable style={styles.imagePicker} onPress={selectImage}>
+            {imageUri ? (
+              <View>
+                <Image source={{ uri: imageUri }} style={styles.image} />
+                {/* Gray overlay with icon */}
+                <View style={styles.overlay}>
+                  <MaterialIcons name="edit" size={24} color="white" />
+                </View>
+              </View>
+            ) : (
+              <Text style={styles.imagePickerText}>點擊上傳圖片</Text>
+            )}
+          </Pressable>
 
-        {/* Offering Name Input */}
-        <TextInput style={styles.input} placeholder="供品名稱" value={name} onChangeText={setName}/>
+          <Text style={styles.label}>供品名稱</Text>
+          <TextInput
+            style={styles.input}
+            value={name}
+            onChangeText={setName}
+            placeholder="輸入供品名稱"
+          />
 
-        {/* Offering Price Input */}
-        <TextInput style={styles.input} placeholder="供品價錢" value={price} keyboardType="numeric" onChangeText={setPrice}/>
+          <Text style={styles.label}>金額</Text>
+          <TextInput
+            style={styles.input}
+            value={price}
+            onChangeText={setPrice}
+            placeholder="輸入金額"
+            keyboardType="numeric"
+          />
 
-        {/* Offering Remark Input */}
-        <TextInput style={styles.input} placeholder="供品備註" value={remark} onChangeText={setRemark} />
-        
+          <Text style={styles.label}>備註</Text>
+          <TextInput
+            style={styles.input}
+            value={remark}
+            onChangeText={setRemark}
+            placeholder="輸入備註 (選填)"
+            multiline
+          />
 
-		<View style={styles.buttonContainer}>
-          <CheckoutBar btnText={'確認送出'} iconName={"checkbox-outline"} onPress={handleSubmit} />
-        </View>
+          {/* <Text style={styles.label}>存貨數量</Text>
+          <TextInput
+            style={styles.input}
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="輸入備註 (選填)"
+            multiline
+          /> */}
+        </ScrollView>
+
+        <CheckoutBar btnText={'確認送出'} iconName={'arrow-forward-circle-outline'} onPress={handleSubmit} />
       </View>
     </SafeAreaProvider>
   );
-}
+};
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
+  btncontainer:{
+    position: 'absolute',
+    top: 60,
+    left: 10,
   },
-  header: {
-    fontSize: 24,
+  
+  container: {
+    width: width * 0.95,
+    flexGrow: 1,
+    padding: 20,
+    paddingBottom: 180,
+  },
+  label: {
+    fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 10,
+    color: '#4F4F4F',
+  },
+  input: {
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 5,
+    padding: 10,
     marginBottom: 20,
-    textAlign: 'center',
+    fontSize: 16,
   },
   imagePicker: {
-    backgroundColor: '#F0F0F0',
-    height: 300,
+    backgroundColor: '#fff',
+    width: 200,
+    height: 200,
+    alignSelf: 'center',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 40,
     borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   imagePickerText: {
     fontSize: 18,
     color: '#888',
   },
   image: {
-    width: '100%',
-    height: '100%',
+    width: 200,
+    height: 200,
     borderRadius: 10,
   },
-  input: {
-    height: 50,
-    borderColor: '#ccc',
-    borderWidth: 1,
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    marginBottom: 20,
-    fontSize: 16,
-  },
-  buttonContainer: {
-    width: width,
-    justifyContent: "center",
-    alignItems: 'center',
+  overlay: {
     position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
   },
 });
 

@@ -1,31 +1,27 @@
-import React, {useState, useEffect, useRef, useContext } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList } from 'react-native';
+import React, { useState, useEffect, useContext } from 'react';
+import { View, Text, StyleSheet, Dimensions, FlatList, Image } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 
-import WelfareMatchingPage from './WelfareMatchingPage';
 import SectionHeader from '../../components/Utility/SectionHeader';
-
-import {UserContext} from '../../components/Context/UserContext';
+import { UserContext } from '../../components/Context/UserContext';
 
 const API = require('../config/DBconfig');
-
 const { width, height } = Dimensions.get('window');
 
-
-function WelfareHomePage()  {
+function WelfareHomePage() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
   const { userId } = useContext(UserContext);
   const [temples, setTemples] = useState([]);
   const [welfares, setWelfaresData] = useState([]);
+  const [anotherData, setAnotherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  
-  //捐贈品運送的API
+  // Fetch temples data
   useEffect(() => {
     axios.get(`${API}/temples`)
       .then(response => {
@@ -36,9 +32,9 @@ function WelfareHomePage()  {
       });
   }, []);
 
+  // Fetch user data
   useEffect(() => {
     if (userId) {
-      console.log("User ID:", userId); // 檢查 userId
       axios.get(`${API}/sw_organization/${userId}`)
         .then(response => {
           setWelfaresData(response.data[0]);
@@ -49,10 +45,9 @@ function WelfareHomePage()  {
     }
   }, [userId]);
 
-  
-  const [anotherData, setAnotherData] = useState([]);
+  // Fetch additional data
   useEffect(() => {
-    axios.get(`${API}/anotherDataTable`) 
+    axios.get(`${API}/anotherDataTable`)
       .then(response => {
         setAnotherData(response.data);
       })
@@ -61,9 +56,13 @@ function WelfareHomePage()  {
       });
   }, []);
 
-
   const transportItem = ({ item }) => (
     <View style={styles.donateItemContainer}>
+      {/* 顯示照片 */}
+      <Image
+        source={{ uri: `${API}${item.IMAGE}` }} // Assuming the image path is relative to the API base URL
+        style={styles.templeImage}
+      />
       <Text style={styles.donateItemTitle}>{item.NAME}</Text>
       <Text style={styles.donateItemText}>{item.ADDRESS}</Text>
     </View>
@@ -71,11 +70,11 @@ function WelfareHomePage()  {
 
   const matchingItem = ({ item }) => (
     <View style={styles.anotherItemContainer}>
-      <Text style={styles.anotherItemText}>Field1: {item.FIELD1}</Text>
-      <Text style={styles.anotherItemText}>Field2: {item.FIELD2}</Text>
+      <Text style={styles.anotherItemText}>Field1: {item.TEMPLE_NAME}</Text>
+      <Text style={styles.anotherItemText}>Field2: {item.EVENT_NAME}</Text>
     </View>
   );
-  
+
   return (
     <SafeAreaProvider>
       <View style={[styles.container, {
@@ -85,9 +84,11 @@ function WelfareHomePage()  {
         paddingRight: insets.right + 30
       }]}>
         
-        <View style={{width: width*0.95, flexDirection: 'row', justifyContent: 'flex-start', alignSelf: 'center', marginBottom: 35}}>
-          <MaterialCommunityIcons name="home-heart" size={30} color="orange" style={{marginRight: 8}} />
-          <Text style={{fontSize: 24, fontWeight: 'bold', color: '#4F4F4F'}}>{'歡迎回來 ! '}{welfares.NAME}</Text>
+        <View style={{ width: width * 0.95, flexDirection: 'row', justifyContent: 'flex-start', alignSelf: 'center', marginBottom: 35 }}>
+          <MaterialCommunityIcons name="home-heart" size={30} color="orange" style={{ marginRight: 8 }} />
+          <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#4F4F4F' }}>
+            {'歡迎回來 ! '}{welfares.NAME}
+          </Text>
         </View>
 
         <View style={styles.infoContainer}>
@@ -96,8 +97,8 @@ function WelfareHomePage()  {
             data={temples}
             renderItem={transportItem}
             keyExtractor={(item, index) => index.toString()}
-            horizontal // Set horizontal to true
-            showsHorizontalScrollIndicator={false} // Hide horizontal scroll indicator
+            horizontal
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={styles.flatListContainer}
           />
         </View>
@@ -105,7 +106,7 @@ function WelfareHomePage()  {
         <View style={styles.infoContainer}>
           <SectionHeader title="媒合確認" onPress={() => navigation.navigate('WelfareMatchingPage')} />
         </View>
-        
+
         <View>
           <FlatList
             data={anotherData}
@@ -127,18 +128,6 @@ const styles = StyleSheet.create({
     justifyContent: 'start',
     alignItems: 'start',
   },
-  welcomeContainer: {
-    width: width * 0.95,
-    justifyContent: 'center',
-    alignSelf: 'center',
-    marginLeft: 10,
-    marginBottom: 35,
-  },
-  welcomeText: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    color: '#4F4F4F',
-  },
   infoContainer: {
     width: width * 0.95,
     justifyContent: 'center',
@@ -150,27 +139,32 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   flatListContainer: {
-    alignSelf:'center',
+    alignSelf: 'center',
   },
   donateItemContainer: {
-    width: width * 0.4, 
+    width: width * 0.4,
     height: 200,
     backgroundColor: 'white',
     padding: 15,
-    marginHorizontal: 5, // Margin to space items horizontally
+    marginHorizontal: 5,
     borderRadius: 10,
     borderColor: '#cccccc',
     borderWidth: 1,
-    
-    justifyContent:'flex-end',
+    justifyContent: 'flex-end',
   },
-  donateItemTitle:{
+  templeImage: {
+    width: '100%',
+    height: 100, // 控制圖片高度
+    resizeMode: 'cover',
+    borderRadius: 8,
+    marginBottom: 10,
+  },
+  donateItemTitle: {
     color: '#4F4F4F',
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 8,
   },
-
   donateItemText: {
     fontSize: 14,
     color: '#4F4F4F',
@@ -179,7 +173,8 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: 'red',
     textAlign: 'center',
-    top:'20%',
+    top: '20%',
   },
 });
+
 export default WelfareHomePage;

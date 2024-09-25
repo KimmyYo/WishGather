@@ -11,15 +11,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const { width, height } = Dimensions.get('window');
 
-
-
-
-import BelieverHomePage from '../Believer/BelieverHomePage';
-import OfferingPage from '../Believer/OfferingPage';
-import CartPage from '../Believer/CartPage';
-
 import DrawlotsButton from "../../components/Believer/DrawlotsButton";
-
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"; 
 import Ionicons from "@expo/vector-icons/Ionicons";

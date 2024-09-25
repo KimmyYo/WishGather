@@ -98,7 +98,7 @@ const TemplesByOffering = () => {
     <SafeAreaProvider>
         <View style={{
           flex: 1,
-          backgroundColor: "white",
+          backgroundColor: "#f2f2f2",
           paddingTop: insets.top,
           paddingBottom: insets.bottom - 40,
           paddingLeft: insets.left,

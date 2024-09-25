@@ -1,16 +1,12 @@
 import React from 'react'
 import { StyleSheet } from 'react-native';
 import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
-import {MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
-// import WelfareTransportPage from '../../screens/Welfare/WelfareTransportPage';
-// import WelfareUserPage from '../../screens/Welfare/WelfareUserPage';
-// import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
-import UserPage from '../../screens/Common/UserPage';
+import WelfareUserStack from '../NavStack/WelfareUserStack';
 import WelfareHomeStack from '../NavStack/WelfareHomeStack';
 import WelfareTransportStack from '../NavStack/WelfareTransportStack';
-
+import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -44,13 +40,13 @@ function WelfareTab(){
             component={WelfareTransportStack}
             options={{
               tabBarLabel: '運送',
-              tabBarIcon: ({color}) => (<MaterialIcons name="emoji-transportation" color={color} size={26}/>)
+              tabBarIcon: ({color}) => (<MaterialCommunityIcons name="truck" color={color} size={26}/>)
             }} 
           />
          
           <Tab.Screen
             name="使用者"
-            component={UserPage}
+            component={WelfareUserStack}
             options={{
               tabBarLabel: '使用者',
               tabBarIcon: ({color}) => (<MaterialCommunityIcons  name="account" color={color} size={26}/>)

@@ -3,6 +3,9 @@ import { View, Text, Image, StyleSheet, Dimensions, TextInput, Pressable, Alert 
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
+import CloseButton from '../../components/Utility/CloseButton';
+import CheckoutBar from '../../components/Utility/CheckoutBar';
+
 const { width, height } = Dimensions.get('window');
 
 const ProductInfoPage = ({ route, navigation }) => {
@@ -27,7 +30,9 @@ const ProductInfoPage = ({ route, navigation }) => {
           paddingBottom: insets.bottom,
           paddingLeft: insets.left,
           paddingRight: insets.right 
-        }}>  
+        }}> 
+
+        <View style={styles.btnContainer}><CloseButton /></View>
         
         <View style={styles.imageContainer}>
           <Image style={styles.image} source={imageSource} />
@@ -59,16 +64,29 @@ const ProductInfoPage = ({ route, navigation }) => {
         </View>
 
         {/* Add To Cart Button */}
-        <Pressable style={styles.addToCartButton} onPress={handleAddToCart}>
+
+        <View style={styles.buttonContainer}>
+           <CheckoutBar btnText={"加入購物車"} iconName_M={"cart"} onPress={handleAddToCart} />
+        </View>
+
+        {/* <Pressable style={styles.addToCartButton} onPress={handleAddToCart}>
           <MaterialCommunityIcons name="cart" size={24} color="white" />
           <Text style={styles.addToCartButtonText}>加入購物車</Text>
-        </Pressable>
+        </Pressable> */}
+
       </View>
     </SafeAreaProvider>
   );
 };
 
 const styles = StyleSheet.create({
+  btnContainer:{
+    zIndex:9999,
+    position:'absolute',
+    top:10,
+    right:8,
+
+  },
   imageContainer: {
     width: width,
     height: height * 0.4,
@@ -150,22 +168,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     color: '#4F4F4F',
   },
-  addToCartButton: {
-    flexDirection: 'row',
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
     alignItems: 'center',
-    backgroundColor: 'orange', // Example color, change as needed
-    padding: 10,
-    borderRadius: 8,
-    alignSelf: 'center'
-  },
-  addToCartButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-    marginLeft: 10,
-  },
-  iconContainer: {
-    marginRight: 10,
+    position: 'absolute',
+    bottom: 0,
   },
 });
 

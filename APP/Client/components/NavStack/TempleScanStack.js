@@ -2,9 +2,7 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import TempleHomePage from '../../screens/Temple/TempleHomePage';
-import TempleEventPage from '../../screens/Temple/TempleEventPage';
-import TempleDeliverPage from '../../screens/Temple/TempleDeliverPage';
+
 import FoodScanningPage from '../../screens/Temple/FoodScanningPage';
 import ScanResult from '../../screens/Temple/ScanResult';
 import EditTempleInfoPage from '../../screens/Temple/EditTempleInfoPage';
@@ -12,6 +10,8 @@ import MatchingPage from '../../screens/Temple/MatchingPage';
 
 import OfferingHome from '../../screens/Temple/OfferingHome';
 import OfferingUpload from '../../screens/Temple/OfferingUpload';
+import OfferingEditPage from '../../screens/Temple/OfferingEditPage';
+import EditOfferingInfoPage from '../../screens/Temple/EditOfferingInfoPage';
 import SubmissionResult from '../../screens/Temple/SubmissionResult';
 
 
@@ -30,15 +30,22 @@ function TempleScanStack(){
                 options={{ headerShown: false }}
             />
 
-<Stack.Screen 
+            <Stack.Screen 
                 name="OfferingUpload"
                 component={OfferingUpload}
                 options={{ headerShown: false }}
             />
 
-
-
-
+            <Stack.Screen 
+                name="OfferingEditPage"
+                component={OfferingEditPage}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen 
+                name="EditOfferingInfoPage"
+                component={EditOfferingInfoPage}
+                options={{ headerShown: false }}
+            />
             <Stack.Screen 
                 name="FoodScanningPage"
                 component={FoodScanningPage}
@@ -50,7 +57,7 @@ function TempleScanStack(){
                 options={{ headerShown: false }}
             />
 
-<Stack.Screen 
+            <Stack.Screen 
                 name="SubmissionResult"
                 component={SubmissionResult}
                 options={{ headerShown: false }}

@@ -1,15 +1,26 @@
 import { React, useState } from 'react'
-import { View, Text, TextInput, StyleSheet, Dimensions, Button } from 'react-native'
+import { View, Text, TextInput, StyleSheet, Dimensions } from 'react-native'
 import Ionicons from '@expo/vector-icons/Ionicons';
-function TextInputSet({ labelName, defaultValue, multiLine, placeholder}){
-    const [text, onChangeText] =  useState(defaultValue);
+
+const {width} = Dimensions.get('window');
+
+function TextInputSet({ labelName, defaultValue, multiLine, placeholder, onChange}){
+    // const [text, onChangeText] =  useState(defaultValue);
+
+    const handleTextChange = (newText) => {
+        // onChangeText(newText);  // Update internal state
+        if (onChange) {
+            onChange(newText);  // Call parent's handler if provided
+        }
+    };
+
     return (
         <View style={styles.container}>
             <Text style={styles.label}>{labelName}</Text>
             <TextInput style={[styles.input, multiLine ? styles.multiLine : null]} 
                        placeholder={placeholder}
-                       value={text} 
-                       onChangeText={onChangeText}  
+                       value={defaultValue} 
+                       onChangeText={handleTextChange}  
                        multiline={multiLine ? true : false}/>
         </View>
     )
@@ -21,24 +32,22 @@ let screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
     container:{
         marginBottom: '5px',
+        width:width*0.9,
     },
     label:{
-        color:"#4F4F4F",
-        fontWeight:'bold',
-        marginLeft: 10,
-        fontSize: 20
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 10,
+        color: '#4F4F4F',
     },
     input: {
-        backgroundColor: '#dbdbdb',
+        backgroundColor: '#fff',
         borderWidth: 1,
-        borderColor: '#dbdbdb',
-        borderRadius: 10,
-        padding: 20,
-        width: screenWidth * 0.9,
-        height: 70,
-        margin: 12,
-        fontSize: 20,
-        position: 'relative'
+        borderColor: '#ccc',
+        borderRadius: 5,
+        padding: 10,
+        marginBottom: 20,
+        fontSize: 16,
     },
     multiLine: {
         height: 150,

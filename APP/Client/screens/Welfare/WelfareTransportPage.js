@@ -61,7 +61,7 @@ function WelfareTransportPage() {
     <Pressable  style={styles.itemContainer} onPress={() => handleTemplePress(item)}>
       {/* Image of the temple */}
       <Image
-        source={{ uri: item.IMAGE }}
+        source={{ uri: `${API}${item.IMAGE}` }} // Assuming the image path is relative to the API base URL
         style={styles.templeImage}
       />
 
