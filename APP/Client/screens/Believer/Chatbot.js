@@ -70,9 +70,9 @@ const handleScrollEndDrag = () => {
           },
         ]);
       } else {
-        console.error(`未找到匹配的签: 第${lotNumber}籤`);
+        console.error(`未找到匹配的籤: 第${lotNumber}籤`);
         setMessages([
-          { type: "bot", text: "抱歉，未找到匹配的签。请重新抽签。" },
+          { type: "bot", text: "抱歉，未找到匹配的籤。請重新抽籤。" },
         ]);
       }
     } else {
@@ -83,10 +83,11 @@ const handleScrollEndDrag = () => {
   const addMessage = (content, type) => {
     setMessages((prevMessages) => [...prevMessages, { type, text: content }]);
     
-    // 僅當用戶沒有在手動滾動時，才自動滾動到底部
-    if (!isUserScrolling) {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }
+    setTimeout(() => {
+      if (!isUserScrolling) {
+        scrollViewRef.current?.scrollToEnd({ animated: true });
+      }
+    }, 100);
   };
 
   const handleSend = async () => {
@@ -237,7 +238,6 @@ const handleScrollEndDrag = () => {
   onScrollBeginDrag={handleScrollBeginDrag}  // 當用戶開始拖動時觸發
   onScrollEndDrag={handleScrollEndDrag}      // 當用戶停止拖動時觸發
   onContentSizeChange={() => {
-    // 當內容改變時，若用戶不在手動滾動，滾動到底部
     if (!isUserScrolling) {
       scrollViewRef.current?.scrollToEnd({ animated: true });
     }
