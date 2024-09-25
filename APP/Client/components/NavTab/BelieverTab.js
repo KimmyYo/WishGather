@@ -7,6 +7,9 @@ import BelieverOfferingStack from '../NavStack/BelieverOfferingStack';
 import BelieverUserStack from '../NavStack/BelieverUserStack';
 import CartPage from '../../screens/Believer/CartPage';
 import UserPage from '../../screens/Common/UserPage';
+import BelieverLeftoverPage from '../../screens/Believer/BelieverLeftoverPage';
+
+
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -36,10 +39,18 @@ function BelieverTab(){
             }}
           />
           <Tab.Screen
+            name = "剩食地圖"
+            component = { BelieverLeftoverPage }
+            options={{
+                tabBarLabel: '剩食地圖',
+                tabBarIcon: ({color}) => (<MaterialCommunityIcons name="map-search" color={color} size={26} />)
+              }}
+          />
+          <Tab.Screen
             name = "購物車"
             component = { CartPage }
             options={{
-                tabBarLabel: '訂購',
+                tabBarLabel: '購物車',
                 tabBarIcon: ({color}) => (<MaterialCommunityIcons name="cart" color={color} size={26} />)
               }}
           />

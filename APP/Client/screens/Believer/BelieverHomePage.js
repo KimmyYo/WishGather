@@ -5,7 +5,6 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import axios from 'axios';
 
-
 import TempleDistance from "../../components/Believer/TempleDistance";
 import AddressOverlay from "../../components/Believer/AddressOverlay";
 import DrawlotsButton from "../../components/Believer/DrawlotsButton";
@@ -60,6 +59,13 @@ useEffect(() => {
     setText1Visible(false);
   }, []);
 
+  // const handleAddressSubmit = useCallback((newAddress) => {
+  //   if (newAddress) {
+  //     setCurrentAddress(newAddress);
+  //   }
+  //   setLocationIconVisible(false);
+  //   setText1Visible(false);
+  // }, []);
   const handleAddressSubmit = useCallback(async (newAddress) => {
     if (newAddress) {
       setCurrentAddress(newAddress);
@@ -180,7 +186,9 @@ useEffect(() => {
 
   const renderTempleItem = ({ item }) => (
     <TempleDistance
-      imageSource={{ uri: item.IMAGE }}
+      // imageSource={{ uri: item.IMAGE }}
+      //imageSource={item.IMAGE}
+      imageSource={{ uri: item.IMAGE ? `${API}${item.IMAGE}` : 'https://news.nsysu.edu.tw/static/file/120/1120/pictures/930/m/mczh-tw810x810_small253522_197187713212.jpg' }}
       temple={item.NAME}
       distance={`${item.distance.toFixed(2)} km`}
       onPress={() => navigation.navigate("OfferingsByTemple", { templeId: item.tID })}
@@ -239,10 +247,30 @@ useEffect(() => {
         <FlatList
           data={nearbyTemples}
           renderItem={renderTempleItem}
+          // Image={renderTempleItem.imageSource}
           // keyExtractor={(item) => item.tID.toString()}
           style={styles.templeList}
           // contentContainerStyle={styles.templeListContent}
         />
+
+        {/* Temple */}
+        
+        {/* <FlatList
+          data={temples}
+          renderItem={({ item }) => (
+            <TempleDistance
+              imageSource={item.imageSource}
+              temple={item.temple}
+              event={item.event}
+              distance={item.distance}
+              date1={item.date1}
+              date2={item.date2}
+              onPress={() => navigation.navigate("OfferingsByTemple")}
+            />
+          )}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.activityContainer}
+        /> */}
 
         {/*Modal - address modify*/}
         <Modal animationType="fade" transparent visible={locationIconVisible}>
