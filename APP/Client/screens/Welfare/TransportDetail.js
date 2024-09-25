@@ -86,7 +86,8 @@ function TransportDetail({ route, navigation }) {
 const styles = StyleSheet.create({
   headerSection: {
     height: '40%',
-    backgroundColor: '#FF6D00',
+    backgroundColor: 'orange',
+    opacity: 0.8,
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 100,
     alignItems: 'center',
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
   },
   viewItemsButton: {
-    backgroundColor: '#FF6D00',
+    backgroundColor: 'orange',
     paddingVertical: 5,
     paddingHorizontal: 15,
     marginLeft :8,

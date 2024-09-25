@@ -6,7 +6,8 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import WelfareUserStack from '../NavStack/WelfareUserStack';
 import WelfareHomeStack from '../NavStack/WelfareHomeStack';
 import WelfareTransportStack from '../NavStack/WelfareTransportStack';
-import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
+
+import WelfareMatchingStack from '../NavStack/WelfareMatchingStack';
 
 
 const Tab = createMaterialBottomTabNavigator();
@@ -29,7 +30,7 @@ function WelfareTab(){
           />
           <Tab.Screen 
             name="媒合" 
-            component={WelfareMatchingPage} 
+            component={WelfareMatchingStack} 
             options={{
               tabBarLabel: '媒合',
               tabBarIcon: ({color}) => (<MaterialCommunityIcons name="puzzle" color={color} size={26}/>)

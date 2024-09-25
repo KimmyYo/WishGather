@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { View, TextInput, Pressable, StyleSheet, Alert, Text, TouchableOpacity } from 'react-native';
+import { View, TextInput, Pressable, StyleSheet, Alert, Text, TouchableOpacity, Dimensions } from 'react-native';
 import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -12,6 +12,8 @@ import { useValidation } from '../../components/CustomHook/useValidateInput';
 import { useAlertDialog } from '../../components/CustomHook/useAlertDialog';
 const base = require('../config/DBconfig');
 const SIGNUP_API = `${base}/signup`
+
+const { width }=Dimensions.get('window')
 
 const SignUp = () => {
   // 會員基本資訊
@@ -244,8 +246,8 @@ const SignUp = () => {
 
     { role == 'C' && 
       <View style={styles.formContainer}>
-        <PageTitle titleText={'歡迎加入'}/>
-        <PageTitle titleText={name}/>
+        <PageTitle titleText={`歡迎加入 ! ${name}`} />
+
         <TextInputBox
           inputType='text'
           placeholder="輸入社福機構地址"
@@ -257,11 +259,15 @@ const SignUp = () => {
           validState={!addressError}
           invalidInput={addressError || ''}
         />
-        <DropDown 
-          open={dropDownOpen} 
-          setOpen={setDropDownOpen}
-          value={preferences}
-          setValue={setPreferences}/>
+
+        <View style={{width:width*0.75}}>
+          <DropDown 
+            open={dropDownOpen} 
+            setOpen={setDropDownOpen}
+            value={preferences}
+            setValue={setPreferences}
+          />
+        </View>
         {/* TODO: 營業時間 */}
       </View>
     }
