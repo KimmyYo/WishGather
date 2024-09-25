@@ -171,35 +171,50 @@ const BelieverLeftoverPage = () => {
 
         {selectedTemple && (
           <Modal
-            transparent={true}
-            visible={!!selectedTemple}
-            animationType="slide"
-            onRequestClose={() => setSelectedTemple(null)}
-          >
+          transparent={true}
+          visible={!!selectedTemple}
+          animationType="fade"
+          onRequestClose={() => setSelectedTemple(null)}
+        >
+          <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
-              <Text style={styles.modalTitle}>{selectedTemple.NAME}</Text>
-              <Text style={styles.modalTitle}>現有供品-水果</Text>
-              <View style={styles.table}>
-                <View style={styles.tableRow}>
-                  <Text style={styles.tableHeader}>名稱</Text>
-                  <Text style={styles.tableHeader}>數量</Text>
-                </View>
-                {selectedTemple.offerings && selectedTemple.offerings.length > 0 ? (
-                  selectedTemple.offerings.map((offering, index) => (
-                    <View key={index} style={styles.tableRow}>
-                      <Text>{offering.NAME}</Text>
-                      <Text>{offering.AMOUNT}</Text>
+              {/* Modal Title */}
+              <Text style={styles.modalTitle}>現有供品 - 水果</Text>
+              {selectedTemple && (
+                <>
+                  {/* Temple Name */}
+                  <Text style={styles.modalSubtitle}>{selectedTemple.NAME}</Text>
+        
+                  {/* Offerings Table */}
+                  <View style={styles.table}>
+                    <View style={styles.tableRow}>
+                      <Text style={styles.tableHeader}>名稱</Text>
+                      <Text style={styles.tableHeader}>數量</Text>
                     </View>
-                  ))
-                ) : (
-                  <Text style={{ textAlign: 'center', paddingVertical: 10 }}>目前尚無供品</Text>
-                )}
-              </View>
+        
+                    {/* Offerings List */}
+                    {selectedTemple.offerings && selectedTemple.offerings.length > 0 ? (
+                      selectedTemple.offerings.map((offering, index) => (
+                        <View key={index} style={styles.tableRow}>
+                          <Text style={styles.tableCell}>{offering.NAME}</Text>
+                          <Text style={styles.tableCell}>{offering.AMOUNT}</Text>
+                        </View>
+                      ))
+                    ) : (
+                      <Text style={styles.noOfferingsText}>目前尚無供品</Text>
+                    )}
+                  </View>
+                </>
+              )}
+        
+              {/* Close Button */}
               <Pressable onPress={() => setSelectedTemple(null)} style={styles.closeButton}>
                 <Text style={styles.closeButtonText}>關閉</Text>
               </Pressable>
             </View>
-          </Modal>
+          </View>
+        </Modal>
+        
         )}
       </View>
     </SafeAreaProvider>
@@ -233,8 +248,9 @@ const styles = StyleSheet.create({
     height: 25,
   },
   locationText: {
-    color: "#898989",
+    color: "#4F4F4F",
     fontSize: 16,
+    fontWeight:'semibold',
   },
   overlay: {
     flex: 1,
@@ -259,48 +275,85 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginBottom: 5,
   },
-  modalContainer: {
+  modalOverlay: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // 半透明的深色背景
+  },
+  modalContainer: {
+    width: '75%',
+    backgroundColor: '#fff',
+    borderRadius: 15,
     padding: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5, // 提升陰影效果
+    alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 24,
-    color: 'white',
-    marginBottom: 10,
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  modalSubtitle: {
+    fontSize: 18,
+    fontWeight:'semibold',
+    color: '#666',
+    marginBottom: 20,
+    textAlign: 'center',
   },
   table: {
-    backgroundColor: 'white',
+    width: '90%',
+    marginVertical: 10,
+    borderColor: '#ddd',
+    borderWidth: 1,
     borderRadius: 10,
-    padding: 10,
-    width: '50%',
-  },
-  tableHeader: {
-    fontSize: 16,
-    fontWeight: 'bold',
-    // textAlign: 'center',
-    marginBottom: 5  
+    overflow: 'hidden',
   },
   tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#f9f9f9',
     borderBottomWidth: 1,
-    alignItems: 'center',
     borderBottomColor: '#eee',
+  },
+  tableHeader: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  tableCell: {
+    fontSize: 16,
+    color: '#4F4F4F',
+  },
+  noOfferingsText: {
+    textAlign: 'center',
+    paddingVertical: 15,
+    color: '#888',
   },
   closeButton: {
     marginTop: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 30,
     backgroundColor: 'orange',
-    padding: 10,
-    borderRadius: 5,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 2, 
   },
   closeButtonText: {
-    color: 'white',
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
-    fontSize: 18,
   },
 });
 
