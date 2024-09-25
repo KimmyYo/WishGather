@@ -17,6 +17,7 @@
     "@react-navigation/native-stack": "^6.7.0",
     "@react-navigation/routers": "^6.1.0",
     "@react-navigation/stack": "^6.4.0",
+    "@rnmapbox/maps": "^10.1.31",
     "@tony801015/chinese-lunar": "^0.20.2",
     "axios": "^1.7.2",
     "expo": "^51.0.32",
