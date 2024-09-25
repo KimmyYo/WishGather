@@ -125,7 +125,17 @@ const BelieverLeftoverPage = () => {
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
-        {/* ... (保持其他 UI 元素不變) ... */}
+        <View style={styles.titleContainer}>
+          <MaterialCommunityIcons name="map-search-outline" size={30} color="orange" style={styles.icon} />
+          <Text style={styles.pageTitle}>剩食地圖</Text>
+        </View>
+
+        <View style={styles.locationContainer}>
+          <Pressable style={styles.locationIcon} onPress={() => setLocationIconVisible(true)}>
+            <MaterialCommunityIcons name="map-marker" size={26} color="orange" />
+          </Pressable>
+          <Text style={styles.locationText}>當前位置: {currentAddress}</Text>
+        </View>
 
         <MapView
           ref={mapRef}
