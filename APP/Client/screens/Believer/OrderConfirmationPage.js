@@ -190,12 +190,10 @@ const OrderConfirmationPage = () => {
           {/* Title */}
           <View style={styles.titleContainer}>
             <FontAwesome5 name="file-alt" size={24} color="orange" style={styles.icon} />
-            <Text style={styles.pageTitle}>訂單明細</Text>
+            <Text style={styles.pageTitle}>您的訂單</Text>
           </View>
 
           {/* Item */}
-
-          
           {items.map((item, index) => (
             <View style={styles.itemsContainer}>
               <ConfirmItem key={item.id} quantity={item.quantity} title={item.title} price={item.price} />

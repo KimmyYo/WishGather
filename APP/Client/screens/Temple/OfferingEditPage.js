@@ -2,6 +2,8 @@ import React, { useState ,useContext, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, Image, Button, Dimensions, Alert } from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
@@ -33,9 +35,11 @@ const OfferingEditPage = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTempleOfferingData();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchTempleOfferingData();
+    }, [])
+  );
 
    // 刪除供品邏輯
    const handleOfferingDelete = (offeringId) => {

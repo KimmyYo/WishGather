@@ -59,10 +59,12 @@ function WelfareHomePage() {
   const transportItem = ({ item }) => (
     <View style={styles.donateItemContainer}>
       {/* 顯示照片 */}
-      <Image
+      
+        <Image
         source={{ uri: `${API}${item.IMAGE}` }} // Assuming the image path is relative to the API base URL
         style={styles.templeImage}
       />
+      
       <Text style={styles.donateItemTitle}>{item.NAME}</Text>
       <Text style={styles.donateItemText}>{item.ADDRESS}</Text>
     </View>
@@ -143,25 +145,28 @@ const styles = StyleSheet.create({
   },
   donateItemContainer: {
     width: width * 0.4,
-    height: 200,
+    height: 230,
     backgroundColor: 'white',
     padding: 15,
     marginHorizontal: 5,
     borderRadius: 10,
     borderColor: '#cccccc',
     borderWidth: 1,
-    justifyContent: 'flex-end',
+    alignItems:'flex-start',
+    justifyContent: 'start',
   },
   templeImage: {
-    width: '100%',
-    height: 100, // 控制圖片高度
+    width: '95%',
+    height: 120, // 控制圖片高度
     resizeMode: 'cover',
     borderRadius: 8,
     marginBottom: 10,
+
+    alignSelf:'center',
   },
   donateItemTitle: {
     color: '#4F4F4F',
-    fontSize: 20,
+    fontSize: 17,
     fontWeight: 'bold',
     marginBottom: 8,
   },

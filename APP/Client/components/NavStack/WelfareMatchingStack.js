@@ -19,11 +19,11 @@ function WelfareMatchingStack(){
         component = { WelfareMatchingPage }
         options = {{ headerShown: false }}
       />
-      <Stack.Screen
-        name = 'WelfareMatchingDetails'
-        component = { WelfareMatchingDetails }
-        options = {{ headerShown: false }}
-      />
+      <Stack.Screen 
+        name="WelfareMatchingDetails" 
+        component={WelfareMatchingDetails} 
+        options = {{ headerShown: false }} 
+      /> 
      
     </Stack.Navigator>
   )

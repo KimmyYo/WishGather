@@ -181,6 +181,7 @@ const styles = StyleSheet.create({
   headerSection: {
     height: '40%',
     backgroundColor: 'orange',
+    opacity: 0.8,
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 100,
     alignItems: 'center',

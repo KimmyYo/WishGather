@@ -5,6 +5,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 
 import PageTitle from '../../components/Utility/PageTitle';
 import CheckoutBar from '../../components/Believer/CheckoutBar';
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
 
 const { width } = Dimensions.get('window');
 
@@ -39,6 +40,7 @@ const OfferingPreference = () => {
           paddingLeft: insets.left,
           paddingRight: insets.right
         }}>
+            <View style={{position:'absolute', top:50, left:10}}><GoBackButton1/></View>
             <PageTitle iconName={'add-circle-outline'} titleText="偏好選擇" />
             <DropDownPicker
                 open={open}
