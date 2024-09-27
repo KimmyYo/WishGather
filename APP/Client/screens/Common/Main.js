@@ -15,12 +15,12 @@ export default function Home({ navigation }) {
         <Image
         style={styles.icon}
         contentFit="cover"
-        source={require("../../assets/logo.png")}
+        source={require("../../assets/new_logo.png")}
         />
       </View>
       
       {/* App Name */}
-      <Text style={styles.title}>WishGather</Text>
+      {/* <Text style={styles.title}>WishGather</Text> */}
 
       {/* Sign In/Up Button */}
       <Pressable style={styles.button} onPress={() => navigation.navigate('SignIn')}>
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   iconLayout: {
-    height: 100,
-    width: 100,
+    height: 280,
+    width: 280,
     marginBottom:25,
   },
   icon:{
@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
   },
   button: {
-    backgroundColor: '#FFA500',
+    backgroundColor: 'orange',
     padding: 15,
     borderRadius: 15,
     marginVertical: 15,

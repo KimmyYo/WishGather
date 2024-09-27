@@ -1,15 +1,16 @@
 import React, {useState} from 'react';
 import {Text, View, StyleSheet, Dimensions} from 'react-native';
-import { MaterialIcons,MaterialCommunityIcons  } from '@expo/vector-icons';
+import { MaterialIcons,MaterialCommunityIcons, AntDesign } from '@expo/vector-icons';
 
 
 const { width } = Dimensions.get('window');
 
-function PageTitle({titleText, iconName, iconName1}){
+function PageTitle({titleText, iconName, iconName1, iconName2}){
     return (
         <View style={styles.titleContainer}>
           <MaterialIcons name={iconName} size={32} color="orange" style={styles.icon} />
           <MaterialCommunityIcons name={iconName1} size={32} color="orange" style={styles.icon} />
+          <AntDesign name={iconName2} size={24} color="orange" style={styles.icon} />
           <Text style={styles.pageTitle}>{ titleText }</Text>
         </View>
         

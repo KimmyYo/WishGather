@@ -122,7 +122,7 @@ const ScanResult = ({ route }) => {
         <SafeAreaProvider>
             <View style={[styles.container, {
                 paddingTop: insets.top,
-                paddingBottom: insets.bottom-20,
+                paddingBottom: insets.bottom+20,
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }]}>
@@ -135,7 +135,7 @@ const ScanResult = ({ route }) => {
                     <Text style={styles.title}>{profile ? profile.name || 'User' : 'Loading...'} 您的照片中共有:</Text>
                     {items.map((item, index) => (
                         <View key={index} style={styles.itemContainer}>
-                            <Text style={styles.itemName}>{item.name}:</Text>
+                            <Text style={styles.itemName}>{item.name}</Text>
                             <TextInput
                                 style={styles.input}
                                 value={item.count.toString()}
@@ -165,19 +165,21 @@ const ScanResult = ({ route }) => {
                             <Text style={styles.buttonText}>新增</Text>
                         </TouchableOpacity>
                     </View>
-                    <View style={styles.buttonContainer}>
-                        <CheckoutBar btnText={"送出"} iconName={"checkbox-outline"} onPress={handleSubmit} />
-                    </View>
+                    
 
                     {/* <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
                         <Text style={styles.buttonText}>送出</Text>
                     </TouchableOpacity>*/}
 
-                    <TouchableOpacity style={styles.rescanButton} onPress={() => navigation.navigate("FoodScanningPage")}>
+                    {/* <TouchableOpacity style={styles.rescanButton} onPress={() => navigation.navigate("FoodScanningPage")}>
                         <Text style={styles.buttonText}>重新掃描?</Text>
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
 
                 </ScrollView>
+
+                <View style={styles.buttonContainer}>
+                    <CheckoutBar btnText={"送出"} iconName={"checkbox-outline"} onPress={handleSubmit} />
+                </View>
             </View>
         </SafeAreaProvider>
     );
@@ -186,13 +188,15 @@ const ScanResult = ({ route }) => {
 const styles = StyleSheet.create({
     container: {
         flexGrow: 1,
-        justifyContent: 'center',
+        justifyContent: 'start',
         alignItems: 'center',
-        padding: 20,
+        paddingHorizontal: 20,
+        paddingTop: 90,
+        // borderWidth:1,
     },
     title: {
         color:'#4F4F4F',
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
         marginBottom: 20,
     },
@@ -204,6 +208,7 @@ const styles = StyleSheet.create({
     },
     itemName: {
         fontSize: 18,
+        textAlign:'center',
         flex: 1,
     },
     input: {
@@ -243,7 +248,7 @@ const styles = StyleSheet.create({
         width: '80%',
     },
     rescanButton: {
-        backgroundColor: '#FFA042',
+        backgroundColor: 'orange',
         padding: 15,
         paddingTop:20,
         marginTop:20,
@@ -256,11 +261,12 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: 'center',
         position: 'absolute',
-        bottom: 0,
+        bottom: 25,
     },
     buttonText: {
         color: 'white',
         fontWeight: 'bold',
+        fontSize: 14,
     },
 });
 
