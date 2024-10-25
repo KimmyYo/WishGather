@@ -8,7 +8,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  TouchableWithoutFeedback,
   Keyboard,
 } from "react-native";
 import axios from "axios";
@@ -23,30 +22,40 @@ const WishGatherChatbot = ({ route }) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
 
-// 當用戶手動開始拖動時
-const handleScrollBeginDrag = () => {
-  setIsUserScrolling(true);
-};
+  const handleScrollBeginDrag = () => {
+    setIsUserScrolling(true);
+  };
 
-// 當用戶結束手動拖動時
-const handleScrollEndDrag = () => {
-  setIsUserScrolling(false);
-};
+  const handleScrollEndDrag = () => {
+    setIsUserScrolling(false);
+  };
+
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
       "keyboardDidShow",
-      () => setKeyboardVisible(true)
+      () => {
+        setKeyboardVisible(true);
+        if (!isUserScrolling) {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }
+      }
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
-      () => setKeyboardVisible(false)
+      () => {
+        setKeyboardVisible(false);
+        if (!isUserScrolling) {
+          scrollViewRef.current?.scrollToEnd({ animated: true });
+        }
+      }
     );
 
     return () => {
-      keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
+      keyboardDidHideListener.remove();
     };
-  }, []);
+  }, [isUserScrolling]);
+
   useEffect(() => {
     console.log("Full drawLotsData:", JSON.stringify(drawLotsData, null, 2));
     const { lotNumber, lotMessage } = route.params || {};
@@ -228,72 +237,65 @@ const handleScrollEndDrag = () => {
   };
 
   return (
-    <KeyboardAvoidingView
-      style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
-    >
-      <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.content}>
-          <View style={styles.header}>
-            <Text style={styles.title}>你好</Text>
-            <Text style={styles.subtitle}>歡迎使用WishGather解籤功能</Text>
-          </View>
+    <View style={styles.container}>
+      <View style={styles.header}>
+        <Text style={styles.title}>你好</Text>
+        <Text style={styles.subtitle}>歡迎使用WishGather解籤功能</Text>
+      </View>
 
-          <ScrollView
-  ref={scrollViewRef}
-  style={styles.messagesArea}
-  contentContainerStyle={{
-    paddingBottom: isKeyboardVisible ? 90 : 10,
-  }}
-  onScrollBeginDrag={handleScrollBeginDrag}  // 當用戶開始拖動時觸發
-  onScrollEndDrag={handleScrollEndDrag}      // 當用戶停止拖動時觸發
-  onContentSizeChange={() => {
-    if (!isUserScrolling) {
-      scrollViewRef.current?.scrollToEnd({ animated: true });
-    }
-  }}
-  removeClippedSubviews={true}
-  keyboardShouldPersistTaps="handled"
->
-  {messages.map((msg, index) => (
-    <View
-      key={index}
-      style={[
-        styles.messageBox,
-        msg.type === "user"
-          ? styles.userMessageBox
-          : styles.botMessageBox,
-      ]}
-    >
-      <Text
-        style={
-          msg.type === "user" ? styles.userMessage : styles.botMessage
-        }
+      <ScrollView
+        ref={scrollViewRef}
+        style={styles.messagesArea}
+        contentContainerStyle={styles.messagesContent}
+        onScrollBeginDrag={handleScrollBeginDrag}
+        onScrollEndDrag={handleScrollEndDrag}
+        onContentSizeChange={() => {
+          if (!isUserScrolling) {
+            scrollViewRef.current?.scrollToEnd({ animated: true });
+          }
+        }}
+        keyboardShouldPersistTaps="handled"
       >
-        {msg.text}
-      </Text>
-    </View>
-  ))}
-</ScrollView>
-
-
-          <View style={styles.typingArea}>
-            <TextInput
-              style={styles.input}
-              value={userMessage}
-              onChangeText={setUserMessage}
-              placeholder="請輸入您的問題"
-              placeholderTextColor="#a9a9a9"
-              onFocus={() => setKeyboardVisible(true)} // 鍵盤彈出時
-              onBlur={() => setKeyboardVisible(false)} // 鍵盤隱藏時
-            />
-            <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
-              <Text style={styles.sendButtonText}>Send</Text>
-            </TouchableOpacity>
+        {messages.map((msg, index) => (
+          <View
+            key={index}
+            style={[
+              styles.messageBox,
+              msg.type === "user"
+                ? styles.userMessageBox
+                : styles.botMessageBox,
+            ]}
+          >
+            <Text
+              style={
+                msg.type === "user" ? styles.userMessage : styles.botMessage
+              }
+            >
+              {msg.text}
+            </Text>
           </View>
+        ))}
+      </ScrollView>
+
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "position" : "padding"}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+      >
+        <View style={styles.typingArea}>
+          <TextInput
+            style={styles.input}
+            value={userMessage}
+            onChangeText={setUserMessage}
+            placeholder="請輸入您的問題"
+            placeholderTextColor="#a9a9a9"
+            multiline={false}
+          />
+          <TouchableOpacity style={styles.sendButton} onPress={handleSend}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
         </View>
-      </TouchableWithoutFeedback>
-    </KeyboardAvoidingView>
+      </KeyboardAvoidingView>
+    </View>
   );
 };
 
@@ -302,17 +304,16 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#fff",
   },
-  content: {
-    flex: 1,
-    padding: 20,
-  },
   header: {
-    marginBottom: 20,
+    padding: 20,
+    paddingTop: 30,
+    backgroundColor: "#fff",
+    paddingBottom: -5,
   },
   title: {
+    paddingTop: 18,
     fontSize: 24,
     fontWeight: "bold",
-    marginTop: 30,
   },
   subtitle: {
     fontSize: 16,
@@ -321,7 +322,11 @@ const styles = StyleSheet.create({
   },
   messagesArea: {
     flex: 1,
-    marginBottom: 10,
+    backgroundColor: "#fff",
+  },
+  messagesContent: {
+    padding: 20,
+    paddingBottom: 20,
   },
   messageBox: {
     maxWidth: "80%",
@@ -346,16 +351,10 @@ const styles = StyleSheet.create({
   typingArea: {
     flexDirection: "row",
     alignItems: "center",
-    paddingVertical: 10,
-    // borderTopWidth: 1.5,
-    borderBottomWidth: 0.5,
-    borderColor: "#ccc",
+    padding: 10,
     backgroundColor: "#fff",
-    position: "absolute", // 固定位置
-    bottom: 0, // 固定在底部
-    left: 0,
-    right: 0,
-    paddingHorizontal: 10, // 讓左右有些邊距
+    borderTopWidth: 0.5,
+    borderColor: "#ccc",
   },
   input: {
     flex: 1,
@@ -365,6 +364,7 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
     backgroundColor: "#E8E9EB",
+    maxHeight: 100,
   },
   sendButton: {
     backgroundColor: "#F89880",
