@@ -17,6 +17,7 @@ import { OPENAI_API_KEY } from "@env";
 const WishGatherChatbot = ({ route }) => {
   const [userMessage, setUserMessage] = useState("");
   const [messages, setMessages] = useState([]);
+  const [resultVisible, setResultVisible] = useState(true);
   const scrollViewRef = useRef();
   const [currentLot, setCurrentLot] = useState(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
@@ -29,6 +30,14 @@ const WishGatherChatbot = ({ route }) => {
   const handleScrollEndDrag = () => {
     setIsUserScrolling(false);
   };
+  useEffect(() => {
+    const { lotNumber, lotMessage } = route.params || {};
+
+    // 當導航到聊天室頁面時隱藏 result box
+    if (lotNumber && lotMessage) {
+      setResultVisible(false); // 隱藏 result box
+    }
+  }, [route.params]);
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
