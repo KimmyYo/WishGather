@@ -73,7 +73,7 @@ const DrawlotsModal = () => {
       '第二籤 甲寅 屬水利冬 宜其北方 於今此景正當時， 看看欲吐百花魁， 若能遇得春色到， 一洒清吉脫塵埃，',
       '第一籤 甲子 屬金利秋　宜其西方 日出便見風雲散， 光明清靜照世間， 一向前途通大道， 萬事清吉保平安。',
   ];
-
+  
   const handlePress = () => {
     setShowGif(true);
     
@@ -87,12 +87,15 @@ const DrawlotsModal = () => {
   };
 
   const handleInterpret = () => {
-    navigation.navigate('Chatbox', {
-      lotNumber: randomNumber,
-      lotMessage: message
-    });
+    setShowResult(false);  // 先淡出結果框
+    setTimeout(() => {
+      navigation.navigate('Chatbox', {
+        lotNumber: randomNumber,
+        lotMessage: message
+      });
+    }, 100);  // 短暫延遲確保動畫順暢
   };
-
+  
   return (
     <View style={styles.container}>
       {!showGif && !showResult && (
