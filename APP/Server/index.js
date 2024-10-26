@@ -564,6 +564,28 @@ app.post('/submitScanResult', async(req, res) => {
     }
 });
 
+// 呼叫flask媒合演算法
+// 1. 宮廟按下一鍵媒合 trigger API
+// 2. 抓取需要的資訊傳送給function 
+// 3. 回傳媒合結果放入資料庫
+app.get('/match_algo/:id', async(req, res) => {
+    // Tables: 宮廟資料，社福資料，供品資料
+    const queyGetTempleOfferingInfo = `SELECT * 
+                                       FROM hf.宮廟 AS temple
+                                       JOIN hf.供品 AS offering
+                                       ON temple.TID = offering.tID_fk
+                                       WHERE offering.tID_fk = ?`
+    const queryGetWelfarePreferInfo = `SELECT *
+                                       FROM hf.社福機構`;
+    const [templeOfferingInfo] = await db.promise().query(queyGetTempleOfferingInfo, [req.params.id]);
+    const [welfareInfo] = await db.promise().query(queryGetWelfarePreferInfo);
+
+    // 計算
+    
+    // Insert
+})
+
+
 
 
 // 開給全部

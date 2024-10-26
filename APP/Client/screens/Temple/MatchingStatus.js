@@ -10,6 +10,7 @@ import SetButton from '../../components/Utility/SetButton';
 import MatchingInfoCard from '../../components/Temple/MatchingInfoCard'
 import { FlatList } from 'react-native-gesture-handler';
 import { UserContext } from '../../components/Context/UserContext';
+import LoadingScreen from '../../components/Utility/Loading';
 
 const API = require('../config/DBconfig');
 function MatchingStatus() {
@@ -31,7 +32,7 @@ function MatchingStatus() {
                 setLoading(false);
             });
     }, []);
-    if(loading) return (<View><Text>Loading...</Text></View>);
+    if(loading) return (<LoadingScreen />);
     if(error) return (<View><Text>Error: {error}</Text></View>);
     return (
         <SafeAreaProvider>
@@ -41,6 +42,7 @@ function MatchingStatus() {
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }]}>
+                {matchData && matchData.length > 0 ? (
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={matchData}
@@ -50,6 +52,9 @@ function MatchingStatus() {
                         showsVerticalScrollIndicator={false}
                     />
                 </View>
+                ) : (
+                    <View><Text>沒有媒合資料</Text></View> // Default text when matchData is null or empty
+                )}
             </View>
         </SafeAreaProvider>
     );
