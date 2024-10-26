@@ -58,10 +58,10 @@ const WishGatherChatbot = ({ route, navigation }) => {
 
   useEffect(() => {
     console.log("Full drawLotsData:", JSON.stringify(drawLotsData, null, 2));
-    const { lotNumber, lotMessage } = route.params || {};
+    const { lotNumber, lotMessage, fromDrawLot } = route.params || {};
     console.log("Route params:", { lotNumber, lotMessage });
 
-    if (lotNumber && lotMessage) {
+    if (lotNumber && lotMessage && fromDrawLot) {
       const matchedLot = drawLotsData.find(
         (lot) => lot.number === `第${lotNumber}籤`
       );

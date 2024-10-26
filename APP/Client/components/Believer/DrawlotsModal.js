@@ -85,16 +85,19 @@ const DrawlotsModal = () => {
       setShowResult(true);
     }, 2000);
   };
+  
 
   const handleInterpret = () => {
     setShowResult(false);  // 先淡出結果框
     setTimeout(() => {
       navigation.navigate('Chatbox', {
         lotNumber: randomNumber,
-        lotMessage: message
+        lotMessage: message,
+        fromDrawLot: true
       });
     }, 100);  // 短暫延遲確保動畫順暢
   };
+  
   
   return (
     <View style={styles.container}>
