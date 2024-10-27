@@ -420,8 +420,9 @@ ${rewrittenQueryAnalysis}
       </ScrollView>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "position" : "padding"}
-        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 0}
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === "ios" ? 0 : 20} // 調整此偏移量以適應不同平台
+        style={styles.typingAreaContainer}
       >
         <View style={styles.typingArea}>
           <TextInput
@@ -493,13 +494,12 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   typingArea: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     padding: 10,
-    backgroundColor: "#fff",
-    borderTopWidth: 0.5,
-    borderColor: "#ccc",
+    backgroundColor: '#f5f5f5',
   },
+  typingAreaContainer: { borderTopWidth: 1, borderColor: '#ddd' },
   input: {
     flex: 1,
     borderColor: "#ccc",
