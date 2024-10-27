@@ -74,6 +74,7 @@ const DrawlotsModal = () => {
       '第一籤 甲子 屬金利秋　宜其西方 日出便見風雲散， 光明清靜照世間， 一向前途通大道， 萬事清吉保平安。',
   ];
   
+  
   const handlePress = () => {
     setShowGif(true);
     

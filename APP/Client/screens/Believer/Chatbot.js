@@ -10,18 +10,23 @@ import {
   Platform,
   Keyboard,
 } from "react-native";
+import { useFocusEffect } from '@react-navigation/native';
+
 import axios from "axios";
 import drawLotsData from "../../assets/drawLotsData.json";
 import { OPENAI_API_KEY } from "@env";
 
 const WishGatherChatbot = ({ route, navigation }) => {
+  
   const [userMessage, setUserMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const scrollViewRef = useRef();
   const [currentLot, setCurrentLot] = useState(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
-  const [isBotProcessing, setIsBotProcessing] = useState(false);
+
+
+
 
   const handleScrollBeginDrag = () => {
     setIsUserScrolling(true);
