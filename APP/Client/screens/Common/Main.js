@@ -58,20 +58,21 @@ const styles = StyleSheet.create({
   curvedContainer: {
     backgroundColor: 'white',
     width: '100%',
-    height:'35%',
-    borderTopLeftRadius: 80,
-    borderTopRightRadius: 80,
+    height: '40%',
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
     paddingVertical: 80,
     paddingHorizontal: 20,
+    justifyContent:'center',
     alignItems: 'center',
 
     shadowColor: "#000",
     shadowOffset: {
         width: 0,
-        height: -4,
+        height: -2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
   },
   title: {
     fontSize: 32,
