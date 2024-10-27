@@ -1,21 +1,21 @@
 import { React, useState, useEffect } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
+const API = require('../../screens/config/DBconfig');
 
 const MatchingCard = ({infos}) => {
     const [statusText, setStatusText] = useState("");
     const [statusColor, setStatusColor] = useState(styles.defaultStatus);
-
     useEffect(() => {
-        switch (infos.MATCHING_STATUS) {
-            case 'A':
+        switch (infos.DELIVER_STATUS) {
+            case '未配送':
                 setStatusText('未送出');
                 setStatusColor(styles.notDelivered);
                 break;
-            case 'B': 
+            case '配送中': 
                 setStatusText('配送中');
                 setStatusColor(styles.inTransit);
                 break;
-            case 'C':
+            case '已送達':
                 setStatusText('已送達');
                 setStatusColor(styles.delivered);
                 break;
@@ -26,6 +26,9 @@ const MatchingCard = ({infos}) => {
 
     return (
         <View style={styles.card}>
+            <View style={styles.imageContainer}>
+                <Image style={styles.image} source={{ uri: infos.IMAGE ? `${API}${infos.IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }} />
+            </View>
             <View style={styles.middleTitle}>
                 <Text style={styles.titlePrimary}>{infos.NAME}</Text>
                 <Text style={styles.titleSecond}>{infos.ADDRESS}</Text>
@@ -45,11 +48,12 @@ const styles = StyleSheet.create({
         width: screenWidth * 0.8,
         height: 100,
         flexDirection: 'row',
-        justifyContent: 'space-around',
+        justifyContent: 'start',
         alignItems: 'center',
+        gap: '12',
         backgroundColor: 'white',
         borderRadius: 10,
-        padding: 30,
+        padding: 20,
         marginVertical: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -58,15 +62,25 @@ const styles = StyleSheet.create({
         elevation: 5, // This is for Android shadow
         
     },
+    middleTitle: {
+        width: 0.38 * screenWidth,
+        flexDirection: 'column',
+        justifyContent: 'start',
+        alignItems: 'start'
+    },
     titlePrimary: {
         fontSize: 20, 
         fontWeight: 'bold',
     },
     titleSecond: {
-        fontSize: 15, 
+        fontSize: 12, 
     },
     state:{
+        width: 0.2 * screenWidth,
         paddingTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'end',
+        alignItems:'end'
     },
     delivered: {
         color: 'green'
@@ -79,6 +93,11 @@ const styles = StyleSheet.create({
     },
     defaultStatus:{
         color: '#333'
+    },
+    image:{
+        width: 50,
+        height: 50,
+        borderRadius: '50%'
     }
 });
 

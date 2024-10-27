@@ -29,7 +29,7 @@ function MatchingInstituteCard({ institute }) {
             const calcDistance = calculateDistance(templeCord.x, templeCord.y, institute.COORDINATE.x, institute.COORDINATE.y);
             setDistance(calcDistance);
         } else {
-            console.log("Coordinates are not available");
+            // console.log("Coordinates are not available");
         }
     })
     // order by distance (set bound distance)

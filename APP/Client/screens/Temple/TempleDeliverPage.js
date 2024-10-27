@@ -1,50 +1,12 @@
-import React, {useState, useEffect, useRef, useCallback } from 'react';
-import {Button, Text, SafeAreaView, View, StyleSheet, FlatList, Dimensions, ScrollView} from 'react-native';
-import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, {useState, useEffect} from 'react';
+import {Text, View, StyleSheet, ScrollView} from 'react-native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { DataTable } from 'react-native-paper';
-import StepIndicator from 'react-native-step-indicator-v2';
-
-import SectionHeader from '../../components/Utility/SectionHeader';
 import PageTitle from '../../components/Utility/PageTitle';
 import NavigateBack from '../../components/Utility/NavigateBack';
-
-const labels = ["準備中", "配送中", "已抵達", "已領貨"];
-const customStyles = {
-  stepIndicatorSize: 25,
-  currentStepIndicatorSize: 30,
-  separatorStrokeWidth: 2,
-  currentStepStrokeWidth: 3,
-  stepStrokeCurrentColor: '#fe7013',
-  stepStrokeWidth: 3,
-  stepStrokeFinishedColor: '#fe7013',
-  stepStrokeUnFinishedColor: '#aaaaaa',
-  separatorFinishedColor: '#fe7013',
-  separatorUnFinishedColor: '#aaaaaa',
-  stepIndicatorFinishedColor: '#fe7013',
-  stepIndicatorUnFinishedColor: '#ffffff',
-  stepIndicatorCurrentColor: '#ffffff',
-  stepIndicatorLabelFontSize: 13,
-  currentStepIndicatorLabelFontSize: 13,
-  stepIndicatorLabelCurrentColor: '#fe7013',
-  stepIndicatorLabelFinishedColor: '#ffffff',
-  stepIndicatorLabelUnFinishedColor: '#aaaaaa',
-  labelColor: '#999999',
-  labelSize: 16,
-  labelAlign: 'center',
-  currentStepLabelColor: '#fe7013',
-  borderRadiusSize: 10
-};
-
-// TODO: data should come from db 
-const dummyData = {
-  data: [
-    { title: "準備中", body: "Your Order placed." },
-    { title: "配送中", body: "Anything" },
-    { title: "已抵達", body: "1324894071" },
-    { title: "已領貨", body: "Anything" },
-  ]
-};
+import CustomStepIndicator from '../../components/Utility/CustomStepIndicator'; // Update the path as needed
+import axios from 'axios';
 
 const deliverList = [
   { glD: 101, NAME: '蘋果', TYPE: '水果', AMOUNT: 100 },
@@ -59,142 +21,145 @@ const deliverList = [
   { glD: 110, NAME: '龍眼', TYPE: '水果', AMOUNT: 90 }
 ];
 
-function TempleDeliverPage(){
+const API = require('../config/DBconfig');
+
+function TempleDeliverPage({route}) {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
-    
-    const [currentPage, setCurrentPage] = useState(2);
-    const [statusDetail, setStatusDetail] = useState('');
-    const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 40 }).current;  
+    const { data } = route.params;
+    const [statusData, setStatusData] = useState([]);
+    const [deliverList, setDeliverList] = useState([]);
+    const [currentPosition, setCurrentPosition] = useState(0);
 
-    const renderPage = ({ item, index }) => {
-      if (index == currentPage) {
+    useEffect(() => {
+        const fetchStatusData = async () => {
+            try {
+                // 抓取運送狀態資料
+                let response = await axios.get(`${API}/readCode/0003`);
+                const codes = response.data.code;
+                setStatusData(codes);
+                // 設定運送裝態與步驟參數
+                if (codes && codes.length > 0) {
+                    const statusIndex = codes.findIndex(
+                        item => item.CODE_NAME === data.DELIVER_STATUS
+                    );
+                    setCurrentPosition(statusIndex !== -1 ? statusIndex : 0);
+                }
+                // 抓取媒合細項資項
+                response = await axios.get(`${API}/matchDetails/${data.wID}`);
+                setDeliverList(response.data.matchingDetails);
+
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        fetchStatusData();
+    }, [data.DELIVER_STATUS]);
+
+    const renderCurrentStatus = () => {
+        if (statusData.length === 0) return null;
+        
+        const currentStatus = statusData[currentPosition];
         return (
-          <View style={styles.infoCard}>
-            <Text style={styles.title}>訂單{item.title}</Text>
-            <Text style={styles.body}>訂單編號：{item.body}</Text>
-          </View>
-        )
-      }
-      return null;
+            <View style={styles.infoCard}>
+                <Text style={styles.title}>運送狀態：{currentStatus.CODE_NAME}</Text>
+                <Text style={styles.body}>媒合編號：{data.ORDER_ID || '未知'}</Text>
+                <Text style={styles.body}>狀態說明：{
+                  data.BOOKED_STATUS = 'A' ? `\n您的媒合尚未被${data.NAME}確認` : `\n您還未將此捐贈訂單送出`
+                || '無說明'}</Text>
+            </View>
+        );
     };
-
-    // Update currentPage based on visible items
-    const onViewableItemsChanged = useCallback(({ viewableItems }) => {
-      if (viewableItems.length > 0) {
-        setCurrentPage(viewableItems[viewableItems.length - 1].index);
-      }
-    }, []);
-
     return (
         <SafeAreaProvider>
-          <View style={{
-            flex: 1,
-            justifyContent: 'start',
-            alignItems: 'start',
-           
-            // Paddings to handle safe area
-            paddingTop: insets.top,
-            paddingBottom: insets.bottom + 10,
-            paddingLeft: insets.left,
-            paddingRight: insets.right
-          }}>  
-            <NavigateBack />
-            <PageTitle titleText="媒合運送"/>
-            <View style={styles.container}>
-              <View style={styles.stepIndicator}>
-                {/* Steps indicator tells the delivering status */}
-                {/* TODO: Change the steps rendering effect */}
-                <StepIndicator
-                  customStyles={customStyles}
-                  stepCount={dummyData.data.length}
-                  direction="horizontal"
-                  currentPosition={currentPage}
-                  labels={dummyData.data.map(item => item.title)}
-                />
-                {/* Render deliver info card based on delivering status */}
-                {/* TODO: Change the info card styling and necessary info */}
-                <FlatList
-                  data={dummyData.data}
-                  renderItem={renderPage}
-                  onViewableItemsChanged={onViewableItemsChanged}
-                  viewabilityConfig={viewabilityConfig}
-                  keyExtractor={(item, index) => index.toString()} // Ensure each item has a unique key
-                />
-              </View>   
-            </View>
+            <View style={{
+                flex: 1,
+                justifyContent: 'start',
+                alignItems: 'start',
+                paddingTop: insets.top,
+                paddingBottom: insets.bottom + 10,
+                paddingLeft: insets.left,
+                paddingRight: insets.right
+            }}>
+                <NavigateBack />
+                <PageTitle titleText="媒合運送"/>
+                <View style={styles.container}>
+                    <View style={styles.stepIndicator}>
+                        <CustomStepIndicator
+                            steps={statusData.map(item => item.CODE_NAME)}
+                            currentPosition={currentPosition}
+                        />
+                        {renderCurrentStatus()}
+                    </View>
+                </View>
 
-            {/* Table shows deliver goods  */}
-            <ScrollView style={styles.deliverList}>
-                <DataTable>
-                  {/* <DataTable.Header style={styles.tableHeader}>
-                    <DataTable.Title textStyle={styles.tableTitle}>供品名稱</DataTable.Title>
-                    <DataTable.Title textStyle={styles.tableTitle}>種類</DataTable.Title>
-                    <DataTable.Title numeric textStyle={styles.tableTitle}>數量</DataTable.Title>
-                   
-                  </DataTable.Header> */}
-                  {deliverList.map((item, index) => (
-                    <DataTable.Row key={index}>
-                       <DataTable.Cell>{item.NAME}</DataTable.Cell>
-                       <DataTable.Cell>{item.TYPE}</DataTable.Cell>
-                       <DataTable.Cell numeric>{item.AMOUNT}</DataTable.Cell>
-                     
-                    </DataTable.Row>
-                  ))}
-                </DataTable>
-            </ScrollView>  
-            
-          </View>
+                <ScrollView style={styles.deliverList}>
+                    <DataTable>
+                        <DataTable.Header style={styles.tableHeader}>
+                            <DataTable.Title textStyle={styles.tableTitle}>供品名稱</DataTable.Title>
+                            <DataTable.Title textStyle={styles.tableTitle}>種類</DataTable.Title>
+                            <DataTable.Title numeric textStyle={styles.tableTitle}>數量</DataTable.Title>
+                        </DataTable.Header>
+                        {deliverList.map((item, index) => (
+                            <DataTable.Row key={index}>
+                                <DataTable.Cell>{item.CHN}</DataTable.Cell>
+                                <DataTable.Cell>{item.TYPE}</DataTable.Cell>
+                                <DataTable.Cell numeric>{item.AMOUNT}</DataTable.Cell>
+                            </DataTable.Row>
+                        ))}
+                    </DataTable>
+                </ScrollView>
+            </View>
         </SafeAreaProvider>
     );
 }
 
-
-let screenHeight = Dimensions.get("window").height;
-let screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
     container: {
-      flexDirection: 'row',
-      // padding: 16,
+        flexDirection: 'row',
+        width: '100%',
     },
     stepIndicator: {
-      width: "100%",
-      gap: 10,
-      // Your styles for step indicator view
-    },
-    card: {
-      flex: 2, // Ensure it takes up enough space
-      marginLeft: 16,
-      padding: 16,
-      borderRadius: 8,
-      backgroundColor: '#fff',
-      // Additional styling as needed
+        width: "100%",
+        gap: 10,
     },
     infoCard: {
-      padding: 24,
-     
+        padding: 24,
+        backgroundColor: '#fff',
+        margin: 10,
+        borderRadius: 8,
+        shadowColor: "#000",
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.23,
+        shadowRadius: 2.62,
+        elevation: 4,
     },
     title: {
-      fontSize: 18,
-      fontWeight: 'bold',
+        fontSize: 18,
+        fontWeight: 'bold',
+        marginBottom: 10,
     },
     body: {
-      fontSize: 16,
-      lineHeight: 30
+        fontSize: 16,
+        lineHeight: 30,
+        color: '#666',
     },
     deliverList: {
-      width: '100%',
-      padding: 10,
+        width: '100%',
+        padding: 10,
     },
     tableHeader: {
-      backgroundColor: "#e38c14",
+        backgroundColor: "#e38c14",
     },
     tableTitle: {
-      color: "#fff",
-      fontSize: 16,
-      textAlign: 'center'
+        color: "#fff",
+        fontSize: 16,
+        textAlign: 'center'
     }
-
 });
 
 export default TempleDeliverPage;
