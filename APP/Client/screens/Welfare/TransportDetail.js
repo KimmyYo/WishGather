@@ -1,10 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import GoBackButton1 from '../../components/Utility/GoBackButton1'; // Assuming you have a GoBackButton component
 import PageTitle from '../../components/Utility/PageTitle'; // Assuming you have a PageTitle component
 import CloseButton from '../../components/Utility/CloseButton';
+import MapView, { Marker } from 'react-native-maps';
+import axios from 'axios';
+
 const { width, height } = Dimensions.get('window');
+const API = require('../config/DBconfig');
+const axiosInstance = axios.create({
+  baseURL: API,
+  timeout: 10000,
+});
 
 function TransportDetail({ route, navigation }) {
   const insets = useSafeAreaInsets();
@@ -12,6 +20,9 @@ function TransportDetail({ route, navigation }) {
 
   // State to manage if the items list should be shown
   const [showItems, setShowItems] = useState(false);
+  const [error, setError] = useState(null);
+  const [coordinates, setCoordinates] = useState(null); // State to store fetched coordinates
+  const mapRef = useRef(null);
 
   // Example items list (you can replace this with actual data)
   const itemsList = [
@@ -20,12 +31,57 @@ function TransportDetail({ route, navigation }) {
     { name: '供品C', quantity: 3 },
   ];
 
+  //捐贈品運送的API
+  const [temples, setTemples] = useState([]);
+  useEffect(() => {  
+    axiosInstance.get('/temples')
+      .then(response => {
+        setTemples(response.data);
+      })
+      .catch(error => {
+        setError(error);
+      });
+  }, []);
+
+  const geocodeAddress = async (address) => {
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${process.env.EXPO_PUBLIC_API_TOKEN}`;
+    
+    try {
+      const response = await axios.get(url);
+      if (response.data.features.length > 0) {
+        const { center } = response.data.features[0];
+        return { latitude: center[1], longitude: center[0] };
+      } else {
+        console.error('Geocoding failed: Address not found');
+        return null;
+      }
+    } catch (error) {
+      console.error('Geocoding failed:', error);
+      return null;
+    }
+  };
+
+  // UseEffect to fetch coordinates when component mounts
+  useEffect(() => {
+    const fetchCoordinates = async () => {
+      if (temple.ADDRESS) {
+        const coords = await geocodeAddress(temple.ADDRESS);
+        if (coords) {
+          setCoordinates(coords);
+          // console.log('Fetched coordinates:', coords); // Log the fetched coordinates
+        }
+      }
+    };
+
+    fetchCoordinates();
+  }, [temple.ADDRESS]); //依賴於 temple.ADDRESS 變化
+
   return (
     <SafeAreaProvider>
       <View style={{
         flex: 1,
         backgroundColor: '#f2f2f2',
-        paddingTop: insets.top-50,
+        paddingTop: insets.top - 50,
         paddingBottom: insets.bottom,
         paddingLeft: insets.left,
         paddingRight: insets.right,
@@ -39,7 +95,7 @@ function TransportDetail({ route, navigation }) {
         </View>
 
         <View style={styles.btncontainer}>
-            <CloseButton />
+          <CloseButton />
         </View>
 
         {/* Details Section */}
@@ -77,6 +133,44 @@ function TransportDetail({ route, navigation }) {
             </View>
           )}
 
+          {/* Map Section */}
+          <MapView
+            ref={mapRef}
+            style={{ width: '100%', height: '90%', alignItems: 'center' }}
+            initialRegion={{
+              latitude: coordinates ? coordinates.latitude : 22.623, // Default latitude
+              longitude: coordinates ? coordinates.longitude : 120.293, // Default longitude
+              latitudeDelta: 0.1,
+              longitudeDelta: 0.1,
+            }}
+          >
+            {/* 添加當前寺廟的 Marker */}
+            {coordinates && (
+              <Marker
+                coordinate={coordinates}
+                title={temple.NAME}
+                pinColor="orange"
+              />
+            )}
+
+            {/* Loop through temples and place markers on the map */}
+            {temples.map((temple) => (
+              <Marker
+                key={temple.tID}
+                coordinate={{
+                  latitude: temple.latitude,
+                  longitude: temple.longitude,
+                }}
+                title={temple.NAME}
+                pinColor="orange"
+              />
+            ))}
+            
+          </MapView>
+
+          {/* Conditionally show error message */}
+          {error && <Text style={styles.errorText}>無法載入宮廟資料: {error.message}</Text>}
+
         </View>
       </View>
     </SafeAreaProvider>
@@ -86,19 +180,20 @@ function TransportDetail({ route, navigation }) {
 const styles = StyleSheet.create({
   headerSection: {
     height: '40%',
-    backgroundColor: '#FF6D00',
+    backgroundColor: 'orange',
+    opacity: 0.8,
     borderBottomLeftRadius: 100,
     borderBottomRightRadius: 100,
     alignItems: 'center',
-    justifyContent:'center',
+    justifyContent: 'center',
     paddingTop: 20,
     paddingBottom: 40,
     paddingHorizontal: 20,
   },
-  btncontainer:{
+  btncontainer: {
     position: 'absolute',
     top: 20,
-    right:10,
+    right: 10,
   },
   templeImage: {
     width: 100,
@@ -112,7 +207,7 @@ const styles = StyleSheet.create({
     color: 'white',
     marginBottom: 10,
   },
-  templeAddress:{
+  templeAddress: {
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
@@ -145,10 +240,10 @@ const styles = StyleSheet.create({
     color: '#4F4F4F',
   },
   viewItemsButton: {
-    backgroundColor: '#FF6D00',
+    backgroundColor: 'orange',
     paddingVertical: 5,
     paddingHorizontal: 15,
-    marginLeft :8,
+    marginLeft: 8,
     borderRadius: 5,
   },
   viewItemsText: {
@@ -166,13 +261,18 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 16,
-    fontWeight:'semibold',
+    fontWeight: 'semibold',
     color: '#333',
   },
   itemQuantity: {
     fontSize: 16,
-    fontWeight:'semibold',
+    fontWeight: 'semibold',
     color: '#333',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
   },
 });
 

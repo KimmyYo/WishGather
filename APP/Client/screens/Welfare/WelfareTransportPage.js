@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, FlatList, Pressable } from 'react-native';
+import { View, Text, StyleSheet, Image, Dimensions, FlatList, Pressable, } from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import axios from 'axios';
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
@@ -61,16 +62,21 @@ function WelfareTransportPage() {
     <Pressable  style={styles.itemContainer} onPress={() => handleTemplePress(item)}>
       {/* Image of the temple */}
       <Image
-        source={{ uri: item.IMAGE }}
+        source={{ uri: `${API}${item.IMAGE}` }} // Assuming the image path is relative to the API base URL
         style={styles.templeImage}
       />
 
       {/* Temple details */}
       <View style={styles.detailsContainer}>
-        <Text style={{lineHeight:25}}>
-          <Text style={styles.templeName}>{item.NAME}{"\n"}</Text>
+        <View style={{}}>
+
+          <View style={{flexDirection:'row',}}>
+            <MaterialIcons name="temple-buddhist" size={20} color="#4F4F4F" />
+            <Text style={styles.templeName}>{item.NAME}{"\n"}</Text>
+          </View>
+          
           <Text style={styles.address}>{item.ADDRESS}</Text>
-        </Text>
+        </View>
       </View>
 
       <View style={styles.transportState}>
@@ -129,18 +135,19 @@ const styles = StyleSheet.create({
     left: '10%',
   },
   donateListContainer: {
-    width: width*0.95,
+    width: width,
     justifyContent:'center',
     alignItems:'center',
     alignSelf:'center',
+    paddingHorizontal:10,
     paddingBottom: 80,
     // borderWidth:1
   },
   itemContainer: {
-    width: width*0.9,
+    width: width*0.95,
     height: 120,
     flexDirection: 'row',
-    justifyContent:'space-between',
+    justifyContent:'center',
     alignItems: 'center',
     backgroundColor: 'white',
     paddingVertical: 5,
@@ -156,16 +163,18 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   templeImage:{
-    width:80,
-    height:80,
+    width:90,
+    height:90,
+    borderRadius:10,
 
   },
   detailsContainer:{
-    width: 180,
+    width: "60%",
     height:'100%',
     alignItems:'flex-start',
+    alignSelf:'center',
     paddingTop: 15,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     lineHeight: 30,
     // borderWidth:1,
 
@@ -174,10 +183,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: "bold",
     color: '#4F4F4F',
+    marginLeft: 5,
   },
   address: {
     fontSize: 14,
     color: 'gray',
+    marginLeft:3,
   },
   transportState:{
     height:'100%',

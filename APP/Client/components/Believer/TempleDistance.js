@@ -26,9 +26,9 @@ const TempleDistance = ({ imageSource, date1, date2, temple, event, onPress }) =
             <Text style={styles.event}>{event}</Text>
           </View>
         </View>
-        <View style={styles.dateContainer}>
+        {/* <View style={styles.dateContainer}>
           <Text style={styles.dateText}>{date1} | {date2}</Text>
-        </View>
+        </View> */}
       </View>
     </Pressable>
   );
@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
     width: width * 0.9,
     height: 200,
     marginBottom: 10,
-    backgroundColor: "#FFFFFF",
+    backgroundColor: "#f2f2f2",
   },
   imageContainer: {
     height: 160,

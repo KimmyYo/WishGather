@@ -3,11 +3,9 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import TempleUserPage  from '../../screens/Temple/TempleUserPage';
-import TemplesByOffering from '../../screens/Believer/TemplesByOffering';
-import OrderConfirmationPage from '../../screens/Believer/OrderConfirmationPage';
-import OrderSuccess from '../../screens/Believer/OrderSuccess';
-import OrderHistoryPage from '../../screens/Believer/OrderHistoryPage';
-import SavedTemples from '../../screens/Believer/SavedTemples';
+import OfferingEditPage from '../../screens/Temple/OfferingEditPage';
+import EditOfferingInfoPage from '../../screens/Temple/EditOfferingInfoPage';
+import OfferingUpload from '../../screens/Temple/OfferingUpload';
 import ProfileManagement from '../../screens/Common/ProfileManagement';
 
 
@@ -30,23 +28,18 @@ function TempleUserStack(){
         options = {{ headerShown: false }}
       /> 
       <Stack.Screen
-        name = 'OrderConfirmationPage'
-        component = { OrderConfirmationPage }
+        name = 'OfferingEditPage'
+        component = { OfferingEditPage }
         options = {{ headerShown: false }}
       />
       <Stack.Screen
-        name = 'OrderSuccess'
-        component = { OrderSuccess }
+        name = 'OfferingUpload'
+        component = { OfferingUpload }
         options = {{ headerShown: false }}
       />
       <Stack.Screen
-        name = 'OrderHistoryPage'
-        component = { OrderHistoryPage }
-        options = {{ headerShown: false }}
-      />
-      <Stack.Screen
-        name = 'SavedTemples'
-        component = { SavedTemples }
+        name = 'EditOfferingInfoPage'
+        component = { EditOfferingInfoPage }
         options = {{ headerShown: false }}
       />
       

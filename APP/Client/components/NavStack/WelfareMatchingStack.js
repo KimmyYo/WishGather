@@ -2,27 +2,31 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-import WelfareHomePage from '../../screens/Welfare/WelfareHomePage';
-
-
+import WelfareMatchingPage from '../../screens/Welfare/WelfareMatchingPage';
+import WelfareMatchingDetails from '../../screens/Welfare/WelfareMatchingDetails';
 
 
 const Stack = createNativeStackNavigator();
 
-function WelfareHomeStack(){
+function WelfareMatchingStack(){
   return (
     <Stack.Navigator
-        screenOption = {{ headerShown: false }}
-        initialRouteName='WelfareHomePage'
+        screenOptions = {{ headerShown: false }}
+        initialRouteName='WelfareMatchingPage'
     >
       <Stack.Screen
-        name = 'WelfareHomePage'
-        component = { WelfareHomePage }
+        name = 'WelfareMatchingPage'
+        component = { WelfareMatchingPage }
         options = {{ headerShown: false }}
       />
+      <Stack.Screen 
+        name="WelfareMatchingDetails" 
+        component={WelfareMatchingDetails} 
+        options = {{ headerShown: false }} 
+      /> 
      
     </Stack.Navigator>
   )
 }
 
-export default WelfareHomeStack;
+export default WelfareMatchingStack;

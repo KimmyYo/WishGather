@@ -48,8 +48,8 @@ const styles = StyleSheet.create({
     gap: 8
   },
   textBox: {
-    width: screenWidth * 0.8,
-    height: 60,
+    width: screenWidth * 0.75,
+    height: 50,
     backgroundColor: '#FFFAF4',
     borderColor: 'gray',
     borderWidth: 1,

@@ -22,7 +22,7 @@ function TempleTab(){
         activeColor="#FF7A00"
         inactiveColor="#CCCCCC"
         shifting={true}
-        barStyle={{ backgroundColor: 'white', opacity: '0.8'}}
+        barStyle={{ backgroundColor: '#fff', opacity: '0.8'}}
       >
           <Tab.Screen   
             name="主頁" 

@@ -1,20 +1,18 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
-import { Ionicons } from '@expo/vector-icons'; // Import Ionicons or other icon set
+import { Ionicons } from '@expo/vector-icons';
+import { useNavigation } from '@react-navigation/native';
 
-class DrawlotsModal extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      randomNumber: null,
-      message: '',
-      showGif: false,
-      showResult: false,
-    };
+const DrawlotsModal = () => {
+  const navigation = useNavigation();
+  const [randomNumber, setRandomNumber] = useState(null);
+  const [message, setMessage] = useState('');
+  const [showGif, setShowGif] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
-    // 定義六十甲子籤文
-    this.stickMessages = [
-      '第六十籤 癸亥 屬水利冬　宜其北方 月出光輝本清吉， 浮雲總是蔽陰色， 戶內用心再作福， 當官分理便有益。',
+  // 定義六十甲子籤文
+  const stickMessages = [
+'第六十籤 癸亥 屬水利冬　宜其北方 月出光輝本清吉， 浮雲總是蔽陰色， 戶內用心再作福， 當官分理便有益。',
       '第五十九籤 癸酉 屬金利秋　宜其西方 有心作福莫遲疑， 求名清吉正當時， 此事必能成會合， 財寶自然喜相隨。',
       '第五十八籤 癸未 屬木利春　宜其東方 蛇身意欲變成龍， 只恐命內運未通， 久病且作寬心坐， 言語雖多不可從。',
       '第五十七籤 癸已 屬水利冬　宜其北方 勸君把定心莫虛， 前途清吉得運時， 到底中間無大事， 又遇神仙守安居。',
@@ -74,64 +72,68 @@ class DrawlotsModal extends React.Component {
       '第三籤 甲辰 屬火利夏 宜其南方 勸君把定心莫虛， 天註姻緣自有餘， 和合重重常吉慶， 時來終遇得明珠。',
       '第二籤 甲寅 屬水利冬 宜其北方 於今此景正當時， 看看欲吐百花魁， 若能遇得春色到， 一洒清吉脫塵埃，',
       '第一籤 甲子 屬金利秋　宜其西方 日出便見風雲散， 光明清靜照世間， 一向前途通大道， 萬事清吉保平安。',
-    ];
-  }
-
-  handlePress = () => {
-    this.setState({ showGif: true });
+  ];
+  
+  const handlePress = () => {
+    setShowGif(true);
     
     setTimeout(() => {
-      const randomIndex = Math.floor(Math.random() * this.stickMessages.length);
-      this.setState({
-        showGif: false,
-        randomNumber: 60 - randomIndex,
-        message: this.stickMessages[randomIndex],
-        showResult: true,
-      });
+      const randomIndex = Math.floor(Math.random() * stickMessages.length);
+      setRandomNumber(60 - randomIndex);
+      setMessage(stickMessages[randomIndex]);
+      setShowGif(false);
+      setShowResult(true);
     }, 2000);
   };
+  
 
-  render() {
-    const { randomNumber, message, showGif, showResult } = this.state;
+  const handleInterpret = () => {
+    setShowResult(false);  // 先淡出結果框
+    setTimeout(() => {
+      navigation.navigate('Chatbox', {
+        lotNumber: randomNumber,
+        lotMessage: message,
+        fromDrawLot: true
+      });
+    }, 100);  // 短暫延遲確保動畫順暢
+  };
+  
+  
+  return (
+    <View style={styles.container}>
+      {!showGif && !showResult && (
+        <View>
+           <Image
+              source={require('../../assets/drawlots.png')}
+              style={styles.image}
+            />
+          <TouchableOpacity style={styles.button} onPress={handlePress}>
+            <Text style={styles.buttonText}>開始求籤</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+      {showGif && (
+        <Image
+          source={require('../../assets/drawlots.gif')}
+          style={styles.gif}
+        />
+      )}
+      {showResult && (
+        <View style={styles.resultContainer}>
+          <Text style={styles.resultText}>籤號: 第{randomNumber}籤</Text>
+          <Text style={styles.messageText}>{message}</Text>
 
-    return (
-      <View style={styles.container}>
-        {!showGif && !showResult && (
-          <View>
-             <Image
-                source={require('../../assets/drawlots.png')} // 本地圖片加載
-                style={styles.image}
-              />
-            <TouchableOpacity style={styles.button} onPress={this.handlePress}>
-              <Text style={styles.buttonText}>開始求籤</Text>
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity style={styles.interpretButton} onPress={handleInterpret}>
+              <Text style={styles.interpretButtonText}>前往解籤</Text>
+              <Ionicons name="arrow-forward" size={20} color="#fff" style={styles.icon} />
             </TouchableOpacity>
           </View>
-          
-        )}
-        {showGif && (
-          <Image
-            source={require('../../assets/drawlots.gif')} // Replace with the actual path to your GIF
-            style={styles.gif}
-          />
-        )}
-        {showResult && (
-          <View style={styles.resultContainer}>
-            <Text style={styles.resultText}>籤號: 第{randomNumber}籤</Text>
-            <Text style={styles.messageText}>{message}</Text>
-
-            <View style={styles.buttonContainer}>
-              <TouchableOpacity style={styles.interpretButton}>
-                <Text style={styles.interpretButtonText}>前往解籤</Text>
-                <Ionicons name="arrow-forward" size={20} color="#fff" style={styles.icon} />
-              </TouchableOpacity>
-            </View>
-          </View>
-          
-        )}
-      </View>
-    );
-  }
-}
+        </View>
+      )}
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
