@@ -1,78 +1,135 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
+
+const { height } = Dimensions.get('window');
 
 export default function Home({ navigation }) {
   return (
-    
-    <LinearGradient
-      colors={['#EA7500', '#FFFAF4']}
-      style={styles.container}
-    >
-
-      {/* Logo 決定再放上去*/}
-      <View style={styles.iconLayout}>
+    <LinearGradient colors={['#e08371', '#FF9C33']} style={styles.background}>
+      {/* Logo 置中 */}
+      <View style={styles.logoContainer}>
         <Image
-        style={styles.icon}
-        contentFit="cover"
-        source={require("../../assets/new_logo.png")}
+          style={styles.icon}
+          contentFit="cover"
+          source={require('../../assets/new_logo.png')}
         />
       </View>
-      
-      {/* App Name */}
-      {/* <Text style={styles.title}>WishGather</Text> */}
 
-      {/* Sign In/Up Button */}
-      <Pressable style={styles.button} onPress={() => navigation.navigate('SignIn')}>
-        <Text style={styles.buttonText}>登入</Text>
-      </Pressable>
-      <Pressable style={styles.button} onPress={() => navigation.navigate('SignUp')}>
-        <Text style={styles.buttonText}>註冊</Text>
-      </Pressable>
+      {/* CurvedContainer 貼合螢幕底部 */}
+      <View style={styles.curvedContainer}>
+        {/* <Text style={styles.title}>WishGather</Text> */}
+
+        <Text style={styles.description}>「 科技連結信仰, 讓供品化為愛的循環 」</Text>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignIn')}>
+            <Text style={styles.buttonText}>登入</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate('SignUp')}>
+            <Text style={styles.loginButtonText}>註冊</Text>
+          </TouchableOpacity>
+        </View>
+        
+      </View>
     </LinearGradient>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between', 
     alignItems: 'center',
-    padding: 16,
   },
-  iconLayout: {
-    height: 280,
-    width: 280,
-    marginBottom:25,
+  logoContainer: {
+    width: "100%",
+    height: "50%",
+    justifyContent:'flex-end',
+    alignItems: 'center',
   },
-  icon:{
-    width:"100%",
-    height:"100%"
+  icon: {
+    width: 300,
+    height: 300 ,
+    // borderWidth:1,
+    bottom:-40
+  },
+  curvedContainer: {
+    backgroundColor: 'white',
+    width: '100%',
+    height:'35%',
+    borderTopLeftRadius: 80,
+    borderTopRightRadius: 80,
+    paddingVertical: 80,
+    paddingHorizontal: 20,
+    alignItems: 'center',
 
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: -4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   title: {
-    fontSize: 40,
-    fontWeight:"500",
-    fontFamily:"Roboto",
-    marginBottom: 40,
+    fontSize: 32,
+    fontWeight: 'bold',
+    color: '#FF7F00',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 18,
+    color: '#4F4F4F',
+    textAlign: 'center',
+    fontWeight:'bold',
+    marginBottom: 50,
+  },
+  buttonContainer: {
+    flexDirection: 'row',    
+    justifyContent: 'center', 
+    alignItems: 'center',     
+    gap: 20,                
   },
   button: {
-    backgroundColor: 'orange',
+    backgroundColor: '#FF9C33',
     padding: 15,
-    borderRadius: 15,
-    marginVertical: 15,
-    width: '80%',
+    borderRadius: 25,
+    width: 170,  
     alignItems: 'center',
-    //Shadow
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 4,
+    },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 4,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight:"500"
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  loginButton: {
+    backgroundColor: '#333',
+    padding: 15,
+    borderRadius: 25,
+    width: 170,  
+    alignItems: 'center',
+
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+  },
+  loginButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
   },
 });

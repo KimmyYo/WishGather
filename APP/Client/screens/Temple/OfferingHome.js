@@ -1,5 +1,5 @@
 import React, {useState, useEffect, useRef, useContext } from 'react';
-import {Button, Text, SafeAreaView, View, StyleSheet, TouchableOpacity} from 'react-native';
+import {Button, Text, SafeAreaView, View, StyleSheet, TouchableOpacity, Dimensions} from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import AntDesign from '@expo/vector-icons/AntDesign';
@@ -13,6 +13,7 @@ import { UserContext } from '../../components/Context/UserContext';
 
 const API = require('../config/DBconfig')
 
+const { width } = Dimensions.get('window');
 // TempleHomePage Screen 
 
 function OfferingHome() {
@@ -60,29 +61,43 @@ function OfferingHome() {
 			<View style={styles.btncontainer}><GoBackButton1 /></View>
 			<PageTitle iconName="outbox" titleText="功能選擇" />
 			
-			<TouchableOpacity
-				style={styles.button}
-				onPress={() => navigation.navigate('OfferingUpload')}
-			>
-				<AntDesign name="caretright" size={24} color="white" />
-				<Text style={styles.buttonText}>供品上架</Text>
-			</TouchableOpacity>
+			<View style={styles.listContainer}>
+				<View style={styles.listItem}>
+					<TouchableOpacity 
+						style={styles.itemContent}
+						onPress={() => navigation.navigate('OfferingUpload')}
+					>
+						<AntDesign name="cloudupload" size={24} color="#FF9C33" />
+						<Text style={styles.itemText}>供品上架</Text>
+						<AntDesign name="right" size={20} color="#ccc" style={styles.chevron} />
+					</TouchableOpacity>
+					<View style={styles.orangeBar} />
+				</View>
 
-			<TouchableOpacity
-				style={styles.button}
-				onPress={() => navigation.navigate('OfferingUpload')}
-			>
-				<AntDesign name="caretright" size={24} color="white" />
-				<Text style={styles.buttonText}>供品編輯</Text>
-			</TouchableOpacity>
-			
-			<TouchableOpacity
-				style={styles.button}
-				onPress={() => navigation.navigate('FoodScanningPage')}
-			>
-				<AntDesign name="caretright" size={24} color="white" />
-				<Text style={styles.buttonText}>供品辨識</Text>
-			</TouchableOpacity>
+				<View style={styles.listItem}>
+					<TouchableOpacity 
+						style={styles.itemContent}
+						onPress={() => navigation.navigate('OfferingEditPage')}
+					>
+						<AntDesign name="edit" size={24} color="#FF9C33" />
+						<Text style={styles.itemText}>供品編輯</Text>
+						<AntDesign name="right" size={20} color="#ccc" style={styles.chevron} />
+					</TouchableOpacity>
+					<View style={styles.orangeBar} />
+				</View>
+
+				<View style={styles.listItem}>
+					<TouchableOpacity 
+						style={styles.itemContent}
+						onPress={() => navigation.navigate('FoodScanningPage')}
+					>
+						<AntDesign name="scan1" size={24} color="#FF9C33" />
+						<Text style={styles.itemText}>供品辨識</Text>
+						<AntDesign name="right" size={20} color="#ccc" style={styles.chevron} />
+					</TouchableOpacity>
+					<View style={styles.orangeBar} />
+				</View>
+            </View>
         </View>
       </SafeAreaProvider>
     )
@@ -99,34 +114,49 @@ const styles = StyleSheet.create({
 		flexDirection: 'column',
 		justifyContent: 'flex-start',
 		alignItems: 'center',
-		gap: 30,  
 		backgroundColor: '#f2f2f2',
 	},
-	button: {
-		width: '90%',
-		height: 180,
-		paddingVertical: 15,
-		backgroundColor: '#FFA500',  // 橘色背景
-		borderRadius: 10,
+	listContainer: {
+		flex: 1,
+		width: width,
+		paddingHorizontal: 15,
+		borderTopWidth: 1,
+		borderTopColor: '#ccc',
+	},
+	listItem: {
+		width: width,
+		height: 100,
+		position: 'relative',
+		borderBottomWidth: 1,
+		borderBottomColor: '#ccc',
+		justifyContent:'center',
+	},
+	itemContent: {
+		height: '100%',
+		flexDirection: 'row',
 		alignItems: 'center',
-		justifyContent: 'center',
-		flexDirection:'row',
-
-		// Shadow for iOS
-		shadowColor: '#000',
-		shadowOffset: { width: 0, height: 2 },
-		shadowOpacity: 0.25,
-		shadowRadius: 3.84,
-	
-		// Elevation for Android
-		elevation: 5,
+		paddingHorizontal: 30,  
+		gap:10,
 	},
-	buttonText: {
-		color: 'white',
-		fontSize: 25,
+	itemText: {
+		flex: 1,  
+		fontSize: 24,
+		color: '#4F4F4F',
 		fontWeight: 'bold',
-		marginLeft: 10,
 	},
+	orangeBar: {
+		position: 'absolute',
+		left: 0,
+		width: 4,
+		height: 80,
+		backgroundColor: '#FF9C33',
+		borderRadius: 2,
+		
+	},
+	chevron: {
+		marginLeft: 'auto', 
+	},
+	
 })
 
 export default OfferingHome;
