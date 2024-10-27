@@ -60,7 +60,7 @@ function TempleHomePage() {
         <View style={[styles.container,
           // Paddings to handle safe area
           {paddingTop: insets.top + 30,
-          paddingBottom: insets.bottom,
+          paddingBottom: insets.bottom + 80,
           paddingLeft: insets.left + 30,
           paddingRight: insets.right + 30} 
         ]}>  
@@ -85,7 +85,7 @@ function TempleHomePage() {
 					contentContainerStyle={styles.scrollView}
 				/>
 			</View>
-			<View style={styles.sectionContainer}>
+			<View style={[styles.sectionContainer, styles.matchingContainer]}>
 				<SectionHeader title="媒合訊息" onPress={() => navigation.navigate('MatchingPage')}/>
 				<FlatList
 						data={matchData}
@@ -107,6 +107,10 @@ const styles = StyleSheet.create({
 	scrollView: {
 		paddingLeft: 16,
 	},
+	matchingContainer: {
+		paddingBottom: 250
+	}
+
 })
 
 export default TempleHomePage;

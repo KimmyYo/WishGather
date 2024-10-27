@@ -50,6 +50,10 @@ function EditTempleInfoPage(){
             .then((response) => {
                 if (response.status === 200) {
                     setAlertDialogVisible(true);
+
+                    setTimeout(() => {
+                        setAlertDialogVisible(false);
+                    })
                 }
             })
             .catch((error) => {

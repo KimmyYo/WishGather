@@ -25,7 +25,6 @@ function MatchingPage() {
                 paddingLeft: insets.left ,
                 paddingRight: insets.right
             }}>
-                
                 <GoBackButton1  destination={'TempleHomePage'}/>
                 <PageTitle iconName={'group'} titleText="媒合"></PageTitle>
                
@@ -49,8 +48,9 @@ function MatchingPage() {
                         borderRadius: 1
                     },
             }}>
-                <Tab.Screen name="訊息" component={MatchingStatus} />
                 <Tab.Screen name="機構" component={MatchingInstitution} />
+                <Tab.Screen name="訊息" component={MatchingStatus} />
+                
             </Tab.Navigator>            
         </SafeAreaProvider>
     )

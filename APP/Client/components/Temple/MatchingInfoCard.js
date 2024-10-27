@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 function MatchingInfoCard({ infos }) {
-    const { DELIVER_STATUS } = infos;
+    const navigation = useNavigation();
 
     let statusTextStyle;
-    switch (DELIVER_STATUS) {
-        case "A": 
+    switch (infos.BOOKED_STATUS) {
+        case "未確認": 
             statusTextStyle = styles.waitStatus;
             break;
-        case "B":
+        case "已確認":
             statusTextStyle = styles.confirmedStatus;
             break;
         default:
@@ -25,10 +26,10 @@ function MatchingInfoCard({ infos }) {
             <View style={styles.bottomContainer}>
                 <View style={styles.infoContainer}>
                     <Text style={styles.title}>{ infos.NAME }</Text>
-                    <Text style={styles.defaultStatus}>媒合狀態 : <Text style={statusTextStyle}>{ DELIVER_STATUS }</Text></Text>
+                    <Text style={styles.defaultStatus}>媒合狀態 : <Text style={statusTextStyle}>{ infos.BOOKED_STATUS }</Text></Text>
                 </View>
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('TempleDeliverPage', { data: infos})}>
                         <Text style={styles.btnText}>查看內容</Text>
                     </TouchableOpacity>
                 </View>
