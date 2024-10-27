@@ -131,50 +131,58 @@ const ScanResult = ({ route }) => {
                 </View>
                 
 
-                <ScrollView contentContainerStyle={styles.container}>
+                <ScrollView style={styles.scrollContainer}>
+
                     <Text style={styles.title}>{profile ? profile.name || 'User' : 'Loading...'} 您的照片中共有:</Text>
-                    {items.map((item, index) => (
-                        <View key={index} style={styles.itemContainer}>
-                            <Text style={styles.itemName}>{item.name}</Text>
-                            <TextInput
-                                style={styles.input}
-                                value={item.count.toString()}
-                                onChangeText={(newCount) => handleCountChange(index, newCount)}
-                                keyboardType="numeric"
-                            />
-                            <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteItem(index)}>
-                                <Text style={styles.buttonText}>刪除</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ))}
-                    <View style={styles.itemContainer}>
-                        <TextInput
-                            style={[styles.input, { width: '50%', textAlign: 'center'}]}
-                            value={newItemName}
-                            onChangeText={setNewItemName}
-                            placeholder="新品項名稱"
-                        />
-                        <TextInput
-                            style={styles.input}
-                            value={newItemCount}
-                            onChangeText={setNewItemCount}
-                            placeholder="數量"
-                            keyboardType="numeric"
-                        />
-                        <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
-                            <Text style={styles.buttonText}>新增</Text>
-                        </TouchableOpacity>
+
+                    {/* scan result */}
+                    <View style={styles.listContainer}>
+                        {items.map((item, index) => (
+                            <View key={index} style={styles.itemContainer}>
+                                <TextInput
+                                    style={styles.nameInput}
+                                    value={item.name}
+                                    onChangeText={(newName) => {
+                                        const updatedItems = [...items];
+                                        updatedItems[index].name = newName;
+                                        setItems(updatedItems);
+                                    }}
+                                />
+                                <TextInput
+                                    style={styles.countInput}
+                                    value={item.count.toString()}
+                                    onChangeText={(newCount) => handleCountChange(index, newCount)}
+                                    keyboardType="numeric"
+                                />
+                                <TouchableOpacity style={styles.deleteButton} onPress={() => handleDeleteItem(index)}>
+                                    <Text style={styles.buttonText}>刪除</Text>
+                                </TouchableOpacity>
+                            </View>
+                        ))}
                     </View>
-                    
 
-                    {/* <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
-                        <Text style={styles.buttonText}>送出</Text>
-                    </TouchableOpacity>*/}
+                        <View style={styles.divider} />
 
-                    {/* <TouchableOpacity style={styles.rescanButton} onPress={() => navigation.navigate("FoodScanningPage")}>
-                        <Text style={styles.buttonText}>重新掃描?</Text>
-                    </TouchableOpacity> */}
-
+                        <View style={styles.addItemSection}>
+                            <View style={styles.itemContainer}>
+                                <TextInput
+                                    style={styles.nameInput}
+                                    value={newItemName}
+                                    onChangeText={setNewItemName}
+                                    placeholder="新品項名稱"
+                                />
+                                <TextInput
+                                    style={styles.countInput}
+                                    value={newItemCount}
+                                    onChangeText={setNewItemCount}
+                                    placeholder="數量"
+                                    keyboardType="numeric"
+                                />
+                                <TouchableOpacity style={styles.addButton} onPress={handleAddItem}>
+                                    <Text style={styles.buttonText}>新增</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                 </ScrollView>
 
                 <View style={styles.buttonContainer}>
@@ -195,73 +203,89 @@ const styles = StyleSheet.create({
         // borderWidth:1,
     },
     title: {
-        color:'#4F4F4F',
         fontSize: 20,
-        fontWeight: 'bold',
-        marginBottom: 20,
+        fontWeight: '500',
+        color: '#4F4F4F',
+        marginVertical: 20,
+        textAlign: 'center',
     },
-    itemContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 10,
+    scrollContainer: {
+        flex: 1,
+        paddingHorizontal: 20,
+    },
+    listContainer: {
         width: '100%',
     },
-    itemName: {
-        fontSize: 18,
-        textAlign:'center',
-        flex: 1,
+    itemContainer: {
+        width: width*0.9,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingVertical: 5,
     },
-    input: {
+    itemName: {
+        flex: 2,
+        fontSize: 16,
+        color: '#4F4F4F',
+    },
+    countInput: {
+        flex: 1,
+        height: 40,
         borderWidth: 1,
         borderColor: '#ccc',
         borderRadius: 5,
-        padding: 8,
-        width: 100,
+        paddingHorizontal: 10,
+        marginHorizontal: 10,
         textAlign: 'center',
-        marginRight: 10,
     },
-    itemContainer: {
-        flexDirection: 'row',
-        justifyContent:'space-between',
-        alignItems: 'center',
-        marginTop: 20,
-        marginBottom: 20,
-        width: '100%',
+    nameInput: {
+        flex: 2,
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        marginRight: 10,
+        textAlign:'center',
+    },
+    deleteButton: {
+        backgroundColor: '#FF4444',
+        paddingHorizontal: 15,
+        paddingVertical: 8,
+        borderRadius: 5,
     },
     addButton: {
         backgroundColor: '#4CAF50',
-        padding: 10,
+        paddingHorizontal: 15,
+        paddingVertical: 8,
         borderRadius: 5,
-        marginLeft: 10,
     },
-    deleteButton: {
-        backgroundColor: '#f44336',
-        padding: 10,
-        borderRadius: 5,
-        marginLeft: 10,
+    buttonText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '500',
     },
-    submitButton: {
-        backgroundColor: 'orange',
-        padding: 15,
-        borderRadius: 5,
-        alignItems: 'center',
-        width: '80%',
+    divider: {
+        height: 1,
+        backgroundColor: '#ccc',
+        marginVertical: 20,
     },
-    rescanButton: {
-        backgroundColor: 'orange',
-        padding: 15,
-        paddingTop:20,
-        marginTop:20,
-        borderRadius: 5,
-        alignItems: 'center',
-        width: '100%',
+    addItemSection: {
+        marginBottom: 20,
     },
+    sectionTitle: {
+        fontSize: 16,
+        color: '#4F4F4F',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+   
     buttonContainer: {
         width: width,
         justifyContent: "center",
         alignItems: 'center',
         position: 'absolute',
-        bottom: 25,
+        bottom: 0,
     },
     buttonText: {
         color: 'white',

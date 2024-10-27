@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { StyleSheet, View, TextInput, TouchableOpacity, Text, SafeAreaView, Alert ,Pressable} from 'react-native';
+import { StyleSheet, View, TextInput, TouchableOpacity, Text, SafeAreaView, Image ,KeyboardAvoidingView, Platform} from 'react-native';
 
 //儲存空間用來放token(類似php session那種感覺)
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,11 +9,11 @@ import axios from 'axios';
 
 import { StatusBar } from 'expo-status-bar';
 import { LinearGradient } from 'expo-linear-gradient';
-import Checkbox from 'expo-checkbox';
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 
 import TempleTab from '../../components/NavTab/TempleTab';
 import NavigateBack from '../../components/Utility/NavigateBack';
+import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import TextInputBox from '../../components/Utility/TextInputBox';
 import { useAlertDialog } from '../../components/CustomHook/useAlertDialog';
 import { useValidation } from '../../components/CustomHook/useValidateInput';
@@ -158,60 +158,77 @@ function SignIn() {
 
   return (
     <SafeAreaProvider>
+      <KeyboardAvoidingView 
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{flex: 1}}
+      >
       <LinearGradient
-        colors={['#EA7500', '#FFFAF4']}
+        colors={['#e08371', '#FF9C33']}
         style={styles.container}
       >
         <View style={styles.btncontainer}>
           <NavigateBack />
         </View>
-        
-        <Text style={{ color: "#4F4F4F", fontSize: 35, marginBottom: 10, fontWeight: '500'}}>登入</Text>
-        <Text style={{ color: "#4F4F4F", fontSize: 25, fontFamily:"Roboto", marginBottom: 50}}>Login</Text>
 
-        <TextInputBox
-            inputType='email'
-            placeholder="輸入電子郵件"
-            textValue={email}
-            onChangeText={(text) => {
-              setEmail(text);
-              validateUserEmail(text);
-            }}
-            validState={!userEmailError}
-            invalidInput={userEmailError || ''}
-        />
-        <TextInputBox
-          inputType='password'
-          placeholder="設定密碼"
-          textValue={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            validateUserPassword(text);
-          }}
-          validState={!userPasswordError}
-          invalidInput={userPasswordError || ''}
-        />
-
-      {/* <View style={styles.rememberme}>
-          <Checkbox
-            style={styles.checkbox}
-            value={isChecked}
-            onValueChange={setChecked}
-            color={isChecked ? '#FFA500' : undefined}
+        <View style={styles.logoContainer}>
+          <Image
+            style={styles.icon}
+            contentFit="cover"
+            source={require('../../assets/new_logo.png')}
           />
-          <Text style={styles.paragraph}>記住我</Text>
-      </View> */}
+        </View>
+        
+        
+        <View style={styles.curvedContainer}>
 
-      <Pressable style={styles.button} onPress={handleSignIn}>
-          <Text style={styles.buttonText}>登入</Text>
-      </Pressable>
+          
+          <Text style={{ width:'100%', textAlign:'center',color: "#4F4F4F", fontSize: 35, marginBottom: 30, fontWeight: '500'}}>登入</Text>
+          {/* <Text style={{ color: "#4F4F4F", fontSize: 25, fontFamily:"Roboto", marginBottom: 50}}>Login</Text> */}
+  
 
-      <Pressable style={styles.button} onPress={() => navigation.navigate("SignUp")}>
-          <Text style={styles.buttonText}>前往註冊</Text>
-      </Pressable>
-      
+          <TextInputBox
+                inputType='email'
+                placeholder="輸入電子郵件"
+                textValue={email}
+                onChangeText={(text) => {
+                  setEmail(text);
+                  validateUserEmail(text);
+                }}
+                validState={!userEmailError}
+                invalidInput={userEmailError || ''}
+            />
+            <TextInputBox
+              inputType='password'
+              placeholder="設定密碼"
+              textValue={password}
+              onChangeText={(text) => {
+                setPassword(text);
+                validateUserPassword(text);
+              }}
+              validState={!userPasswordError}
+              invalidInput={userPasswordError || ''}
+            />
+            <View style={styles.buttonContainer}>
+                <TouchableOpacity style={styles.button} onPress={handleSignIn}>
+                  <Text style={styles.buttonText}>登入</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.loginButton} onPress={() => navigation.navigate("SignUp")}>
+                  <Text style={styles.loginButtonText}>前往註冊</Text>
+                </TouchableOpacity>
+            </View>
+
+          {/* <Pressable style={styles.button} onPress={handleSignIn}>
+              <Text style={styles.buttonText}>登入</Text>
+          </Pressable>
+
+          <Pressable style={styles.button} onPress={() => navigation.navigate("SignUp")}>
+              <Text style={styles.buttonText}>前往註冊</Text>
+          </Pressable> */}
+        </View>
       {renderAlertDialog()}
       </LinearGradient>
+      </KeyboardAvoidingView>
     </SafeAreaProvider>
   );
 };
@@ -220,59 +237,95 @@ function SignIn() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    justifyContent: 'space-between', 
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#F5F5F5',
+  },
+  logoContainer: {
+    width: "100%",
+    height: "50%",
+    justifyContent:'flex-end',
+    alignItems: 'center',
+  },
+  icon: {
+    width: 300,
+    height: 300 ,
+    // borderWidth:1,
+    bottom:-40
   },
   btncontainer:{
     position: 'absolute',
     top: 60,
+    zIndex:999,
   },
-  input: {
-    width: '90%',
-    height: 50,
-    backgroundColor: "#FFFAF4",
-    borderColor: 'gray',
-    borderWidth: 1,
-    borderRadius: 15,
-    marginBottom: 15,
-    paddingHorizontal: 10,
-  },
-  rememberme: {
-    flexDirection: 'row',
+  curvedContainer: {
+    backgroundColor: 'white',
+    width: '100%',
+    height:'50%',
+    borderTopLeftRadius: 80,
+    borderTopRightRadius: 80,
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+    justifyContent:'flex-start',
     alignItems: 'center',
+    paddingBottom: Platform.OS === "ios" ? 20 : 0,
+
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: -4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
-  paragraph: {
-    fontSize: 18,
-  },
-  checkbox: {
-    margin: 8,
+
+  buttonContainer: {
+    flexDirection: 'row',    
+    justifyContent: 'center', 
+    alignItems: 'center',     
+    gap: 20,
+    marginTop: 30,                
   },
   button: {
-    width: '35%',
-    height: 50,
-    backgroundColor: '#FFA500',
-    justifyContent: 'center',
+    backgroundColor: '#FF9C33',
+    padding: 15,
+    borderRadius: 25,
+    width: 170,  
     alignItems: 'center',
-    borderRadius: 20,
-    marginVertical: 15,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 4,
+    },
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-    elevation: 5,
+    shadowRadius: 4,
   },
   buttonText: {
-    color: '#FCFCFC',
-    fontSize: 18, 
-    fontWeight:'500'
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
   },
-  debugContainer: {
-    marginTop: 20,
-    padding: 10,
-    backgroundColor: '#f0f0f0',
+  loginButton: {
+    backgroundColor: '#333',
+    padding: 15,
+    borderRadius: 25,
+    width: 170,  
+    alignItems: 'center',
+
+    shadowColor: "#000",
+    shadowOffset: {
+        width: 0,
+        height: 4,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
+  loginButtonText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+  },
+
 });
 
 export default SignIn;
