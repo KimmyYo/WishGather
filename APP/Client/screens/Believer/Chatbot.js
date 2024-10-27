@@ -21,6 +21,7 @@ const WishGatherChatbot = ({ route, navigation }) => {
   const [currentLot, setCurrentLot] = useState(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const [isBotProcessing, setIsBotProcessing] = useState(false);
 
   const handleScrollBeginDrag = () => {
     setIsUserScrolling(true);
@@ -51,10 +52,10 @@ const WishGatherChatbot = ({ route, navigation }) => {
           setTimeout(() => {
             scrollToBottom();
           }, 300);
+        }
       }
-    }
     );
-
+ 
     return () => {
       keyboardDidShowListener.remove();
       keyboardDidHideListener.remove();
@@ -63,50 +64,60 @@ const WishGatherChatbot = ({ route, navigation }) => {
   const scrollToBottom = () => {
     if (!isUserScrolling && scrollViewRef.current) {
       setTimeout(() => {
-        scrollViewRef.current.scrollToEnd({ 
+        scrollViewRef.current.scrollToEnd({
           animated: true,
-          duration: 500 // 增加動畫持續時間
+          duration: 500, // 增加動畫持續時間
         });
       }, 100);
     }
   };
 
-
   const formatMessage = (text) => {
     if (!text) return null;
-    
-    const lines = text.split('\n');
-    
+
+    const lines = text.split("\n");
+
     return lines.map((line, index) => {
       // 處理標題 (###)
-      if (line.startsWith('###')) {
+      if (line.startsWith("###")) {
         return (
           <Text key={index} style={styles.titleText}>
-            {line.replace('###', '').trim()}
+            {line.replace("###", "").trim()}
           </Text>
         );
       }
-      
+
       // 處理重點提示 (⭐️)
-      if (line.startsWith('⭐️')) {
+      if (line.startsWith("⭐️")) {
         return (
           <Text key={index} style={styles.highlightText}>
             {line.trim()}
           </Text>
         );
       }
-  
+
       // 處理解籤中的引文（用「」包圍的文字）
-      if (line.includes('「') && line.includes('」')) {
+      if (line.includes("「") && line.includes("」")) {
         // 將行分成引文和非引文部分
         const parts = line.split(/([「」])/);
         return (
           <Text key={index} style={styles.botMessage}>
             {parts.map((part, partIndex) => {
-              if (part === '「' || part === '」') {
-                return <Text key={partIndex} style={styles.quotationMark}>{part}</Text>;
-              } else if (parts[partIndex - 1] === '「' && parts[partIndex + 1] === '」') {
-                return <Text key={partIndex} style={styles.quoteText}>{part}</Text>;
+              if (part === "「" || part === "」") {
+                return (
+                  <Text key={partIndex} style={styles.quotationMark}>
+                    {part}
+                  </Text>
+                );
+              } else if (
+                parts[partIndex - 1] === "「" &&
+                parts[partIndex + 1] === "」"
+              ) {
+                return (
+                  <Text key={partIndex} style={styles.quoteText}>
+                    {part}
+                  </Text>
+                );
               } else {
                 return <Text key={partIndex}>{part}</Text>;
               }
@@ -114,7 +125,7 @@ const WishGatherChatbot = ({ route, navigation }) => {
           </Text>
         );
       }
-  
+
       // 一般文本
       return (
         <Text key={index} style={styles.botMessage}>
@@ -139,7 +150,7 @@ const WishGatherChatbot = ({ route, navigation }) => {
         setCurrentLot(matchedLot);
         setMessages([
           { type: "bot", text: `歡迎來解籤！您抽到的是：${matchedLot.number}` },
-          
+
           { type: "bot", text: `籤詩內容: ${matchedLot.content}` },
           {
             type: "bot",
@@ -159,15 +170,13 @@ const WishGatherChatbot = ({ route, navigation }) => {
 
   const addMessage = (content, type) => {
     setMessages((prevMessages) => [...prevMessages, { type, text: content }]);
-    
+
     setTimeout(() => {
       if (!isUserScrolling) {
         scrollViewRef.current?.scrollToEnd({ animated: true });
       }
     }, 100);
   };
-
-
 
   // 新增問題改寫函數
   const rewriteQuery = async (userQuery) => {
@@ -213,7 +222,7 @@ const WishGatherChatbot = ({ route, navigation }) => {
           model: "gpt-3.5-turbo",
           messages: [
             { role: "system", content: "你是專業的籤詩解讀與問題分析專家。" },
-            { role: "user", content: rewritePrompt }
+            { role: "user", content: rewritePrompt },
           ],
           temperature: 0.7,
           max_tokens: 500,
@@ -235,8 +244,6 @@ const WishGatherChatbot = ({ route, navigation }) => {
 
   const handleSend = async () => {
     if (userMessage.trim() === "") return;
-
-
 
     addMessage(userMessage, "user");
     setUserMessage("");
@@ -339,8 +346,6 @@ ${rewrittenQueryAnalysis}
 
 無需著急，花開有時，您的良緣一定會在最好的時機綻放！`;
 
-
-
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
@@ -360,14 +365,14 @@ ${rewrittenQueryAnalysis}
         }
       );
 
-      const botMessage = response.data.choices[0]?.message?.content || 
+      const botMessage =
+        response.data.choices[0]?.message?.content ||
         "對不起，我目前無法處理您的請求。";
       addMessage(botMessage, "bot");
 
       requestAnimationFrame(() => {
         scrollToBottom();
       });
-
     } catch (error) {
       console.error("Error details:", error.response?.data || error.message);
       const errorMessage = error.response
@@ -385,38 +390,38 @@ ${rewrittenQueryAnalysis}
       </View>
 
       <ScrollView
-          ref={scrollViewRef}
-          style={styles.messagesArea}
-          contentContainerStyle={styles.messagesContent}
-          onScrollBeginDrag={handleScrollBeginDrag}
-          onScrollEndDrag={handleScrollEndDrag}
-          onContentSizeChange={scrollToBottom}
-          onLayout={scrollToBottom}
-          keyboardShouldPersistTaps="handled"
-          maintainVisibleContentPosition={{
-            minIndexForVisible: 0,
-            autoscrollToTopThreshold: 10,
-          }}
+        ref={scrollViewRef}
+        style={styles.messagesArea}
+        contentContainerStyle={styles.messagesContent}
+        onScrollBeginDrag={handleScrollBeginDrag}
+        onScrollEndDrag={handleScrollEndDrag}
+        onContentSizeChange={scrollToBottom}
+        onLayout={scrollToBottom}
+        keyboardShouldPersistTaps="handled"
+        maintainVisibleContentPosition={{
+          minIndexForVisible: 0,
+          autoscrollToTopThreshold: 10,
+        }}
       >
-{messages.map((msg, index) => (
-  <View
-    key={index}
-    style={[
-      styles.messageBox,
-      msg.type === "user"
-        ? styles.userMessageBox
-        : styles.botMessageBox,
-    ]}
-  >
-    {msg.type === "user" ? (
-      <Text style={styles.userMessage}>{msg.text}</Text>
-    ) : (
-      <View style={styles.botMessageContent}>
-        {formatMessage(msg.text)}
-      </View>
-    )}
-  </View>
-))}
+        {messages.map((msg, index) => (
+          <View
+            key={index}
+            style={[
+              styles.messageBox,
+              msg.type === "user"
+                ? styles.userMessageBox
+                : styles.botMessageBox,
+            ]}
+          >
+            {msg.type === "user" ? (
+              <Text style={styles.userMessage}>{msg.text}</Text>
+            ) : (
+              <View style={styles.botMessageContent}>
+                {formatMessage(msg.text)}
+              </View>
+            )}
+          </View>
+        ))}
       </ScrollView>
 
       <KeyboardAvoidingView
@@ -494,12 +499,12 @@ const styles = StyleSheet.create({
     lineHeight: 20,
   },
   typingArea: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     padding: 10,
-    backgroundColor: '#f5f5f5',
+    backgroundColor: "#f5f5f5",
   },
-  typingAreaContainer: { borderTopWidth: 1, borderColor: '#ddd' },
+  typingAreaContainer: { borderTopWidth: 1, borderColor: "#ddd" },
   input: {
     flex: 1,
     borderColor: "#ccc",
@@ -523,33 +528,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-
   titleText: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
     marginVertical: 5,
   },
 
   highlightText: {
-    fontWeight: 'bold',
-    color: '#000',
+    fontWeight: "bold",
+    color: "#000",
   },
 
   quoteText: {
-    fontSize: 16,                // 引文稍微大一點
-    fontWeight: 'bold',         // 加粗
-    color: '#871844',           // 使用主題色
-    backgroundColor: '#F8E8E8', // 淡色背景突出顯示
-    paddingHorizontal: 4,       // 左右間距
-    borderRadius: 4,            // 圓角
+    fontSize: 16, // 引文稍微大一點
+    fontWeight: "bold", // 加粗
+    color: "#871844", // 使用主題色
+    backgroundColor: "#F8E8E8", // 淡色背景突出顯示
+    paddingHorizontal: 4, // 左右間距
+    borderRadius: 4, // 圓角
   },
 
   quotationMark: {
-    color: '#871844',           // 引號也使用主題色
-    fontWeight: 'bold',
+    color: "#871844", // 引號也使用主題色
+    fontWeight: "bold",
   },
-
 });
 
 export default WishGatherChatbot;
