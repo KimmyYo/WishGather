@@ -35,20 +35,24 @@ const WishGatherChatbot = ({ route, navigation }) => {
       "keyboardDidShow",
       () => {
         setKeyboardVisible(true);
-        // 添加延遲確保內容已更新
-        setTimeout(() => {
-          scrollToBottom();
-        }, 100);
+        if (!isUserScrolling) {
+          // 增加延遲時間，確保內容完全更新
+          setTimeout(() => {
+            scrollToBottom();
+          }, 300); // 延長延遲時間
+        }
       }
     );
     const keyboardDidHideListener = Keyboard.addListener(
       "keyboardDidHide",
       () => {
         setKeyboardVisible(false);
-        setTimeout(() => {
-          scrollToBottom();
-        }, 100);
+        if (!isUserScrolling) {
+          setTimeout(() => {
+            scrollToBottom();
+          }, 300);
       }
+    }
     );
 
     return () => {
@@ -56,6 +60,16 @@ const WishGatherChatbot = ({ route, navigation }) => {
       keyboardDidHideListener.remove();
     };
   }, [isUserScrolling]);
+  const scrollToBottom = () => {
+    if (!isUserScrolling && scrollViewRef.current) {
+      setTimeout(() => {
+        scrollViewRef.current.scrollToEnd({ 
+          animated: true,
+          duration: 500 // 增加動畫持續時間
+        });
+      }, 100);
+    }
+  };
 
 
   const formatMessage = (text) => {
@@ -153,11 +167,7 @@ const WishGatherChatbot = ({ route, navigation }) => {
     }, 100);
   };
 
-  const scrollToBottom = () => {
-    if (!isUserScrolling && scrollViewRef.current) {
-      scrollViewRef.current.scrollToEnd({ animated: true });
-    }
-  };
+
 
   // 新增問題改寫函數
   const rewriteQuery = async (userQuery) => {
@@ -476,9 +486,11 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     color: "rgb(237,225,217)",
+    lineHeight: 20,
   },
   botMessage: {
     color: "#000",
+    lineHeight: 20,
   },
   typingArea: {
     flexDirection: "row",
