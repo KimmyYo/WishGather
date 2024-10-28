@@ -22,7 +22,7 @@ function MatchingStatus() {
     
     useEffect(() => {
         // Replace with your API endpoint
-        axios.get(`${API}/match/${userId}`)
+        axios.get(`${API}/matchData?tID=${userId}`)
             .then(response => {
                 setMatchData(response.data);
                 setLoading(false);
@@ -47,7 +47,7 @@ function MatchingStatus() {
                     <FlatList
                         data={matchData}
                         renderItem={({ item }) => <MatchingInfoCard infos={item}/>}
-                        keyExtractor={(item) => item.matchingID}
+                        keyExtractor={(item) => item.wID}
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}
                     />

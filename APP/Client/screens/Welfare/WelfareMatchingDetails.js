@@ -11,7 +11,7 @@ export default function MatchingDetailsPage({ route, navigation }) {
 
   // Fetch donation details from the database using DonationID
   useEffect(() => {
-    axios.get(`${API}/donations/${DonationID}`)
+    axios.get(`${API}/matchDetails/${DonationID}`)
       .then(response => {
         setDonationDetails(response.data);
       })

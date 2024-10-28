@@ -48,9 +48,8 @@ function MatchingPage() {
                         borderRadius: 1
                     },
             }}>
-                <Tab.Screen name="機構" component={MatchingInstitution} />
                 <Tab.Screen name="訊息" component={MatchingStatus} />
-                
+                <Tab.Screen name="機構" component={MatchingInstitution} />
             </Tab.Navigator>            
         </SafeAreaProvider>
     )

@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
+const API = require('../../screens/config/DBconfig');
 function MatchingInfoCard({ infos }) {
     const navigation = useNavigation();
 
@@ -20,12 +21,12 @@ function MatchingInfoCard({ infos }) {
     return (
         <View style={styles.cardContainer}>
             <View style={styles.logoContainer}>
-                <Image style={styles.image} source={require("../../assets/welfare-sample.png")}/>
+            <Image style={styles.image} source={{ uri: infos.WELFARE_IMAGE ? `${API}${infos.WELFARE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }} />
             </View>
 
             <View style={styles.bottomContainer}>
                 <View style={styles.infoContainer}>
-                    <Text style={styles.title}>{ infos.NAME }</Text>
+                    <Text style={styles.title}>{ infos.WELFARE_NAME }</Text>
                     <Text style={styles.defaultStatus}>媒合狀態 : <Text style={statusTextStyle}>{ infos.BOOKED_STATUS }</Text></Text>
                 </View>
                 <View style={styles.buttonContainer}>
@@ -62,6 +63,7 @@ const styles = StyleSheet.create({
     image: {
         width: 90,
         height: 90,
+        borderRadius: '50%'
     },
     bottomContainer: {
         width: "90%",

@@ -42,7 +42,7 @@ function renderRightActions (progress, dragAnimatedValue, showDialog, goEdit, ev
 }
 
 
-function EventCard ({ event, size }){
+function EventCard ({ event, temple, size }){
     const navigation = useNavigation();
     const [dialogVisible, setDialogVisible] = useState(false);
     const swipeableRef = useRef(null);
@@ -50,7 +50,7 @@ function EventCard ({ event, size }){
     const { showAlertDialog, renderAlertDialog } = useAlertDialog();
     const API = require('../../screens/config/DBconfig');
     const deleteEventApi = `${API}/delete_event`;
-
+    
     const showDialog = () => {
       setDialogVisible(true);
     };
@@ -86,10 +86,14 @@ function EventCard ({ event, size }){
         return (
                 <View style={[styles.card, getCardSize(size)]}>
                    <Image 
-                        source={event.IMAGE ? { uri: event.IMAGE } : require('../../assets/adaptive-icon.png')}
+                        source={{ uri: `${API}/uploads/profilePictures/default.jpg` }}
                         style={styles.image} 
                     />
-                    <Text style={styles.overlayText}>{convertSolarDateToLunarDate(event.DATE)}</Text>
+                   <View style={styles.overlay}>
+                        <Text style={styles.overlayText}>
+                            {convertSolarDateToLunarDate(event.DATE)}
+                        </Text>
+                    </View>
                 </View>
         );
     }
@@ -101,10 +105,14 @@ function EventCard ({ event, size }){
                     ref={swipeableRef}>
                     <View style={[styles.card, getCardSize(size)]}>
                         <Image 
-                            source={event.IMAGE ? { uri: event.IMAGE } : require('../../assets/adaptive-icon.png')}
-                            style={styles.image} 
+                            source={{ uri: temple.IMAGE ? `${API}${temple.IMAGE}` : `${API}/uploads/profilePictures/default.jpg` }}
+                            style={[styles.image, styles.squareImage]} 
                         />
-                        <Text style={styles.overlayText}>{event.NAME} {convertSolarDateToLunarDate(event.DATE)}</Text>
+                        <View style={styles.overlay}>
+                            <Text style={styles.overlayText}>
+                                {convertSolarDateToLunarDate(event.DATE)}
+                            </Text>
+                        </View>
                     </View>
                 </Swipeable>  
                 <Dialog.Container visible={dialogVisible}>
@@ -152,14 +160,27 @@ const styles = StyleSheet.create({
     image: {
         width: '100%',
         height: '100%',
+        borderRadius: '8px'
+    },
+    squareImage: {
+        borderRadius: 0
+    },
+    overlay: {
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: 'rgba(128, 128, 128, 0.5)', // Gray with 50% opacity
+        borderRadius: 8,
+        justifyContent: 'center', // Center items vertically
+        alignItems: 'center', // Center items horizontally
     },
     overlayText: {
-        position: 'absolute',
-        bottom: 10,
-        left: 15,
-        color: '#4F4F4F',
-        fontSize: 18,
+        color: '#FFFFFF',
+        fontSize: 40,
         fontWeight: 'bold',
+        textAlign: 'center', // Center text horizontally
     },
     swipedRow: {
         flexDirection: 'row',
