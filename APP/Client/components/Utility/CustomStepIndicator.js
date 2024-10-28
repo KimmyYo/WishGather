@@ -37,7 +37,7 @@ const CustomStepIndicator = ({ steps, currentPosition }) => {
               styles.label,
               {
                 color: index <= currentPosition ? '#fe7013' : '#999999',
-                fontWeight: index <= currentPosition ? 'bold' : '400'
+                fontWeight: index <= currentPosition ? 'bold' : 400
               }
             ]}
           >

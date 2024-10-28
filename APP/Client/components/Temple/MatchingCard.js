@@ -1,8 +1,12 @@
-import { React, useState, useEffect } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions } from 'react-native';
-const API = require('../../screens/config/DBconfig');
+import { React, useState, useEffect, useContext } from 'react';
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { UserContext } from '../../components/Context/UserContext';
 
+const API = require('../../screens/config/DBconfig');
 const MatchingCard = ({infos}) => {
+    const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
     const [statusText, setStatusText] = useState("");
     const [statusColor, setStatusColor] = useState(styles.defaultStatus);
     useEffect(() => {
@@ -23,20 +27,22 @@ const MatchingCard = ({infos}) => {
                 setStatusColor(styles.defaultStatus);
         }
     }, [infos.MATCHING_STATUS]);
-
+    
     return (
-        <View style={styles.card}>
-            <View style={styles.imageContainer}>
-                <Image style={styles.image} source={{ uri: infos.IMAGE ? `${API}${infos.IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }} />
+        <TouchableOpacity onPress={() => navigation.navigate('TempleDeliverPage', { data: infos})}>
+            <View style={styles.card}>
+                <View style={styles.imageContainer}>
+                    <Image style={styles.image} source={{ uri: infos.WELFARE_IMAGE ? `${API}${infos.WELFARE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }} />
+                </View>
+                <View style={styles.middleTitle}>
+                    <Text style={styles.titlePrimary}>{infos.WELFARE_NAME}</Text>
+                    <Text style={styles.titleSecond}>{infos.WELFARE_ADDRESS}</Text>
+                </View>
+                <View style={styles.state}>
+                    <Text style={statusColor}>{statusText}</Text>
+                </View>
             </View>
-            <View style={styles.middleTitle}>
-                <Text style={styles.titlePrimary}>{infos.NAME}</Text>
-                <Text style={styles.titleSecond}>{infos.ADDRESS}</Text>
-            </View>
-            <View style={styles.state}>
-                <Text style={statusColor}>{statusText}</Text>
-            </View>
-        </View>
+        </TouchableOpacity>
     );
 };
 

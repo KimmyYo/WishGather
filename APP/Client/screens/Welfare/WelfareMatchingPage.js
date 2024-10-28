@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Dimensions, FlatList, TouchableOpacity, Image, Modal } from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
+import { UserContext } from '../../components/Context/UserContext';
+import WelfareMatchingCard from '../../components/Welfare/WelfareMatchingCard';
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
@@ -13,25 +15,21 @@ const { width, height } = Dimensions.get('window');
 function WelfareMatchingPage() {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation();
+  const { userId } = useContext(UserContext);
   const [error, setError] = useState(null);
-  const [temples, setTemples] = useState([]);
+  const [templeMatch, setTempleMatch] = useState([]);
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedTemple, setSelectedTemple] = useState(null); // To track the selected temple
+  // const [selectedTemple, setSelectedTemple] = useState(null); // To track the selected temple
 
   // Fetch temple data from API using async/await
-  const fetchTemples = async () => {
-    try {
-      const response = await axios.get(`${API}/temples`);
-      setTemples(response.data);
-    } catch (error) {
-      console.error(error); // Log the error for debugging
-      setError(error);
-    }
+  const fetchTempleMatchData = async () => {
+      const matchResponse = await axios.get(`${API}/matchData?wID=${userId}&BOOKED_STATUS=A`);
+      setTempleMatch(matchResponse.data);
   };
 
   useEffect(() => {
-    fetchTemples();
+    fetchTempleMatchData();
   }, []);
   
 
@@ -42,20 +40,18 @@ function WelfareMatchingPage() {
 
   const handleConfirmPress = (temple) => {
     // Open confirmation modal and set the selected temple
-    setSelectedTemple(temple);
     setModalVisible(true);
   };
   const renderTempleItem = ({ item }) => (
     <View style={styles.itemContainer}>
       {/* Temple Image */}
       <Image
-
-        source={{ uri: `${API}${item.IMAGE}` }} // Assuming your API provides an image URL
+        source={{ uri: `${API}${item.TEMPLE_IMAGE}` }} // Assuming your API provides an image URL
         style={styles.templeImage}
       />
       <Text style={styles.templeInfo}>
-        <Text style={styles.templeName}>{item.NAME}{'\n'}</Text>
-        <Text style={styles.templeEvent}>{item.ADDRESS}</Text>
+        <Text style={styles.templeName}>{item.TEMPLE_NAME}{'\n'}</Text>
+        <Text style={styles.templeEvent}>{item.TEMPLE_ADDRESS}</Text>
       </Text>
 
       {/* Buttons */}
@@ -84,7 +80,7 @@ function WelfareMatchingPage() {
     <SafeAreaProvider>
       <View style={{
           flex: 1,
-          backgroundColor: 'white',
+          backgroundColor: '#f2f2f2',
           justifyContent: 'start',
     
           // Paddings to handle safe area
@@ -99,53 +95,24 @@ function WelfareMatchingPage() {
 
       <View style={styles.donateListContainer}>
         <FlatList
-          data={temples}
-          renderItem={renderTempleItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
+              data={templeMatch}
+              renderItem={({ item }) => <WelfareMatchingCard data={item} />}
+              keyExtractor={(item) => item.tID}
+          />
       </View>
 
       {error && <Text style={styles.errorText}>{error.message}</Text>}
-
-      {/* Confirmation Modal */}
-      <Modal
-        animationType="fade"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalText}>確認媒合 {selectedTemple?.NAME} ?</Text>
-
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={styles.modalButton}
-                onPress={() => setModalVisible(false)}
-              >
-                <Text style={styles.modalButtonText}>取消</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={styles.modalButtonConfirm}
-                onPress={() => {
-                  setModalVisible(false);
-                  // Perform the confirmation action here
-                }}
-              >
-                <Text style={styles.modalButtonText}>確認</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-      </Modal>
 
     </View>
     </SafeAreaProvider>
   );
 }
+let screenHeight = Dimensions.get("window").height;
+let screenWidth = Dimensions.get("window").width;
 
 const styles = StyleSheet.create({
   container: {
+    width: screenWidth * 0.9,
     flex: 1,
     backgroundColor: '#f2f2f2',
   },
