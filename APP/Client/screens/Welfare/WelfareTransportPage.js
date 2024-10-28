@@ -61,11 +61,6 @@ function WelfareTransportPage() {
                 renderItem={({ item }) => <WelfareDeliverCard data={item} />}
                 keyExtractor={(item) => item.tID}
             />
-            <FlatList
-                data={deliverData}
-                renderItem={({ item }) => <WelfareDeliverCard data={item} />}
-                keyExtractor={(item) => item.tID}
-            />
         </View>
       {/* {error && <Text style={styles.errorText}>{error.message}</Text>} */}
       </View>

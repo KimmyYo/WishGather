@@ -2,34 +2,31 @@ import { React, useState, useEffect, useContext } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../../components/Context/UserContext';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const API = require('../../screens/config/DBconfig');
 const MatchingCard = ({infos}) => {
     const navigation = useNavigation();
     const { userId } = useContext(UserContext);
-    const [statusText, setStatusText] = useState("");
+    const [statusText, setStatusText] = useState('');
     const [statusColor, setStatusColor] = useState(styles.defaultStatus);
-    useEffect(() => {
-        switch (infos.DELIVER_STATUS) {
-            case '未配送':
-                setStatusText('未送出');
-                setStatusColor(styles.notDelivered);
-                break;
-            case '配送中': 
-                setStatusText('配送中');
-                setStatusColor(styles.inTransit);
-                break;
-            case '已送達':
-                setStatusText('已送達');
-                setStatusColor(styles.delivered);
-                break;
-            default: 
-                setStatusColor(styles.defaultStatus);
+
+    const renderStatusIcon = () => {
+        if(infos.BOOKED_STATUS == '未預定'){
+            return (<MaterialCommunityIcons name="account-clock" color={"#aaaaaa"} size={26} />)
         }
-    }, [infos.MATCHING_STATUS]);
-    
+        else if(infos.CONFIRMED_STATUS == '未確認'){
+            return (<MaterialCommunityIcons name="account-alert" color={"#FF681E"} size={26} />)
+        }
+        else if(infos.DELIVER_STATUS == '配送中'){
+            return (<MaterialCommunityIcons name="truck-delivery" color={"#FF980E"} size={26} />)
+        }
+        else if(infos.DELIVER_STATUS == "已送達"){
+            return (<MaterialCommunityIcons name="account-check" color={"#069C56"} size={26} />)
+        }
+    }
     return (
-        <TouchableOpacity onPress={() => navigation.navigate('TempleDeliverPage', { data: infos})}>
+        <TouchableOpacity onPress={() => navigation.navigate('TempleDeliverPage', { welfare: infos})}>
             <View style={styles.card}>
                 <View style={styles.imageContainer}>
                     <Image style={styles.image} source={{ uri: infos.WELFARE_IMAGE ? `${API}${infos.WELFARE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }} />
@@ -39,7 +36,7 @@ const MatchingCard = ({infos}) => {
                     <Text style={styles.titleSecond}>{infos.WELFARE_ADDRESS}</Text>
                 </View>
                 <View style={styles.state}>
-                    <Text style={statusColor}>{statusText}</Text>
+                    {renderStatusIcon()}
                 </View>
             </View>
         </TouchableOpacity>
@@ -83,10 +80,10 @@ const styles = StyleSheet.create({
     },
     state:{
         width: 0.2 * screenWidth,
-        paddingTop: 20,
+        paddingBottom: 10,
         flexDirection: 'row',
-        justifyContent: 'end',
-        alignItems:'end'
+        justifyContent: 'center',
+        alignSelf: 'flex-end'
     },
     delivered: {
         color: 'green'

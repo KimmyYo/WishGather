@@ -11,7 +11,7 @@ const CustomStepIndicator = ({ steps, currentPosition }) => {
             <View 
               style={[
                 styles.connector,
-                {backgroundColor: index <= currentPosition ? '#fe7013' : '#aaaaaa'}
+                {backgroundColor: index <= currentPosition ? '#fe7013' : '#404040'}
               ]} 
             />
           )}
@@ -22,7 +22,7 @@ const CustomStepIndicator = ({ steps, currentPosition }) => {
               styles.circle,
               {
                 backgroundColor: index <= currentPosition ? '#fe7013' : '#ffffff',
-                borderColor: index <= currentPosition ? '#fe7013' : '#aaaaaa'
+                borderColor: index <= currentPosition ? '#fe7013' : '#404040'
               }
             ]}
           >
@@ -36,8 +36,8 @@ const CustomStepIndicator = ({ steps, currentPosition }) => {
             style={[
               styles.label,
               {
-                color: index <= currentPosition ? '#fe7013' : '#999999',
-                fontWeight: index <= currentPosition ? 'bold' : 400
+                color: index <= currentPosition ? '#fa5b05' : '#ffffff',
+                fontWeight: index <= currentPosition ? 'bold' : 500
               }
             ]}
           >
@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   },
   connector: {
     height: 2,
-    backgroundColor: '#aaaaaa',
+    backgroundColor: '#404040',
     position: 'absolute',
     top: 12,
     left: '-40%',

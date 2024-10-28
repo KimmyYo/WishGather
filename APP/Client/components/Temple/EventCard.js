@@ -84,17 +84,17 @@ function EventCard ({ event, temple, size }){
 
     if(size == "square"){
         return (
-                <View style={[styles.card, getCardSize(size)]}>
-                   <Image 
-                        source={{ uri: `${API}/uploads/profilePictures/default.jpg` }}
-                        style={styles.image} 
-                    />
-                   <View style={styles.overlay}>
-                        <Text style={styles.overlayText}>
-                            {convertSolarDateToLunarDate(event.DATE)}
-                        </Text>
-                    </View>
+            <View style={[styles.card, getCardSize(size), { borderRadius: 9 }]}>
+                <Image 
+                    source={{ uri: temple.IMAGE ? `${API}${temple.IMAGE}` : `${API}/uploads/profilePictures/default.jpg` }}
+                    style={styles.image} 
+                />
+                <View style={[styles.overlay, { borderRadius: 9 }]}>
+                    <Text style={styles.overlayText}>
+                        {convertSolarDateToLunarDate(event.DATE)}  {/* Wrapped in Text */}
+                    </Text>
                 </View>
+            </View>
         );
     }
     if(size == "rectangle"){
@@ -107,6 +107,7 @@ function EventCard ({ event, temple, size }){
                         <Image 
                             source={{ uri: temple.IMAGE ? `${API}${temple.IMAGE}` : `${API}/uploads/profilePictures/default.jpg` }}
                             style={[styles.image, styles.squareImage]} 
+                            resizeMode="cover"
                         />
                         <View style={styles.overlay}>
                             <Text style={styles.overlayText}>
@@ -135,16 +136,16 @@ let screenWidth = Dimensions.get("window").width;
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-            backgroundColor: "#fff",
+            // backgroundColor: "#fff",
             alignItems: "center",
             justifyContent: "center",
     },
     card: {
         flex: 1,
         position: 'relative',
-        borderWidth: '1px',
-        borderColor: '#e6e6e6',
-        backgroundColor: 'white',
+        // borderWidth: '1px',
+        borderColor: 'none',
+        // backgroundColor: 'white',
     },
     squareSize: {
         width: 120,
@@ -171,8 +172,8 @@ const styles = StyleSheet.create({
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(128, 128, 128, 0.5)', // Gray with 50% opacity
-        borderRadius: 8,
+        backgroundColor: 'rgba(128, 128, 128, 0.2)', // Gray with 50% opacity
+        // borderRadius: 8,
         justifyContent: 'center', // Center items vertically
         alignItems: 'center', // Center items horizontally
     },
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        borderRadius: 10,
+        // borderRadius: 10,
     },
     behindButton: {
         justifyContent: 'center',
