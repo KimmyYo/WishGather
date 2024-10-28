@@ -1,220 +1,338 @@
-import React, { useState, useEffect, useContext, useRef } from 'react';
-import { Text, View, StyleSheet, ScrollView, Animated, Image, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
-import { DataTable } from 'react-native-paper';
-import PageTitle from '../../components/Utility/PageTitle';
-import GoBackButton1 from '../../components/Utility/GoBackButton1';
-import CustomStepIndicator from '../../components/Utility/CustomStepIndicator';
+import GoBackButton1 from '../../components/Utility/GoBackButton1'; // Assuming you have a GoBackButton component
+import PageTitle from '../../components/Utility/PageTitle'; // Assuming you have a PageTitle component
+import CloseButton from '../../components/Utility/CloseButton';
+import MapView, { Marker } from 'react-native-maps';
+import { useNavigation } from '@react-navigation/core';
 import axios from 'axios';
-import { LinearGradient } from 'expo-linear-gradient';
+import { DataTable } from 'react-native-paper';
 import { UserContext } from '../../components/Context/UserContext';
 
+const { width, height } = Dimensions.get('window');
 const API = require('../config/DBconfig');
 
 function TempleDeliverPage({ route }) {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
     const { userId } = useContext(UserContext);
-    const { data } = route.params;
-    const [statusData, setStatusData] = useState([]);
+    const { welfare } = route.params;
+    const [showItems, setShowItems] = useState(false);
     const [deliverList, setDeliverList] = useState([]);
-    const [isScrolled, setIsScrolled] = useState(0);
-    const [currentPosition, setCurrentPosition] = useState(0);
+    const [isBooked, setIsBooked] = useState();
+    const mapRef = useRef(null);
 
     useEffect(() => {
-        const fetchStatusData = async () => {
-            try {
-                let response = await axios.get(`${API}/readCode/0003`);
-                const codes = response.data.code;
-                setStatusData(codes);
-                
-                if (codes && codes.length > 0) {
-                    const statusIndex = codes.findIndex(
-                        item => item.CODE_NAME === data.DELIVER_STATUS
-                    );
-                    setCurrentPosition(statusIndex !== -1 ? statusIndex : 0);
-                }
-                
-                response = await axios.get(`${API}/matchDetails/${data.wID}/${userId}`);
-                setDeliverList(response.data.matchingDetails);
-                setIsScrolled(0);
-            } catch (err) {
-                console.error(err);
-            }
-        };
-
-        fetchStatusData();
-    }, [data.DELIVER_STATUS]);
-
-    const renderCurrentStatus = () => {
-        if (statusData.length === 0) return null;
-        const currentStatus = statusData[currentPosition];
-        return (
-            <View 
-                style={
-                    styles.statusInfoCard}
-            >
-                <Text style={styles.statusTitle}>運送狀態：{currentStatus.CODE_NAME}</Text>
-                <Text style={styles.statusBody}>媒合編號：{data.matchingID || '未知'}</Text>
-                <Text style={styles.statusBody}>狀態說明：{
-                    data.BOOKED_STATUS === 'A' ? `您的媒合尚未被${data.WELFARE_NAME}確認` : `您還未將此捐贈訂單送出`
-                }</Text>
-            </View>
-        );
+      const fetchDeliverData = async () => {
+        try {
+          const deliveryResponse = await axios.get(
+            `${API}/matchDetails/${welfare.wID}/${userId}`
+          );
+          const matchingDetails = deliveryResponse.data.matchingDetails;
+          setDeliverList(matchingDetails);
+          if(deliverList.length){
+            if(deliverList[0].CONFIRMED_STATUS != '已確認' && deliverList[0].BOOKED_STATUS == '已預定')
+              setIsBooked(1);
+          }
+        } catch (error) {
+          console.error('Error fetching delivery data:', error);
+        }
+      };
+      fetchDeliverData();
+    }, [welfare.wID, userId]); // Add dependencies here if needed, or [] if it only needs to run once
+  // calculate d  istance (mock current user)
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+      const R = 6371; // Radius of the earth in km
+      const dLat = deg2rad(lat2 - lat1);
+      const dLon = deg2rad(lon2 - lon1);
+      const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      const d = R * c; // Distance in km
+      return Math.round(d * 100) / 100;
     };
+    const deg2rad = (deg) => {
+      return deg * (Math.PI/180);
+    };
+    const renderDuration = () => {
+      if(deliverList.length){
+        return (
+          <Text style={styles.detailValue}>
+          {deliverList[0].CONFIRMED_STATUS === '已確認' && deliverList[0].DELIVER_STATUS !== '已送達'
+          ? `${welfare.UPD_DATETIME.substring(0, 10)} ~ ${new Date(new Date(welfare.UPD_DATETIME).setDate(new Date(welfare.UPD_DATETIME).getDate() + 7)).toISOString().substring(0, 10)}`
+          : '未配送'}
+          </Text>
+        )
+      } 
+  }
+    const handleConfirmDonate = () => {
+      Alert.alert(
+          `捐贈給${welfare.WELFARE_NAME}?`,
+          `確認後請將包裹寄出`,
+          [
+              { text: '取消', style: 'cancel' }, 
+              { text: '確認', onPress: () => updateConfirmStatus() }
+          ]
+      );
+  };
 
+  const updateConfirmStatus = async () => {
+
+    try {
+        const response = await axios.put(`${API}/updateStatus`, { 
+            CONFIRMED_STATUS: 'B',
+            matchingID: welfare.matchingID.split(',')
+        });
+        // Show success alert only after successful request
+        if (response.data.success) {
+            Alert.alert('出貨成功');
+            setTimeout(() => {
+              navigation.navigate('TempleHomePage', { refresh: true })
+            }, 100)
+           
+        }
+        else{
+          Alert.alert('出貨失敗', '請稍後再試');
+        }
+
+    } catch (error) {
+        Alert.alert('出貨失敗', '請稍後再試');
+    }
+};
+
+
+    // Tab scenes
+    const renderTableTab = () => (
+        <ScrollView style={styles.deliverListContainer}>
+            <DataTable>
+                <DataTable.Header style={styles.tableHeader}>
+                    <DataTable.Title textStyle={styles.tableTitle}>名稱</DataTable.Title>
+                    <DataTable.Title numeric textStyle={styles.tableTitle}>種類</DataTable.Title>
+                    <DataTable.Title numeric textStyle={styles.tableTitle}>數量</DataTable.Title>
+                </DataTable.Header>
+                {deliverList.map((item, index) => (
+                    <DataTable.Row key={index}>
+                        <DataTable.Cell>{item.CHN}</DataTable.Cell>
+                        <DataTable.Cell numeric>{item.TYPE}</DataTable.Cell>
+                        <DataTable.Cell numeric>{item.AMOUNT}</DataTable.Cell>
+                    </DataTable.Row>
+                ))}
+            </DataTable>
+        </ScrollView>
+    );
 
     return (
-        <SafeAreaProvider>
-            <View style={{ flex: 1, paddingTop: insets.top, paddingBottom: insets.bottom }}>
-                <GoBackButton1 destination={'TempleHomePage'} />
-                <PageTitle titleText="媒合運送" style={styles.pageTitle}/>
-                <View style={[styles.templeInfoCard, styles.circle]}>
-                    <Text style={styles.templeName}>{data.WELFARE_NAME || 'No Name Available'}</Text>
-                    <Text>{data.WELFARE_ADDRESS || 'No Address Available'}</Text>
-                    <CustomStepIndicator
-                        steps={statusData.map(item => item.CODE_NAME)}
-                        currentPosition={currentPosition}
-                    />
-                      {/* Overlay renderCurrentStatus here */}
-                    <View style={styles.statusOverlay}>
-                        {renderCurrentStatus()}
-                    </View>
-                </View>
-                <ScrollView 
-                    style={styles.deliverListContainer}
-                    scrollEventThrottle={600}
-                >
-                    <Text style={styles.orderTitle}>訂單詳情資訊</Text>
-                    <DataTable>
-                        <DataTable.Header style={styles.tableHeader}>
-                            <DataTable.Title textStyle={styles.tableTitle}>名稱</DataTable.Title>
-                            <DataTable.Title numeric textStyle={styles.tableTitle}>種類</DataTable.Title>
-                            <DataTable.Title numeric textStyle={styles.tableTitle}>數量</DataTable.Title>
-                        </DataTable.Header>
-                        {deliverList.map((item, index) => (
-                            <DataTable.Row key={index}>
-                                <DataTable.Cell>{item.CHN}</DataTable.Cell>
-                                <DataTable.Cell numeric>{item.TYPE}</DataTable.Cell>
-                                <DataTable.Cell numeric>{item.AMOUNT}</DataTable.Cell>
-                            </DataTable.Row>
-                        ))}
-                    </DataTable>
-                </ScrollView>
+      <SafeAreaProvider>
+      <View style={{
+        flex: 1,
+        backgroundColor: '#f2f2f2',
+        paddingTop: insets.top - 100,
+        paddingBottom: insets.bottom - 2000,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
+      }}>
+
+        {/* Top Section */}
+        <View style={styles.headerSection}>
+          <Image source={{ uri: welfare.WELFARE_IMAGE ? `${API}${welfare.WELFARE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }}
+                 style={styles.templeImage} />
+          <Text style={styles.templeName}>{welfare.WELFARE_NAME}</Text>
+          <Text style={styles.templeAddress}>{welfare.WELFARE_ADDRESS}</Text>
+        </View>
+
+        <View style={styles.btncontainer}>
+          <CloseButton />
+        </View>
+
+        {/* Details Section */}
+        <View style={styles.detailsContainer}>
+          {isBooked == '已預定' ? (
+            <View  style={styles.detailRow}>
+              <Text style={styles.detailLabel}>社福已確認，請確認出貨</Text>
+              <TouchableOpacity
+                style={[styles.viewItemsButton, { backgroundColor: '#D3212C' }]}
+                onPress={handleConfirmDonate}
+              >
+                <Text style={{ color: 'white', fontWeight: 'bold'}}>確認</Text>
+              </TouchableOpacity>
             </View>
-        </SafeAreaProvider>
+          ): (
+            <View  style={styles.detailRow}>
+              <Text style={styles.detailLabel}>{welfare.DELIVER_STATUS}...</Text>
+            </View>
+          )}
+          <Text style={styles.detailRow}>   
+            <Text style={styles.detailLabel}>配送期限 : </Text>
+            {renderDuration()}
+          </Text>
+
+          <Text style={styles.detailRow}>
+            <Text style={styles.detailLabel}>配送距離 : </Text>
+            <Text style={styles.detailValue}>{
+                  calculateDistance(welfare.TEMPLE_COORDINATE.y, welfare.TEMPLE_COORDINATE.x,
+                                    welfare.WELFARE_COORDINATE.y, welfare.WELFARE_COORDINATE.x)}公里
+            </Text>
+          </Text>
+
+          <View style={styles.detailRow}>
+            <Text style={styles.detailLabel}>配送物資 : </Text>
+            <TouchableOpacity
+              style={styles.viewItemsButton}
+              onPress={() => setShowItems(!showItems)}
+            >
+              <Text style={styles.viewItemsText}>{showItems ? '收起' : '查看'}</Text>
+            </TouchableOpacity>
+          </View>
+          
+
+          {/* Conditionally render items list */}
+          {showItems && (
+            renderTableTab()
+          )}
+
+          {/* Map Section */}
+          <MapView
+            ref={mapRef}
+            style={{ width: '100%', height: '55%', alignItems: 'center' }}
+            initialRegion={{
+              latitude: welfare.WELFARE_COORDINATE ? welfare.WELFARE_COORDINATE.y : 22.623, // Default latitude
+              longitude: welfare.WELFARE_COORDINATE ? welfare.WELFARE_COORDINATE.x : 120.293, // Default longitude
+              latitudeDelta: 0.1,
+              longitudeDelta: 0.1,
+            }}
+          >
+            {/* 添加當前寺廟的 Marker */}
+            {welfare.WELFARE_COORDINATE && (
+              <Marker
+                coordinate={welfare.WELFARE_COORDINATE}
+                title={welfare.WELFARE_NAME}
+                pinColor="orange"
+              />
+            )}
+            <Marker
+                key={welfare.tID}
+                coordinate={{
+                  latitude: welfare.WELFARE_COORDINATE.y,
+                  longitude: welfare.WELFARE_COORDINATE.x,
+                }}
+                title={welfare.WELFARE_NAME}
+                pinColor="orange"
+             />
+          </MapView>
+        </View>
+      </View>
+    </SafeAreaProvider>
     );
 }
-const styles = StyleSheet.create({
-    // circle: {
-      statusOverlay: {
-        position: 'absolute',
-        bottom: -30,  // Adjust this value to position as desired
-        width: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-    }, 
-    templeInfoCard: {
-      alignItems: 'center',
-      backgroundColor: '#FFC47C',
-      borderRadius: '1%',
-      padding: 20,
-      paddingBottom: 80,
-      borderTopLeftRadius: 0,
-      borderTopRightRadius: 0,
-      marginBottom: 50,
-      // Shadow for iOS
-      shadowColor: '#000',
-      shadowOffset: {
-          width: 0,
-          height: 2, // Adjust this value to change the vertical shadow position
-      },
-      shadowOpacity: 0.25, // Adjust for more or less opacity
-      shadowRadius: 3.5, // Adjust for more or less blur
-      // Elevation for Android
-      elevation: 5, // Adjust for more or less shadow
-  },
-  
-    templeImage: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        marginBottom: 10,
-    },
-    templeName: {
-        fontSize: 30,
-        fontWeight: 'bold',
-        marginBottom: 5,
-    },
-    templeAddress: {
-        fontSize: 20,
-        color: '#666',
-        marginBottom: 10,
-    },
-    statusInfoCard: {
-        backgroundColor: '#ffffff',
-        padding: 15,
-        borderRadius: 8,
-        marginTop: 10,
-        width: '90%',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-    },
-    statusTitle: {
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    statusBody: {
-        fontSize: 14,
-        color: '#666',
-        marginTop: 5,
-    },
-    deliverListContainer: {
-        padding: 10,
-    },
-    orderTitle: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
-    tableHeader: {
-        backgroundColor: '#6E7DFF',
-    },
-    tableTitle: {
-        color: '#fff',
-        fontSize: 16,
-    },
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-around',
-        margin: 20,
-    },
-    rejectButton: {
-        backgroundColor: '#d9534f',
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-    },
-    confirmButton: {
-        backgroundColor: '#e38c14',
-        borderRadius: 10,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-    },
-    buttonText: {
-        color: '#fff',
-        fontSize: 16,
-        fontWeight: 'bold',
-        textAlign: 'center',
-    },
-    imageContainer: {
-      width: 100,
-      height: 100,
-      marginBottom: 10,
-  },
-});
 
+const styles = StyleSheet.create({
+  headerSection: {
+    height: '40%',
+    backgroundColor: 'orange',
+    opacity: 0.8,
+    borderBottomLeftRadius: 40, 
+    borderBottomRightRadius: 40,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10, // for Android shado
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingTop: 80,
+    paddingBottom: 40,
+    paddingHorizontal: 20,
+  },
+  btncontainer: {
+    position: 'absolute',
+    top: 20,
+    right: 10,
+  },
+  templeImage: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 20,
+  },
+  templeName: {
+    fontSize: 30,
+    fontWeight: 'bold',
+    color: 'white',
+    marginBottom: 10,
+  },
+  templeAddress: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: 'white',
+  },
+  detailsContainer: {
+    backgroundColor: 'white',
+    padding: 20,
+    marginTop: 20, 
+    marginHorizontal: 20,
+    borderRadius: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+  },
+  detailRow: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  detailLabel: {
+    fontSize: 18,
+    color: '#4F4F4F',
+    fontWeight: 'bold',
+  },
+  detailValue: {
+    fontSize: 16,
+    color: '#4F4F4F',
+  },
+  viewItemsButton: {
+    backgroundColor: 'orange',
+    paddingVertical: 5,
+    paddingHorizontal: 15,
+    marginLeft: 8,
+    borderRadius: 5,
+  },
+  viewItemsText: {
+    color: 'white',
+    fontSize: 16,
+    fontWeight: 'bold',
+  },
+  itemsList: {
+    marginTop: 20,
+  },
+  itemRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: 5,
+  },
+  itemName: {
+    fontSize: 16,
+    fontWeight: 'semibold',
+    color: '#333',
+  },
+  itemQuantity: {
+    fontSize: 16,
+    fontWeight: 'semibold',
+    color: '#333',
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    marginTop: 20,
+  },
+  deliverListContainer: {
+  }
+});
 export default TempleDeliverPage;

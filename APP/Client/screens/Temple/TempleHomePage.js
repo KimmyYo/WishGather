@@ -3,6 +3,7 @@ import { Button, Text, SafeAreaView, View, StyleSheet, FlatList, Dimensions, Ref
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialIcons } from '@expo/vector-icons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 
 import SectionHeader from '../../components/Utility/SectionHeader';
@@ -38,8 +39,6 @@ function TempleHomePage() {
             setEventData(eventResponse.data);
             const matchResponse = await axios.get(`${API}/matchData?tID=${userId}`);
             setMatchData(matchResponse.data);
-			console.log(matchData);
-
             setLoading(false);
         } catch (err) {
             setLoading(false); 
@@ -48,9 +47,10 @@ function TempleHomePage() {
     };
 
     const onRefresh = async () => {
-        setRefreshing(true);
-        await fetchData(); // Re-fetch data on refresh
-        setRefreshing(false);
+        // setRefreshing(true);
+        const matchResponse = await axios.get(`${API}/matchData?tID=${userId}`);
+        setMatchData(matchResponse.data);
+        // setRefreshing(false);
     };
 
     useEffect(() => {
@@ -81,6 +81,7 @@ function TempleHomePage() {
                         renderItem={({ item }) => (
                             <EventCard
                                 event={item}
+								temple={templeData}
                                 size="square"
                             />
                         )}
@@ -92,17 +93,37 @@ function TempleHomePage() {
                 </View>
                 <View style={[styles.sectionContainer, styles.matchingContainer]}>
                     <SectionHeader title="媒合訊息" onPress={() => navigation.navigate('MatchingPage')} />
+					<View style={styles.statusIndicatorContainer}>
+						<View style={styles.statusDetail}>
+							<MaterialCommunityIcons name="account-clock" color={"#aaaaaa"} size={20} />
+							<Text style={{ color: "#aaaaaa" }}>未預定</Text>
+						</View>
+						<View style={styles.statusDetail}>	
+							<MaterialCommunityIcons name="account-alert" color={"#FF681E"} size={20} />
+							<Text style={{ color: "#D3212C" }}>未確認</Text>
+						</View>
+						<View style={styles.statusDetail}>
+							<MaterialCommunityIcons name="truck-delivery" color={"#FF980E"} size={20} />
+							<Text style={{ color: "#FF980E" }}>配送中</Text>
+						</View>
+						<View style={styles.statusDetail}>
+							<MaterialCommunityIcons name="account-check" color={"#069C56"} size={20} />
+							<Text style={{ color: "#068c56" }}>已送達</Text>
+						</View>
+					</View>
                     <FlatList
                         data={matchData}
                         renderItem={({ item }) => <MatchingCard infos={item} />}
-                        keyExtractor={(item) => item.wID}
+                        keyExtractor={(item) => item.matchingID}
                         refreshControl={
                             <RefreshControl
                                 refreshing={refreshing}
                                 onRefresh={onRefresh} // Call onRefresh when user pulls down
                             />
                         }
+						contentContainerStyle={{ paddingBottom: 180 }}
                     />
+					
                 </View>
             </View>
         </SafeAreaProvider>
@@ -120,7 +141,20 @@ const styles = StyleSheet.create({
     },
     matchingContainer: {
         paddingBottom: 120
-    }
+    },
+	statusIndicatorContainer: {
+		margin: 6,
+		flexDirection: 'row',
+		width: '100%' ,
+		flexWrap: 'wrap'
+	  }, 
+	  statusDetail: {
+		flexDirection: 'row',
+		gap: 5,
+		justifyContent: 'center',
+		alignItems: 'center',
+		marginRight: 8
+	  },
 })
 
 export default TempleHomePage;

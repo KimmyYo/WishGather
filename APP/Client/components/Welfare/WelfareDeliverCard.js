@@ -6,24 +6,27 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 
 const API = require('../../screens/config/DBconfig');
 function WelfareDeliverCard({data}){
+    const navigation = useNavigation();
     const [deliverStatus, setDeliverStatus] = useState(data.DELIVER_STATUS);
     return (
-        <View style={styles.cardContainer}>
-            <View style={styles.imageContainer}>
-                <Image style={styles.image} source={{ uri: data.TEMPLE_IMAGE ? `${API}${data.TEMPLE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }}/>
-            </View>
-            <View style={styles.infoContainer}>
-                <View style={styles.titlesContainer}>
-                    <Text style={styles.title}>{data.TEMPLE_NAME}</Text>
-                    <Text style={styles.subtitle}>{data.TEMPLE_ADDRESS}</Text>
+        <TouchableOpacity onPress={() => navigation.navigate('TransportDetail', { temple: data})}>
+            <View style={styles.cardContainer}>
+                <View style={styles.imageContainer}>
+                    <Image style={styles.image} source={{ uri: data.TEMPLE_IMAGE ? `${API}${data.TEMPLE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }}/>
+                </View>
+                <View style={styles.infoContainer}>
+                    <View style={styles.titleContainer}>
+                        <Text style={styles.title}>{data.TEMPLE_NAME}</Text>
+                        <Text style={styles.subtitle}>{data.TEMPLE_ADDRESS}</Text>
+                    </View>
+                </View>
+                <View style={styles.statusContainer}>
+                    {deliverStatus == '未配送' && (<MaterialCommunityIcons name="package-variant" color={"#D3212C"} size={26} />)}
+                    {deliverStatus == '配送中' && (<MaterialCommunityIcons name="truck-delivery" color={"#FF980E"} size={26} />)}
+                    {deliverStatus == '已送達' && (<MaterialCommunityIcons name="account-check" color={"#069C56"} size={26} />)}
                 </View>
             </View>
-            <View style={styles.statusContainer}>
-                {deliverStatus == '未配送' && (<MaterialCommunityIcons name="package-variant" color={"#D3212C"} size={26} />)}
-                {deliverStatus == '配送中' && (<MaterialCommunityIcons name="truck-delivery" color={"#FF980E"} size={26} />)}
-                {deliverStatus == '已送達' && (<MaterialCommunityIcons name="account-check" color={"#069C56"} size={26} />)}
-            </View>
-        </View>
+        </TouchableOpacity>
     )
 }
 const screenWidth = Dimensions.get("window").width;

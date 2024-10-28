@@ -1,53 +1,74 @@
-import { React, useState, useEffect } from 'react'
+import { React, useState, useEffect, useContext } from 'react'
 import { View, Text, Button, TouchableOpacity, Dimensions, Image, StyleSheet, Pressable, SafeAreaView } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import InfoTag from './InfoTag';
+import axios from 'axios'
+import { UserContext } from '../../components/Context/UserContext';
+
+
+const API = require('../../screens/config/DBconfig');
 
 function MatchingInstituteCard({ institute }) {
+    const { userId } = useContext(UserContext); // Get userId from context
     const [distance, setDistance] = useState(0);
-
-    // calculate distance (mock current user)
-    const calculateDistance = (templeLat, templeLong, instituteLat, instituteLong) => {
-        const R = 6371e3;
-        const p1 = templeLat * Math.PI / 180;
-        const p2 = instituteLat * Math.PI / 180;
-        const deltaP = p1 - p2;
-        const deltaLong = templeLong - instituteLong;
-        const deltaLambda = (deltaLong * Math.PI) / 180;
-        const a = Math.sin(deltaP/2) * Math.sin(deltaP/2) +
-                  Math.cos(p1) * Math.cos(p2) + 
-                  Math.sin(deltaLambda/2) * Math.sin(deltaLambda/2);
-        const dist = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)) * R;
-        return (dist/10000000).toFixed(1);
-    }
+    const [temple, setTempleData] = useState([]);
 
     useEffect(() => {
-        // mock 鳳山龍山寺 as current user 
-        var templeCord = {x: 22.620901886750495, y: 120.36202571109524};
-        if (institute.COORDINATE && institute.COORDINATE.x && institute.COORDINATE.y) {
-            const calcDistance = calculateDistance(templeCord.x, templeCord.y, institute.COORDINATE.x, institute.COORDINATE.y);
+        const fetchTempleData = async () => {
+            try {
+                const templeResponse = await axios.get(`${API}/temples_info/${userId}`);
+                setTempleData(templeResponse.data);
+            } catch (error) {
+                console.error('Error fetching temple data:', error);
+                // Handle error as needed (e.g., show a message to the user)
+            }
+        };
+        fetchTempleData();
+    }, [userId]); // Make sure to include userId as a dependency
+
+    useEffect(() => {
+        if (temple.length > 0 && institute.COORDINATE) {
+            const calcDistance = calculateDistance(
+                temple[0].COORDINATE.y,  // Assuming latitude is stored as 'y'
+                temple[0].COORDINATE.x,  // Assuming longitude is stored as 'x'
+                institute.COORDINATE.y,
+                institute.COORDINATE.x
+            );
             setDistance(calcDistance);
-        } else {
-            // console.log("Coordinates are not available");
         }
-    })
-    // order by distance (set bound distance)
+    }, [temple, institute.COORDINATE]); // Recalculate distance when temple or institute coordinates change
+
+    // Calculate distance between two points
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Radius of the earth in km
+        const dLat = deg2rad(lat2 - lat1);
+        const dLon = deg2rad(lon2 - lon1);
+        const a = 
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = R * c; // Distance in km
+        return Math.round(d * 100) / 100; // Return distance rounded to 2 decimal places
+    };
+
+    const deg2rad = (deg) => {
+        return deg * (Math.PI / 180);
+    };
 
     return (
         <View style={styles.container}>
             <View style={styles.upperContainer}>
-                {/* <Image source={require()} style={styles.image} /> */} 
+                {/* Replace with an image if necessary */}
                 <View>
                     <Text style={styles.instituteName}>{institute.NAME}</Text>
                     <Text style={styles.instituteAddress}>{institute.ADDRESS}</Text>
                 </View>
             </View>
             <View style={styles.bottomContainer}>
-                <InfoTag label="距離" value={distance + "km"} />    
-                <InfoTag label="類型" value={institute.CHARA} style={styles.charaContainer}/>
-                <InfoTag label="人數" value={institute.NUMBER} />
-                
+                <InfoTag label="距離" value={distance ? `${distance} km` : "無法計算距離"} />
+                <InfoTag label="人數" value={institute.NUM_OF_PEOPLE} />
             </View>
         </View>
     );

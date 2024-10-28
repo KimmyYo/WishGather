@@ -47,7 +47,7 @@ function MatchingStatus() {
                     <FlatList
                         data={matchData}
                         renderItem={({ item }) => <MatchingInfoCard infos={item}/>}
-                        keyExtractor={(item) => item.wID}
+                        keyExtractor={(item) => item.matchingID}
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}
                     />

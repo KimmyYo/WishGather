@@ -1,7 +1,7 @@
 import { React, useState, useEffect } from 'react';
 import { View, Text, Modal, StyleSheet, TouchableOpacity } from 'react-native';
 
-function ConfirmationModal({ visible, onClose, templeName }){
+function ConfirmationModal({ visible, onClose, orgName, onUpdate }){
 
     return (
         <View>
@@ -13,7 +13,7 @@ function ConfirmationModal({ visible, onClose, templeName }){
             >
                 <View style={styles.modalContainer}>
                     <View style={styles.modalContent}>
-                    <Text style={styles.modalText}>確認媒合{templeName} ?</Text>
+                    <Text style={styles.modalText}>確認媒合{orgName} ?</Text>
 
                     <View style={styles.modalButtons}>
                         <TouchableOpacity
@@ -24,7 +24,7 @@ function ConfirmationModal({ visible, onClose, templeName }){
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.modalButtonConfirm}
-                            onPress={onClose} 
+                            onPress={onUpdate} 
                         >
                         <Text style={styles.modalButtonText}>確認</Text>
                         </TouchableOpacity>

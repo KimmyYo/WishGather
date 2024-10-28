@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { View, Text, StyleSheet, Dimensions, FlatList, Image } from 'react-native';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
+import { View, Text, StyleSheet, Dimensions, FlatList, Image, ScrollView, RefreshControl } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -24,25 +24,46 @@ function WelfareHomePage() {
   const [anotherData, setAnotherData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   // Function to fetch data from the APIs
   const fetchData = async () => {
+    try {
+      setLoading(true);
+      setError(null);
       // 抓取媒合已確認內容
       const deliverResponse = await axios.get(`${API}/matchData?wID=${userId}&BOOKED_STATUS=B`);
       setDeliverData(deliverResponse.data);
       // 抓取媒合未確認內容
       const undeliverResponse = await axios.get(`${API}/matchData?wID=${userId}&BOOKED_STATUS=A`);
       setUndeliverData(undeliverResponse.data);
+    } catch (err) {
+      setError(err);
+      console.error('Error fetching data:', err);
+    } finally {
+      setLoading(false);
+    }
   };
-  // Call the fetch function
+
+  // Pull to refresh handler
+  const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+    try {
+      await fetchData();
+    } finally {
+      setRefreshing(false);
+    }
+  }, [userId]);
+
+  // Initial data fetch
   useEffect(() => {
     fetchData();
-  }, [userId]); // Dependencies array to re-fetch data if userId changes
+  }, [userId]);
 
   return (
     <SafeAreaProvider>
       <View style={[styles.container, {
-        paddingTop: insets.top + 25, 
+        paddingTop: insets.top + 25,
         paddingBottom: insets.bottom,
         paddingLeft: insets.left + 30,
         paddingRight: insets.right + 30
@@ -55,35 +76,54 @@ function WelfareHomePage() {
         </View>
 
         {/**運送狀態卡片*/}
-        <View style={styles.infoContainer}>
+        <View style={[styles.infoContainer, { height: 'fit-content' }]}>
           <SectionHeader title="捐贈運送狀態" onPress={() => navigation.navigate('WelfareTransportPage')} />
           <FlatList
-              data={deliverData}
-              renderItem={({ item }) => <WelfareDeliverCard data={item} />}
-              keyExtractor={(item) => item.tID}
+            data={deliverData}
+            renderItem={({ item }) => <WelfareDeliverCard data={item} />}
+            keyExtractor={(item) => item.tID}
+            contentContainerStyle={{ paddingBottom: 80 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={["#069C56"]} // Android
+                tintColor="#069C56" // iOS
+              />
+            }
           />
           <View style={styles.statusIndicatorContainer}>
-              <View style={styles.statusDetail}>
-                <MaterialCommunityIcons name="package-variant" color={"#D3212C"} size={26} />
-                <Text style={{ color: "#D3212C" }}>未配送</Text>
-              </View>
-              <View style={styles.statusDetail}>
-                <MaterialCommunityIcons name="truck-delivery" color={"#FF980E"} size={26} />
-                <Text style={{ color: "#FF980E" }}>配送中</Text>
-              </View>
-              <View style={styles.statusDetail}>
-                <MaterialCommunityIcons name="account-check" color={"#069C56"} size={26} />
-                <Text style={{ color: "#068c56" }}>已送達</Text>
-              </View>
+            <View style={styles.statusDetail}>
+              <MaterialCommunityIcons name="package-variant" color={"#D3212C"} size={26} />
+              <Text style={{ color: "#D3212C" }}>未配送</Text>
+            </View>
+            <View style={styles.statusDetail}>
+              <MaterialCommunityIcons name="truck-delivery" color={"#FF980E"} size={26} />
+              <Text style={{ color: "#FF980E" }}>配送中</Text>
+            </View>
+            <View style={styles.statusDetail}>
+              <MaterialCommunityIcons name="account-check" color={"#069C56"} size={26} />
+              <Text style={{ color: "#068c56" }}>已送達</Text>
+            </View>
           </View>
         </View>
+
         {/**媒合確認卡片*/}
         <View style={styles.infoContainer}>
           <SectionHeader title="媒合確認" onPress={() => navigation.navigate('WelfareMatchingPage')} />
           <FlatList
-              data={undeliverData}
-              renderItem={({ item }) => <WelfareMatchingCard data={item} />}
-              keyExtractor={(item) => item.tID}
+            data={undeliverData}
+            renderItem={({ item }) => <WelfareMatchingCard data={item} />}
+            keyExtractor={(item) => item.tID}
+            contentContainerStyle={{ paddingBottom: 400 }}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={onRefresh}
+                colors={["#069C56"]} // Android
+                tintColor="#069C56" // iOS
+              />
+            }
           />
         </View>
 
@@ -101,14 +141,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
     justifyContent: 'start',
     alignItems: 'start',
+    height: 10000,
   },
   infoContainer: {
     width: screenWidth * 0.95,
     justifyContent: 'center',
     alignSelf: 'center',
     paddingHorizontal: 10,
-    paddingVertical: 15,
-    marginBottom: 40,
+    paddingBottom: 40,
+    // paddingVertical: 15,
+    // marginBottom: 40,
     // borderTopWidth: 1,
     // borderColor: '#ccc',
   },

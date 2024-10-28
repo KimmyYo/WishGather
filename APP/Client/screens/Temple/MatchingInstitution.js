@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useContext } from 'react'
-import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, FlatList } from 'react-native'
+import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, FlatList, Alert } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -10,43 +10,72 @@ import { UserContext } from '../../components/Context/UserContext';
 import PageTitle from '../../components/Utility/PageTitle';
 import CheckoutBar from '../../components/Utility/CheckoutBar'
 import MatchingInstituteCard from '../../components/Temple/MatchingInstituteCard';
-
+import LoadingScreen from '../../components/Utility/Loading';
 
 const API = require('../config/DBconfig');
 
 function MatchingInstitution() {
     const insets = useSafeAreaInsets();
+    const navigation = useNavigation();
     const { userId } = useContext(UserContext);
     const [swOrgData, setswOrgData] = useState([]);
+    const [templeData, setTempleData] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     
-
     useEffect(() => {
-        // Replace with your API endpoint
-        axios.get(`${API}/sw_organization`)
-            .then(response => {
-                setswOrgData(response.data);
-                setLoading(false);
-            })
-            .catch(error => {
-                setError(error);
-                setLoading(false);
-            });
-    }, []);
+        const fetchData = async () => {
+            try {
+                // Fetch sw organization data
+                const swOrgResponse = await axios.get(`${API}/sw_organization`);
+                setswOrgData(swOrgResponse.data);
+                console.log(`${API}/temples_info/${userId}`);
+                // Fetch temple data
+                const templeResponse = await axios.get(`${API}/temples_info/${userId}`);
+                setTempleData(templeResponse.data);
+            } catch (err) {
+                setError(err);
+            } finally {
+                setLoading(false); // Ensure loading is set to false in both success and error cases
+            }
+        };
+    
+        fetchData();
+    }, [userId]); // Include userId in the dependency array
 
+    console.log(templeData[0]);
 
     const handleCallMatchingAlgo = async() => {
-        const response = await axios.post(`${API}/match_algo`, {tID: userId}, {
-            headers: {
-                'Content-Type': 'application/json'  // Ensure content type is set to JSON
+        try {
+            const response = await axios.post(`${API}/match_algo`, 
+                { tID: userId }, 
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            if(response.data.success){
+                Alert.alert('媒合成功', '請查看媒合訊息');
+                setTimeout(() => {
+                    navigation.navigate('TempleHomePage', { refresh: true });
+                }, 100)
             }
-        });
+        } catch (error) {
+            // console.error('Matching algorithm error:', error);
+            Alert.alert('媒合失敗');
+        }
+    };
+
+
+
+  if (loading) return <LoadingScreen />;
+  // Handle error state
+  if (error) {
+        Alert.alert('Error', 'An error occurred while fetching data.');
+        return null; // Optionally, return a null or some error UI
     }
 
-
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
 
     return (
         <SafeAreaProvider>
@@ -59,8 +88,8 @@ function MatchingInstitution() {
                 <View style={styles.flatListContainer}>
                     <FlatList // trigger matching algorithm
                         data={swOrgData}
-                        renderItem={({ item }) => <MatchingInstituteCard institute={item} />}
-                        keyExtractor={(item) => item.id}
+                        renderItem={({ item }) => <MatchingInstituteCard institute={item}  />}
+                        keyExtractor={(item) => item.wID}
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}
                     />

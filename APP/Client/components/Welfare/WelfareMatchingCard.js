@@ -4,10 +4,11 @@
 // 4. color the confirm status 
 // 5. Link to the Welfare Matching Detail Page 
 import { React, useState, useEffect, useContext } from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../Context/UserContext';
-import ConfirmationModal from './ConfirmationModal';
+import axios from 'axios';
+import ConfirmationModal from '../Utility/ConfirmationModal';
 const API = require('../../screens/config/DBconfig');
 
 function WelfareMatchingCard({data}){
@@ -22,6 +23,32 @@ function WelfareMatchingCard({data}){
         setModalVisible(false);
     };
 
+    const updateBookedStatus = async() => {
+        setModalVisible(false);
+        try {
+            await axios.put(`${API}/updateStatus`, {
+                BOOKED_STATUS: 'B',
+                matchingID: data.matchingID.split(',')
+            });
+            
+            // setModalVisible(false);
+            // Use reset to prevent going back to this page
+            navigation.reset({
+                index: 0,
+                routes: [{ 
+                    name: 'WelfareHomePage',
+                    params: { refresh: true }
+                }],
+            });
+            console.log('succeed')
+        } catch (error) {
+            console.error('Update status error:', error);
+            setModalVisible(false);
+        } finally {
+            setIsLoading(false);
+        }
+
+    }
     return (
         <View style={styles.cardContainer}>
             <View style={styles.imageContainer}>
@@ -48,7 +75,7 @@ function WelfareMatchingCard({data}){
                     <Text style={styles.confirmText}>確認</Text>
                 </TouchableOpacity>
             </View>
-            <ConfirmationModal visible={modalVisible} onClose={closeConfirmationModal} templeName={data.TEMPLE_NAME} />
+            <ConfirmationModal visible={modalVisible} onClose={closeConfirmationModal} orgName={data.TEMPLE_NAME} onUpdate={updateBookedStatus}/>
         </View>
     )
 }
