@@ -1,5 +1,5 @@
 import { React, useState, useEffect, useContext } from 'react'
-import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, ScrollView } from 'react-native'
+import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, ScrollView, Alert } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { UserContext } from '../../components/Context/UserContext';
@@ -48,12 +48,13 @@ function EditTempleInfoPage(){
 
         axios.post(insertEventApi, eventData)
             .then((response) => {
-                if (response.status === 200) {
-                    setAlertDialogVisible(true);
+                if (response.data.success) {
+                    Alert.alert('儲存成功', '請回首頁查看')
 
                     setTimeout(() => {
-                        setAlertDialogVisible(false);
-                    })
+                        // setAlertDialogVisible(false);
+                        navigation.navigate('TempleHomePage', { refresh: true })
+                    }, 200)
                 }
             })
             .catch((error) => {
@@ -117,12 +118,12 @@ function EditTempleInfoPage(){
                 }}
             >
                 <View style={styles.buttonContainer}>
-                    <Pressable onPress={() => navigation.navigate('TempleEventPage', { refresh: true })}>
+                    <TouchableOpacity onPress={() => navigation.navigate('TempleEventPage', { refresh: true })}>
                         <Text style={styles.textDanger}>取消</Text>
-                    </Pressable>
-                    <Pressable onPress={insertTempleEvent}>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={insertTempleEvent}>
                         <Text style={styles.textSucceed}>完成</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
                 
                 <PageTitle  iconName ={forEdit ? "edit" : "add"} titleText={forEdit ? "編輯法會資訊" : "新增法會資訊"}></PageTitle>

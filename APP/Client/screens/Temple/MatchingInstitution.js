@@ -1,5 +1,5 @@
-import { React, useState, useEffect, useContext } from 'react'
-import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, FlatList, Alert } from 'react-native'
+import { React, useState, useEffect, useContext, useCallback } from 'react'
+import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, FlatList, Alert, RefreshControl } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useNavigation, useRoute } from '@react-navigation/native';
@@ -21,29 +21,35 @@ function MatchingInstitution() {
     const [swOrgData, setswOrgData] = useState([]);
     const [templeData, setTempleData] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState(null);
     
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                // Fetch sw organization data
-                const swOrgResponse = await axios.get(`${API}/sw_organization`);
-                setswOrgData(swOrgResponse.data);
-                console.log(`${API}/temples_info/${userId}`);
-                // Fetch temple data
-                const templeResponse = await axios.get(`${API}/temples_info/${userId}`);
-                setTempleData(templeResponse.data);
-            } catch (err) {
-                setError(err);
-            } finally {
-                setLoading(false); // Ensure loading is set to false in both success and error cases
-            }
-        };
-    
-        fetchData();
-    }, [userId]); // Include userId in the dependency array
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const swOrgResponse = await axios.get(`${API}/sw_organization`);
+            setswOrgData(swOrgResponse.data);
+            
+            const templeResponse = await axios.get(`${API}/temples_info/${userId}`);
+            setTempleData(templeResponse.data);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    console.log(templeData[0]);
+    useEffect(() => {
+        fetchData();
+    }, [userId]);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchData();
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 100);
+    }, [userId]);
 
     const handleCallMatchingAlgo = async() => {
         try {
@@ -72,7 +78,7 @@ function MatchingInstitution() {
   if (loading) return <LoadingScreen />;
   // Handle error state
   if (error) {
-        Alert.alert('Error', 'An error occurred while fetching data.');
+        // Alert.alert('Error', 'An error occurred while fetching data.');
         return null; // Optionally, return a null or some error UI
     }
 
@@ -92,6 +98,9 @@ function MatchingInstitution() {
                         keyExtractor={(item) => item.wID}
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
                     />
                 </View>
                 <View style={styles.buttonContainer}>
