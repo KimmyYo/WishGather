@@ -24,9 +24,7 @@ const WishGatherChatbot = ({ route, navigation }) => {
   const [currentLot, setCurrentLot] = useState(null);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
-
-
-
+  const [thinking, setThinking] = useState(false);
 
   const handleScrollBeginDrag = () => {
     setIsUserScrolling(true);
@@ -246,24 +244,35 @@ const WishGatherChatbot = ({ route, navigation }) => {
       return userQuery; // 如果改寫失敗，返回原始問題
     }
   };
-
+  
   const handleSend = async () => {
     if (userMessage.trim() === "") return;
 
     addMessage(userMessage, "user");
     setUserMessage("");
     scrollToBottom(); // 發送消息時滾動
-
+    // setThinking(true);  // 設置 thinking 狀態為 true 顯示 "thinking..."
+    // const thinkingMessageId = addMessage("正在為你解籤..", "bot");
+    // const removeMessage = useCallback((thinkingMessageId) => {
+    //   setMessages(prevMessages => 
+    //     prevMessages.filter(msg => 
+    //       // Only remove the specific thinking message with matching ID and content
+    //       !(msg.id === thinkingMessageId && msg.content === "正在為你解籤..")
+    //     )
+    //   );
+    // }, []);
     if (!currentLot) {
+      // removeMessage(thinkingMessageId);
       addMessage("抱歉，您還未抽籤或發生了錯誤。請先抽一支籤。", "bot");
       return;
     }
-
+    
     try {
+      
       // 1. 改寫用戶問題
       const rewrittenQueryAnalysis = await rewriteQuery(userMessage);
       console.log("Rewritten query analysis:", rewrittenQueryAnalysis);
-
+      
       // 2. 構建包含改寫分析的 prompt
       const contextPrompt = `用戶抽到的籤：
 籤號：${currentLot.number}
@@ -369,12 +378,14 @@ ${rewrittenQueryAnalysis}
           },
         }
       );
-
+      
+      // removeMessage(thinkingMessageId);
+     
       const botMessage =
         response.data.choices[0]?.message?.content ||
         "對不起，我目前無法處理您的請求。";
       addMessage(botMessage, "bot");
-
+      
       requestAnimationFrame(() => {
         scrollToBottom();
       });
