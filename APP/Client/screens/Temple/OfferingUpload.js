@@ -5,6 +5,7 @@ import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-cont
 import { useNavigation } from '@react-navigation/native';
 import { UserContext } from '../../components/Context/UserContext';
 import { MaterialIcons } from '@expo/vector-icons'; // Importing the icon
+import { Picker } from '@react-native-picker/picker';
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
@@ -25,6 +26,7 @@ const OfferingUpload = () => {
   const [price, setPrice] = useState('');
   const [remark, setRemark] = useState('');
   const [amount, setAmount] = useState('');
+  const [type, setType] = useState(''); // Selected type
 
   // Image picker function
   const selectImage = async () => {
@@ -59,6 +61,7 @@ const OfferingUpload = () => {
       price: parseFloat(price),
       remark,
       amount,
+      type, // Add selected type
     };
   
     try {
@@ -121,6 +124,32 @@ const OfferingUpload = () => {
             placeholder="輸入金額"
             keyboardType="numeric"
           />
+
+          <Text style={styles.label}>庫存數量</Text>
+          <TextInput
+            style={styles.input}
+            value={amount}
+            onChangeText={setAmount}
+            placeholder="輸入庫存數量"
+            keyboardType="numeric"
+          />
+
+        <Text style={styles.label}>類型</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={type}
+            onValueChange={(itemValue) => setType(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="選擇類型" value="" />
+            <Picker.Item label="水果" value="水果" />
+            <Picker.Item label="飲料" value="飲料" />
+            <Picker.Item label="箱裝零食" value="包裝零食" />
+            <Picker.Item label="一般零食" value="一般零食" />
+            <Picker.Item label="罐頭" value="罐頭" />
+            <Picker.Item label="米" value="米" />
+          </Picker>
+        </View>
 
           <Text style={styles.label}>備註</Text>
           <TextInput
