@@ -23,17 +23,17 @@ function MatchingStatus() {
     
     const fetchData = async () => {
         try {
-            // setLoading(true);
             const response = await axios.get(`${API}/matchData?tID=${userId}`);
             if(response.data){
-                setLoading(false);
-                console.log(response.data);
                 setMatchData(response.data);
             }
             
         } catch (error) {
             setError(error);
         } 
+        finally {
+            setLoading(false)
+        }
     };
 
     useEffect(() => {
