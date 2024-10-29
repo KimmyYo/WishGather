@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
+import React, { useState, useEffect, useRef, useContext, useCallback } from 'react';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, ScrollView, Alert } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import GoBackButton1 from '../../components/Utility/GoBackButton1'; // Assuming you have a GoBackButton component
 import PageTitle from '../../components/Utility/PageTitle'; // Assuming you have a PageTitle component
@@ -11,8 +11,6 @@ import { UserContext } from '../../components/Context/UserContext';
 
 const { width, height } = Dimensions.get('window');
 const API = require('../config/DBconfig');
-
-
 function TransportDetail({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { temple } = route.params; // Passing temple details from the previous page (WelfareTransportPage)
@@ -24,36 +22,57 @@ function TransportDetail({ route, navigation }) {
   const [coordinates, setCoordinates] = useState(null); // State to store fetched coordinates
   const mapRef = useRef(null);
   const [deliverList, setDeliverList] = useState([]);
-
   const getStatusCode = (status) => {
       if(status == '已預定') return 'B'
       return 'A'
    }
-
-  useEffect(() => {
-    const fetchDeliverData = async () => {
+   console.log(temple);
+   const fetchDeliverData = useCallback(async () => {
+    try {
       const deliveryResponse = await axios.get(
         `${API}/matchDetails?wID=${userId}&tID=${temple.tID}&BOOKED_STATUS=${getStatusCode(temple.BOOKED_STATUS)}`
       );
       const matchingDetails = deliveryResponse.data.matchingDetails;
       setDeliverList(matchingDetails);
+    } catch (error) {
+      console.error("Error fetching delivery data:", error);
     }
-    fetchDeliverData();
-  })
-
+  }, [userId, temple.tID, temple.BOOKED_STATUS]); // Dependencies to prevent recreation
+  
+  useEffect(() => {
+    fetchDeliverData(); // Load data on component mount
+  }, [fetchDeliverData]); // Only re-run if dependencies change
+  
+  const updateBookedStatus = async () => {
+    try {
+      const response = await axios.put(`${API}/updateStatus`, {
+        BOOKED_STATUS: 'B',
+        matchingID: temple.matchingID.split(',')
+      });
+  
+      if (response.data.success) {
+        Alert.alert(`已向${temple.TEMPLE_NAME}預定`, '請等待對方確認');
+        await fetchDeliverData(); // Reload data if update is successful
+      }
+    } catch (error) {
+      console.error('Update status error:', error);
+    }
+  };
   const renderStatus = () => {
       if(deliverList.length){
         
         if(temple.BOOKED_STATUS == '未預定'){
           return (
-            <TouchableOpacity style={[styles.viewItemsButton, { backgroundColor: '#FF980E' }]}>
+            <TouchableOpacity 
+              style={[styles.viewItemsButton, { backgroundColor: '#FF980E' }]}
+              onPress={updateBookedStatus}>
               <Text style={styles.viewItemsText}>確認預定</Text>
             </TouchableOpacity>
           )
         }
         else if(temple.CONFIRMED_STATUS == '未確認'){
           return (
-            <Text>{temple.TEMPLE_NAME}確認中...</Text>
+            <Text style={styles.detailValue}>{temple.TEMPLE_NAME}確認中...</Text>
           )
         }
         else if (temple.CONFIRMED_STATUS === '已確認' && temple.DELIVER_STATUS !== '已送達'){

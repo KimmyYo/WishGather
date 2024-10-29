@@ -56,11 +56,10 @@ function MatchingInstituteCard({ institute }) {
     const deg2rad = (deg) => {
         return deg * (Math.PI / 180);
     };
-
+    if(!distance) return null;
     return (
         <View style={styles.container}>
             <View style={styles.upperContainer}>
-                {/* Replace with an image if necessary */}
                 <View>
                     <Text style={styles.instituteName}>{institute.NAME}</Text>
                     <Text style={styles.instituteAddress}>{institute.ADDRESS}</Text>

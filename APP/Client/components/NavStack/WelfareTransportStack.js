@@ -4,7 +4,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import WelfareTransportPage from '../../screens/Welfare/WelfareTransportPage';
 import TransportDetail from '../../screens/Welfare/TransportDetail';
-
+import WelfareHomePage from '../../screens/Welfare/WelfareHomePage';
 
 
 const Stack = createNativeStackNavigator();
@@ -24,6 +24,11 @@ function  WelfareTransportStack(){
         name = 'TransportDetail'
         component = { TransportDetail }
         options = {{ headerShown: false }}
+      />
+      <Stack.Screen 
+          name="WelfareHomePage"
+          component={WelfareHomePage}
+          options={{ headerShown: false }}
       />
      
     </Stack.Navigator>

@@ -60,7 +60,7 @@ function WelfareMatchingCard({data}){
                     <Text style={styles.subtitle}>{data.TEMPLE_ADDRESS}</Text>
                 </View>
                 <View style={styles.eventContainer}>
-                    <Text style={styles.eventName}>中元普渡</Text>
+                    <Text style={styles.eventName}>祭祀活動</Text>
                 </View>
             </View>
             <View style={styles.buttonContainer}>
@@ -115,7 +115,7 @@ const styles = StyleSheet.create({
         gap: 15,
         justifyContent: 'flex-start',
         alignItems: 'flex-start',
-        width: 0.4 * screenWidth
+        width: 0.4 * screenWidth,
     },
     title: {
         fontSize: 18,

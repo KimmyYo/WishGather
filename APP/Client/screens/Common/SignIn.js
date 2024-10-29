@@ -75,7 +75,7 @@ function SignIn() {
         }
       })
       .catch(error => { 
-        console.log(error);
+         Alert.alert('請重新登入')
       });
     }
   }, [token, navigation]);

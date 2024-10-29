@@ -11,6 +11,9 @@ import OfferingHome from '../../screens/Temple/OfferingHome';
 import OfferingEditPage from '../../screens/Temple/OfferingEditPage';
 import OfferingUpload from '../../screens/Temple/OfferingUpload';
 import FoodScanningPage from '../../screens/Temple/FoodScanningPage';
+import ScanResult from '../../screens/Temple/ScanResult';
+import SubmissionResult from '../../screens/Temple/SubmissionResult';
+
 const Stack = createNativeStackNavigator();
 
 function TempleHomeStack(){
@@ -61,6 +64,18 @@ function TempleHomeStack(){
                 component={FoodScanningPage}
                 options={{ headerShown: false }}
             />
+             <Stack.Screen 
+                name="ScanResult"
+                component={ScanResult}
+                options={{ headerShown: false }}
+            />
+
+            <Stack.Screen 
+                name="SubmissionResult"
+                component={SubmissionResult}
+                options={{ headerShown: false }}
+            />
+
         </Stack.Navigator>
     )
 }

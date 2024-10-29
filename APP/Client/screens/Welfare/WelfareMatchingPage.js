@@ -97,7 +97,7 @@ function WelfareMatchingPage() {
         <FlatList
               data={templeMatch}
               renderItem={({ item }) => <WelfareMatchingCard data={item} />}
-              keyExtractor={(item) => item.tID}
+              keyExtractor={(item) => item.matchingID}
           />
       </View>
 
