@@ -7,6 +7,7 @@ import TempleEventPage from '../../screens/Temple/TempleEventPage';
 import TempleDeliverPage from '../../screens/Temple/TempleDeliverPage';
 import EditTempleInfoPage from '../../screens/Temple/EditTempleInfoPage';
 import MatchingPage from '../../screens/Temple/MatchingPage';
+import OfferingHome from '../../screens/Temple/OfferingHome';
 const Stack = createNativeStackNavigator();
 
 function TempleHomeStack(){
@@ -35,6 +36,11 @@ function TempleHomeStack(){
             <Stack.Screen 
                 name="EditTempleInfoPage"
                 component={EditTempleInfoPage}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name="OfferingHome"
+                component={OfferingHome}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
