@@ -4,6 +4,7 @@ import { StyleSheet, Text, View, FlatList, Dimensions } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import GoBackButton1 from "../../components/Utility/GoBackButton1";
 import CollectedTemple from "../../components/Believer/CollectedTemple";
@@ -15,6 +16,7 @@ const SavedTemples = () => {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const [temples, setTemples] = useState([]);
+  const [savedTempleIds, setSavedTempleIds] = useState([]); // 已收藏的宮廟 ID
 
   useEffect(() => {
     axios.get(`${API}/temples`)
@@ -22,16 +24,31 @@ const SavedTemples = () => {
         setTemples(response.data);
       })
       .catch(error => {
-        console.error('There was an error fetching the temples!!!', error);
+        console.error('Error fetching temples:', error);
       });
+
+    loadSavedTemples(); // 載入已收藏的宮廟
   }, []);
+
+  // 載入已收藏的宮廟 ID
+  const loadSavedTemples = async () => {
+    try {
+      const saved = await AsyncStorage.getItem("savedTempleIds");
+      if (saved) setSavedTempleIds(JSON.parse(saved));
+    } catch (error) {
+      console.error("Error loading saved temples:", error);
+    }
+  };
+
+  // 過濾出已收藏的宮廟
+  const filteredSavedTemples = temples.filter(temple => savedTempleIds.includes(temple.tID));
 
   const renderItem = ({ item }) => (
     <CollectedTemple
       templeImage={{ uri: item.IMAGE ? `${API}${item.IMAGE}` : 'https://news.nsysu.edu.tw/static/file/120/1120/pictures/930/m/mczh-tw810x810_small253522_197187713212.jpg' }}
       templeName={item.NAME}
       address={item.ADDRESS}
-      onPressablePress={() => navigation.navigate("OfferingsByTemple")}
+      onPressablePress={() => navigation.navigate("OfferingsByTemple", { templeId: item.tID })}
     />
   );
 
@@ -54,9 +71,9 @@ const SavedTemples = () => {
         </View>
         
         <FlatList
-          data={temples}
+          data={filteredSavedTemples} // 過濾後的已收藏宮廟
           renderItem={renderItem}
-          keyExtractor={(item) => item.tID}  // Ensure that `item.ID` is a unique identifier
+          keyExtractor={(item) => item.tID.toString()}
           contentContainerStyle={styles.flatListContainer}
         />
       </View>
