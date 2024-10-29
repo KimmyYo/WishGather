@@ -8,6 +8,9 @@ import TempleDeliverPage from '../../screens/Temple/TempleDeliverPage';
 import EditTempleInfoPage from '../../screens/Temple/EditTempleInfoPage';
 import MatchingPage from '../../screens/Temple/MatchingPage';
 import OfferingHome from '../../screens/Temple/OfferingHome';
+import OfferingEditPage from '../../screens/Temple/OfferingEditPage';
+import OfferingUpload from '../../screens/Temple/OfferingUpload';
+import FoodScanningPage from '../../screens/Temple/FoodScanningPage';
 const Stack = createNativeStackNavigator();
 
 function TempleHomeStack(){
@@ -41,6 +44,21 @@ function TempleHomeStack(){
             <Stack.Screen
                 name="OfferingHome"
                 component={OfferingHome}
+                options={{ headerShown: false }}
+            />
+            <Stack.Screen
+                name = 'OfferingEditPage'
+                component = { OfferingEditPage }
+                options = {{ headerShown: false }}
+            />
+            <Stack.Screen
+                name = 'OfferingUpload'
+                component = { OfferingUpload }
+                options = {{ headerShown: false }}
+            />
+            <Stack.Screen 
+                name="FoodScanningPage"
+                component={FoodScanningPage}
                 options={{ headerShown: false }}
             />
         </Stack.Navigator>
