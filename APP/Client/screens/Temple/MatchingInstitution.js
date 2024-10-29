@@ -62,10 +62,18 @@ function MatchingInstitution() {
                 }
             );
             if(response.data.success){
-                Alert.alert('媒合成功', '請查看媒合訊息');
-                setTimeout(() => {
-                    navigation.navigate('TempleHomePage', { refresh: true });
-                }, 100)
+                if(!response.data.hasOffering){
+                    Alert.alert('無供品做媒合', '請掃描供品或手動輸入');
+                    setTimeout(() => {
+                        navigation.navigate('OfferingHome');
+                    }, 300)
+                }
+                else{
+                    Alert.alert('媒合成功', '請查看媒合訊息');
+                    setTimeout(() => {
+                        navigation.navigate('TempleHomePage', { refresh: true });
+                    }, 100)
+                }
             }
         } catch (error) {
             // console.error('Matching algorithm error:', error);
