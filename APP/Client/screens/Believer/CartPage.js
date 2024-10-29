@@ -1,15 +1,12 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useEffect, useState, useContext, useCallback } from "react";
 import { StyleSheet, View, Text, FlatList, Dimensions } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import Ionicons from "@expo/vector-icons/Ionicons";
 
 import CartItem from "../../components/Believer/CartItem";
 import { UserContext } from '../../components/Context/UserContext'; //取得 userId
-
-
 import axios from 'axios';
-
 
 const { width } = Dimensions.get('window');
 const API = require('../config/DBconfig');
@@ -22,10 +19,14 @@ const CartPage = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    fetchCartData();
-  }, []);
+  // 使用 useFocusEffect 在頁面每次獲得焦點時刷新購物車數據
+  useFocusEffect(
+    useCallback(() => {
+      fetchCartData();  // 調用函數以刷新購物車數據
+    }, [userId])
+  );
 
+  // 從後端獲取購物車數據
   const fetchCartData = async () => {
     try {
       setIsLoading(true);
@@ -39,6 +40,7 @@ const CartPage = () => {
     }
   };
 
+  // 渲染購物車項目
   const renderItem = ({ item }) => (
     <CartItem
       onPress={() => navigation.navigate("OrderConfirmationPage")}
@@ -54,7 +56,7 @@ const CartPage = () => {
         flex: 1,
         backgroundColor: "white",
         paddingTop: insets.top,
-        paddingBottom: insets.bottom-35,
+        paddingBottom: insets.bottom - 35,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
