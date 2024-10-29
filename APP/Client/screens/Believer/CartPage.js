@@ -43,12 +43,13 @@ const CartPage = () => {
   // 渲染購物車項目
   const renderItem = ({ item }) => (
     <CartItem
-      onPress={() => navigation.navigate("OrderConfirmationPage")}
+      onPress={() => navigation.navigate('OrderConfirmationPage', { templeId: item.tID })}
       imageSource={{ uri: item.IMAGE }}
       orderTitle={`${item.templeName}\n`}
       orderDetails={`${item.itemCount} 項商品 · NT$${item.totalAmount}`}
     />
   );
+  
 
   return (
     <SafeAreaProvider>
