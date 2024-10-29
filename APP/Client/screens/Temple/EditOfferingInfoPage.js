@@ -8,6 +8,7 @@ import { MaterialIcons } from '@expo/vector-icons'; // 使用 Expo 的 Icon 庫
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
 import CheckoutBar from '../../components/Believer/CheckoutBar';
+import { Picker } from '@react-native-picker/picker';
 
 const API=require('../config/DBconfig')
 import axios from 'axios';
@@ -27,6 +28,7 @@ const EditOfferingInfoPage = () => {
   const [price, setPrice] = useState(offering.PRICE.toString()); 
   const [stock, setStock] = useState(offering.AMOUNT.toString()); 
   const [remark, setRemark] = useState(offering.DESCRIPTION || ''); 
+  const [type, setType] = useState(''); 
   const offering_id = offering.offering_id;
 
 
@@ -63,6 +65,7 @@ const EditOfferingInfoPage = () => {
       price: parseFloat(price),
       amount: parseInt(stock),
       remark,
+      type,
     };
     
 
@@ -125,6 +128,23 @@ const EditOfferingInfoPage = () => {
             placeholder="輸入庫存數量"
             keyboardType="numeric"
           />
+
+        <Text style={styles.label}>類型</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={type}
+            onValueChange={(itemValue) => setType(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="選擇類型" value="" />
+            <Picker.Item label="水果" value="水果" />
+            <Picker.Item label="飲料" value="飲料" />
+            <Picker.Item label="箱裝零食" value="包裝零食" />
+            <Picker.Item label="一般零食" value="一般零食" />
+            <Picker.Item label="罐頭" value="罐頭" />
+            <Picker.Item label="米" value="米" />
+          </Picker>
+        </View>
 
           <Text style={styles.label}>備註</Text>
           <TextInput
