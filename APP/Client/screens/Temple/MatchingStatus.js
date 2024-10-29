@@ -1,5 +1,5 @@
-import { React, useEffect, useState, useContext } from 'react'
-import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable } from 'react-native'
+import { React, useEffect, useState, useContext, useCallback } from 'react'
+import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, RefreshControl } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -10,6 +10,7 @@ import SetButton from '../../components/Utility/SetButton';
 import MatchingInfoCard from '../../components/Temple/MatchingInfoCard'
 import { FlatList } from 'react-native-gesture-handler';
 import { UserContext } from '../../components/Context/UserContext';
+import LoadingScreen from '../../components/Utility/Loading';
 
 const API = require('../config/DBconfig');
 function MatchingStatus() {
@@ -17,21 +18,32 @@ function MatchingStatus() {
     const { userId } = useContext(UserContext);
     const [matchData, setMatchData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState(null);
     
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`${API}/matchData?tID=${userId}`);
+            setMatchData(response.data);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        // Replace with your API endpoint
-        axios.get(`${API}/match/${userId}`)
-            .then(response => {
-                setMatchData(response.data);
-                setLoading(false);
-            })
-            .catch(error => {
-                setError(error);
-                setLoading(false);
-            });
+        fetchData();
     }, []);
-    if(loading) return (<View><Text>Loading...</Text></View>);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+    }, [userId]);
+
+    if(loading) return (<LoadingScreen />);
     if(error) return (<View><Text>Error: {error}</Text></View>);
     return (
         <SafeAreaProvider>
@@ -41,15 +53,25 @@ function MatchingStatus() {
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }]}>
+                {matchData && matchData.length > 0 ? (
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={matchData}
                         renderItem={({ item }) => <MatchingInfoCard infos={item}/>}
-                        keyExtractor={(item) => item.id}
+                        keyExtractor={(item) => item.matchingID}
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh} // Call onRefresh when user pulls down
+                            />
+                        }
                     />
                 </View>
+                ) : (
+                    <View><Text>沒有媒合資料</Text></View> // Default text when matchData is null or empty
+                )}
             </View>
         </SafeAreaProvider>
     );

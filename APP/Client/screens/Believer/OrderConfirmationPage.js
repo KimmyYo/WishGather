@@ -25,6 +25,7 @@ const OrderConfirmationPage = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const insets = useSafeAreaInsets();
+  const { templeId } = route.params;  // 從 route 取得 templeId
 
   const { userId } = useContext(UserContext); //取得 userId
   const [cartItems, setCartItems] = useState([]);
@@ -103,8 +104,9 @@ const OrderConfirmationPage = () => {
       note: note, // 使用者填寫的備註
       cart_id: cart_id, // 購物車 ID
       donation: donation, // Include the donation status in the order data
+      tID: templeId,
     };
-    console.log(orderData);
+    
 
     try {
       const response = await axios.post(`${API}/orders_confirm/${userId}`, orderData, {

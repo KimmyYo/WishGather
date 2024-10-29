@@ -20,22 +20,34 @@ function TempleEventPage({route}){
     const { userId } = useContext(UserContext);
     const [date, setDate] = useState(new Date());
     const [eventData, setEventData] = useState([]);
+    const [templeData, setTempleData] = useState();
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const { showAlertDialog, renderAlertDialog } = useAlertDialog();
     
+
     useEffect(() => {
-        // Replace with your API endpoint
-        axios.get(`${API}/ceremony/${userId}`)
-            .then(response => {
-                setEventData(response.data);
+        const fetchData = async () => {
+            try {
+                // Fetch ceremony data
+                const ceremonyResponse = await axios.get(`${API}/ceremony/${userId}`);
+                setEventData(ceremonyResponse.data);
+                
+                // Fetch temples info
+                const templesResponse = await axios.get(`${API}/temples_info/${userId}`);
+                setTempleData(templesResponse.data[0]); // Assuming you have a state for temple data
+                console.log(templeData);
                 setLoading(false);
-            })
-            .catch(error => {
+            } catch (error) {
                 setError(error);
                 setLoading(false);
-            });
+            }
+        };
+    
+        fetchData(); // Call the fetch function
     }, []);
+    
+
 
     useEffect(() => {
         const unsubscribe = navigation.addListener('focus', () => {
@@ -56,6 +68,7 @@ function TempleEventPage({route}){
     
         return unsubscribe;
     }, [navigation, route.params]);
+    
 
     if (loading) return <Loading />;
     if (error) return <Text>Error: {error.message}</Text>;
@@ -79,7 +92,7 @@ function TempleEventPage({route}){
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={eventData}
-                        renderItem={({ item }) => <EventCard event={ item } size="rectangle" />}
+                        renderItem={({ item }) => <EventCard event={ item } size="rectangle" temple={templeData} />}
                         keyExtractor={(item) => item.eID}
                         vetical
                         contentContainerStyle={styles.scrollView}

@@ -25,7 +25,6 @@ function MatchingPage() {
                 paddingLeft: insets.left ,
                 paddingRight: insets.right
             }}>
-                
                 <GoBackButton1  destination={'TempleHomePage'}/>
                 <PageTitle iconName={'group'} titleText="媒合"></PageTitle>
                

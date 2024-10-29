@@ -1,97 +1,133 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect, useRef, useContext } from 'react';
+import { View, Text, StyleSheet, Image, Dimensions, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import GoBackButton1 from '../../components/Utility/GoBackButton1'; // Assuming you have a GoBackButton component
 import PageTitle from '../../components/Utility/PageTitle'; // Assuming you have a PageTitle component
 import CloseButton from '../../components/Utility/CloseButton';
 import MapView, { Marker } from 'react-native-maps';
 import axios from 'axios';
+import { DataTable } from 'react-native-paper';
+import { UserContext } from '../../components/Context/UserContext';
 
 const { width, height } = Dimensions.get('window');
 const API = require('../config/DBconfig');
-const axiosInstance = axios.create({
-  baseURL: API,
-  timeout: 10000,
-});
+
 
 function TransportDetail({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { temple } = route.params; // Passing temple details from the previous page (WelfareTransportPage)
-
+  const { userId } = useContext(UserContext);
+  const [statusCode, setStatusCode] = useState();
   // State to manage if the items list should be shown
   const [showItems, setShowItems] = useState(false);
   const [error, setError] = useState(null);
   const [coordinates, setCoordinates] = useState(null); // State to store fetched coordinates
   const mapRef = useRef(null);
+  const [deliverList, setDeliverList] = useState([]);
 
-  // Example items list (you can replace this with actual data)
-  const itemsList = [
-    { name: '供品A', quantity: 10 },
-    { name: '供品B', quantity: 5 },
-    { name: '供品C', quantity: 3 },
-  ];
+  const getStatusCode = (status) => {
+      if(status == '已預定') return 'B'
+      return 'A'
+   }
 
-  //捐贈品運送的API
-  const [temples, setTemples] = useState([]);
-  useEffect(() => {  
-    axiosInstance.get('/temples')
-      .then(response => {
-        setTemples(response.data);
-      })
-      .catch(error => {
-        setError(error);
-      });
-  }, []);
-
-  const geocodeAddress = async (address) => {
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${process.env.EXPO_PUBLIC_API_TOKEN}`;
-    
-    try {
-      const response = await axios.get(url);
-      if (response.data.features.length > 0) {
-        const { center } = response.data.features[0];
-        return { latitude: center[1], longitude: center[0] };
-      } else {
-        console.error('Geocoding failed: Address not found');
-        return null;
-      }
-    } catch (error) {
-      console.error('Geocoding failed:', error);
-      return null;
+  useEffect(() => {
+    const fetchDeliverData = async () => {
+      const deliveryResponse = await axios.get(
+        `${API}/matchDetails?wID=${userId}&tID=${temple.tID}&BOOKED_STATUS=${getStatusCode(temple.BOOKED_STATUS)}`
+      );
+      const matchingDetails = deliveryResponse.data.matchingDetails;
+      setDeliverList(matchingDetails);
     }
+    fetchDeliverData();
+  })
+
+  const renderStatus = () => {
+      if(deliverList.length){
+        
+        if(temple.BOOKED_STATUS == '未預定'){
+          return (
+            <TouchableOpacity style={[styles.viewItemsButton, { backgroundColor: '#FF980E' }]}>
+              <Text style={styles.viewItemsText}>確認預定</Text>
+            </TouchableOpacity>
+          )
+        }
+        else if(temple.CONFIRMED_STATUS == '未確認'){
+          return (
+            <Text>{temple.TEMPLE_NAME}確認中...</Text>
+          )
+        }
+        else if (temple.CONFIRMED_STATUS === '已確認' && temple.DELIVER_STATUS !== '已送達'){
+          let updDateTime = temple.UPD_DATETIME ? `${temple.UPD_DATETIME.substring(0, 10)} ~ ${new Date(new Date(temple.UPD_DATETIME).setDate(new Date(temple.UPD_DATETIME).getDate() + 7)).toISOString().substring(0, 10)}` : '未配送';
+          return (
+            <Text style={styles.detailValue}>
+               {updDateTime}
+            </Text>
+          )
+        }
+        else if (temple.DELIVER_STATUS == "已送達"){
+          return (
+            <Text style={styles.detailValue}>
+              捐贈已送達，請確認
+            </Text>
+          )
+        }
+      
+      } 
+  }
+  // calculate d  istance (mock current user)
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    const d = R * c; // Distance in km
+    return Math.round(d * 100) / 100;
+  };
+  const deg2rad = (deg) => {
+    return deg * (Math.PI/180);
   };
 
-  // UseEffect to fetch coordinates when component mounts
-  useEffect(() => {
-    const fetchCoordinates = async () => {
-      if (temple.ADDRESS) {
-        const coords = await geocodeAddress(temple.ADDRESS);
-        if (coords) {
-          setCoordinates(coords);
-          // console.log('Fetched coordinates:', coords); // Log the fetched coordinates
-        }
-      }
-    };
 
-    fetchCoordinates();
-  }, [temple.ADDRESS]); //依賴於 temple.ADDRESS 變化
-
+  // Tab scenes
+  const renderTableTab = () => (
+        <ScrollView style={styles.deliverListContainer}>
+            <DataTable>
+                <DataTable.Header style={styles.tableHeader}>
+                    <DataTable.Title textStyle={styles.tableTitle}>名稱</DataTable.Title>
+                    <DataTable.Title numeric textStyle={styles.tableTitle}>種類</DataTable.Title>
+                    <DataTable.Title numeric textStyle={styles.tableTitle}>數量</DataTable.Title>
+                </DataTable.Header>
+                {deliverList.map((item, index) => (
+                    <DataTable.Row key={index}>
+                        <DataTable.Cell>{item.CHN}</DataTable.Cell>
+                        <DataTable.Cell numeric>{item.TYPE}</DataTable.Cell>
+                        <DataTable.Cell numeric>{item.AMOUNT}</DataTable.Cell>
+                    </DataTable.Row>
+                ))}
+            </DataTable>
+        </ScrollView>
+    );
   return (
     <SafeAreaProvider>
       <View style={{
         flex: 1,
         backgroundColor: '#f2f2f2',
-        paddingTop: insets.top - 50,
-        paddingBottom: insets.bottom,
+        paddingTop: insets.top - 100,
+        paddingBottom: insets.bottom - 2000,
         paddingLeft: insets.left,
         paddingRight: insets.right,
       }}>
 
         {/* Top Section */}
         <View style={styles.headerSection}>
-          <Image source={{ uri: temple.IMAGE }} style={styles.templeImage} />
-          <Text style={styles.templeName}>{temple.NAME}</Text>
-          <Text style={styles.templeAddress}>{'地址 : '}{temple.ADDRESS}</Text>
+          <Image source={{ uri: temple.TEMPLE_IMAGE ? `${API}${temple.TEMPLE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }}
+                 style={styles.templeImage} />
+          <Text style={styles.templeName}>{temple.TEMPLE_NAME}</Text>
+          <Text style={styles.templeAddress}>{temple.TEMPLE_ADDRESS}</Text>
         </View>
 
         <View style={styles.btncontainer}>
@@ -101,14 +137,17 @@ function TransportDetail({ route, navigation }) {
         {/* Details Section */}
         <View style={styles.detailsContainer}>
 
-          <Text style={styles.detailRow}>
+          <Text style={styles.detailRow}>   
             <Text style={styles.detailLabel}>配送期限 : </Text>
-            <Text style={styles.detailValue}>4/1 ~ 4/30</Text> {/* Static value for now */}
+            {renderStatus()}
           </Text>
 
           <Text style={styles.detailRow}>
             <Text style={styles.detailLabel}>配送距離 : </Text>
-            <Text style={styles.detailValue}>2.3 km</Text> {/* Static value for now */}
+            <Text style={styles.detailValue}>{
+                  calculateDistance(temple.TEMPLE_COORDINATE.y, temple.TEMPLE_COORDINATE.x,
+                                    temple.WELFARE_COORDINATE.y, temple.WELFARE_COORDINATE.x)}公里
+            </Text>
           </Text>
 
           <View style={styles.detailRow}>
@@ -123,23 +162,16 @@ function TransportDetail({ route, navigation }) {
 
           {/* Conditionally render items list */}
           {showItems && (
-            <View style={styles.itemsList}>
-              {itemsList.map((item, index) => (
-                <View key={index} style={styles.itemRow}>
-                  <Text style={styles.itemName}>{item.name}</Text>
-                  <Text style={styles.itemQuantity}>數量: {item.quantity}</Text>
-                </View>
-              ))}
-            </View>
+            renderTableTab()
           )}
 
           {/* Map Section */}
           <MapView
             ref={mapRef}
-            style={{ width: '100%', height: '90%', alignItems: 'center' }}
+            style={{ width: '100%', height: '55%', alignItems: 'center' }}
             initialRegion={{
-              latitude: coordinates ? coordinates.latitude : 22.623, // Default latitude
-              longitude: coordinates ? coordinates.longitude : 120.293, // Default longitude
+              latitude: temple.TEMPLE_COORDINATE ? temple.TEMPLE_COORDINATE.y : 22.623, // Default latitude
+              longitude: temple.TEMPLE_COORDINATE ? temple.TEMPLE_COORDINATE.x : 120.293, // Default longitude
               latitudeDelta: 0.1,
               longitudeDelta: 0.1,
             }}
@@ -152,20 +184,15 @@ function TransportDetail({ route, navigation }) {
                 pinColor="orange"
               />
             )}
-
-            {/* Loop through temples and place markers on the map */}
-            {temples.map((temple) => (
-              <Marker
+            <Marker
                 key={temple.tID}
                 coordinate={{
-                  latitude: temple.latitude,
-                  longitude: temple.longitude,
+                  latitude: temple.TEMPLE_COORDINATE.y,
+                  longitude: temple.TEMPLE_COORDINATE.x,
                 }}
-                title={temple.NAME}
+                title={temple.TEMPLE_NAME}
                 pinColor="orange"
-              />
-            ))}
-            
+             />
           </MapView>
 
           {/* Conditionally show error message */}
@@ -182,11 +209,18 @@ const styles = StyleSheet.create({
     height: '40%',
     backgroundColor: 'orange',
     opacity: 0.8,
-    borderBottomLeftRadius: 100,
-    borderBottomRightRadius: 100,
+    borderBottomLeftRadius: 40, 
+    borderBottomRightRadius: 40,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 10, // for Android shado
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 20,
+    paddingTop: 80,
     paddingBottom: 40,
     paddingHorizontal: 20,
   },

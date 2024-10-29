@@ -1,100 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { View, Text, StyleSheet, Image, Dimensions, FlatList, Pressable, } from 'react-native';
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import axios from 'axios';
+import { UserContext } from '../../components/Context/UserContext';
 
 import GoBackButton1 from '../../components/Utility/GoBackButton1';
 import PageTitle from '../../components/Utility/PageTitle';
+import WelfareDeliverCard from '../../components/Welfare/WelfareDeliverCard';
 
 const API = require('../config/DBconfig');
 const { width, height } = Dimensions.get('window'); 
 
 function WelfareTransportPage() {  
-  const navigation = useNavigation();
-  const [error, setError] = useState(null); 
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const { userId } = useContext(UserContext);
+  const [error, setError] = useState(null); 
+  const [deliverData, setDeliverData] = useState([]);
 
-  //捐贈品運送的API
-  const [temples, setTemples] = useState([]);
-  useEffect(() => {  
-    axios.get(`${API}/temples`)
-      .then(response => {
-        setTemples(response.data);
-      })
-      .catch(error => {
-        setError(error);
-      });
-  }, []);
-
+  const fetchDeliveringData = async () => {
+      try{
+        const deliverResponse = await axios.get(`${API}/matchData?wID=${userId}&BOOKED_STATUS=B`);
+        setDeliverData(deliverResponse.data);
+      }
+      catch(error){
+      }
+      
+  }
+  useEffect(() => {
+     fetchDeliveringData()
+  }, [userId])
   {/* 還需要一個column儲存運送狀態的state */}
 
   const handleTemplePress = (temple) => {
     // Navigate to TransportDetail and pass temple data
     navigation.navigate('TransportDetail', { temple });
   };
-
-  {/*放到資料庫裡的資料 */}
-  // const temples = [
-  //   {
-  //     NAME: '高雄市文武聖殿',
-  //     ADDRESS: '前金區民權街32號',
-  //     STATE: '確認收貨',
-  //     IMAGE: 'https://example.com/temple-image1.jpg', // Replace with actual image URL
-  //   },
-  //   {
-  //     NAME: '台北市大天后宮',
-  //     ADDRESS: '大同區民生西路307號',
-  //     STATE: '待出貨',
-  //     IMAGE: 'https://example.com/temple-image2.jpg', // Replace with actual image URL
-  //   },
-  //   {
-  //     NAME: '台中市媽祖廟',
-  //     ADDRESS: '中區建國路74號',
-  //     STATE: '待出貨',
-  //     IMAGE: 'https://example.com/temple-image3.jpg', // Replace with actual image URL
-  //   },
-  // ];
-
-
-  const transportItem = ({ item }) => (
-    <Pressable  style={styles.itemContainer} onPress={() => handleTemplePress(item)}>
-      {/* Image of the temple */}
-      <Image
-        source={{ uri: `${API}${item.IMAGE}` }} // Assuming the image path is relative to the API base URL
-        style={styles.templeImage}
-      />
-
-      {/* Temple details */}
-      <View style={styles.detailsContainer}>
-        <View style={{}}>
-
-          <View style={{flexDirection:'row',}}>
-            <MaterialIcons name="temple-buddhist" size={20} color="#4F4F4F" />
-            <Text style={styles.templeName}>{item.NAME}{"\n"}</Text>
-          </View>
-          
-          <Text style={styles.address}>{item.ADDRESS}</Text>
-        </View>
-      </View>
-
-      <View style={styles.transportState}>
-        <Text style={styles.stateText}>{item.STATE}</Text>
-      </View>
-    </Pressable>
-  );
-  
-
   
   return (
 
     <SafeAreaProvider>
       <View style={{
           flex: 1,
-          backgroundColor: 'white',
+          backgroundColor: '#f2f2f2',
           justifyContent: 'start',
-    
           // Paddings to handle safe area
           paddingTop: insets.top,
           paddingBottom: insets.bottom-40,
@@ -102,21 +53,16 @@ function WelfareTransportPage() {
           paddingRight: insets.right
       }}>
 
-
-      <GoBackButton1 />
-      
-      <PageTitle titleText="捐贈運送狀態" iconName="emoji-transportation" /> 
-      
-      <View style={styles.donateListContainer}>
-        <FlatList
-          data={temples}
-          renderItem={transportItem}
-          keyExtractor={(item, index) => index.toString()}
-        />
-      </View>
-
-      {error && <Text style={styles.errorText}>{error.message}</Text>}
-
+        <GoBackButton1 />
+        <PageTitle titleText="捐贈運送狀態" iconName="emoji-transportation" /> 
+        <View style={styles.donateListContainer}>
+          <FlatList
+                data={deliverData}
+                renderItem={({ item }) => <WelfareDeliverCard data={item} />}
+                keyExtractor={(item) => item.tID}
+            />
+        </View>
+      {/* {error && <Text style={styles.errorText}>{error.message}</Text>} */}
       </View>
     </SafeAreaProvider>
   );

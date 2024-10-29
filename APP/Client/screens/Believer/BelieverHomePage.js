@@ -5,6 +5,7 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons, Entypo } from '@expo/vector-icons';
 import axios from 'axios';
 
+import LoadingScreen from "../../components/Utility/Loading";
 import TempleDistance from "../../components/Believer/TempleDistance";
 import AddressOverlay from "../../components/Believer/AddressOverlay";
 import DrawlotsButton from "../../components/Believer/DrawlotsButton";
@@ -184,16 +185,21 @@ useEffect(() => {
   };
   
 
-  const renderTempleItem = ({ item }) => (
-    <TempleDistance
-      // imageSource={{ uri: item.IMAGE }}
-      //imageSource={item.IMAGE}
-      imageSource={{ uri: item.IMAGE ? `${API}${item.IMAGE}` : 'https://news.nsysu.edu.tw/static/file/120/1120/pictures/930/m/mczh-tw810x810_small253522_197187713212.jpg' }}
-      temple={item.NAME}
-      distance={`${item.distance.toFixed(2)} km`}
-      onPress={() => navigation.navigate("OfferingsByTemple", { templeId: item.tID })}
-    />
-  );
+  const renderTempleItem = ({ item }) => {
+    return (
+      <TempleDistance
+        // imageSource={{ uri: item.IMAGE }}
+        //imageSource={item.IMAGE}
+        imageSource={{ uri: item.IMAGE ? `${API}${item.IMAGE}` : 'https://news.nsysu.edu.tw/static/file/120/1120/pictures/930/m/mczh-tw810x810_small253522_197187713212.jpg' }}
+        temple={item.NAME}
+        distance={`${item.distance.toFixed(2)} km`}
+        onPress={() => navigation.navigate("OfferingsByTemple", { templeId: item.tID })}
+      />
+    );
+  
+  }
+
+  if(currentAddress == '定位中...') return (<LoadingScreen />);
 
   return (
     <SafeAreaProvider>
@@ -248,7 +254,7 @@ useEffect(() => {
           data={nearbyTemples}
           renderItem={renderTempleItem}
           // Image={renderTempleItem.imageSource}
-          // keyExtractor={(item) => item.tID.toString()}
+          keyExtractor={(item) => item.tID.toString()}
           style={styles.templeList}
           // contentContainerStyle={styles.templeListContent}
         />

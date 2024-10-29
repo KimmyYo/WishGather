@@ -1,136 +1,118 @@
-import { React, useState, useEffect } from 'react';
-import { View, Text, FlatList, Modal, ActivityIndicator, Image, StyleSheet, Pressable } from 'react-native';
-import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
+import { React, useState, useEffect, useContext, useCallback } from 'react'
+import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, FlatList, Alert, RefreshControl } from 'react-native'
+import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import axios from 'axios';
+import { UserContext } from '../../components/Context/UserContext';
+
+import PageTitle from '../../components/Utility/PageTitle';
+import CheckoutBar from '../../components/Utility/CheckoutBar'
 import MatchingInstituteCard from '../../components/Temple/MatchingInstituteCard';
-import CheckoutBar from '../../components/Utility/CheckoutBar';
+import LoadingScreen from '../../components/Utility/Loading';
 
 const API = require('../config/DBconfig');
 
 function MatchingInstitution() {
-  const insets = useSafeAreaInsets();
-  const [swOrgData, setswOrgData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isMatching, setIsMatching] = useState(false); // 控制Loading狀態
-  const [matchedInstitute, setMatchedInstitute] = useState(null); // 存儲媒合結果
+    const insets = useSafeAreaInsets();
+    const navigation = useNavigation();
+    const { userId } = useContext(UserContext);
+    const [swOrgData, setswOrgData] = useState([]);
+    const [templeData, setTempleData] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [refreshing, setRefreshing] = useState(false);
+    const [error, setError] = useState(null);
+    
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const swOrgResponse = await axios.get(`${API}/sw_organization`);
+            setswOrgData(swOrgResponse.data);
+            
+            const templeResponse = await axios.get(`${API}/temples_info/${userId}`);
+            setTempleData(templeResponse.data);
+        } catch (err) {
+            setError(err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  
+    useEffect(() => {
+        fetchData();
+    }, [userId]);
 
-  useEffect(() => {
-    axios
-      .get(`${API}/sw_organization`)
-      .then((response) => {
-        setswOrgData(response.data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  }, []);
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchData();
+        setTimeout(() => {
+            setRefreshing(false);
+        }, 100);
+    }, [userId]);
 
-  const handleMatching = () => {
-    setIsMatching(true);
-     // Static matching result data
-     const result = {
-        name: "鳳山城隍廟",
-        address: "高雄市鳳山區鳳明街66號",
-        offerings: [
-          { NAME: '罐裝飲料', AMOUNT: 5 },
-          { NAME: '乾糧', AMOUNT: 10 },
-          { NAME: '罐頭', AMOUNT: 9 },
-        ],
-      };
-      // Simulate a delay and show loading spinner if needed, then set matchedInstitute
-      setTimeout(() => {
-        setMatchedInstitute(result);
-        setIsMatching(false);
-      }, 2000); // Simulate a 2-second delay for matching
-      
-    // setTimeout(() => {
-    //   // 模擬媒合邏輯，隨機選一個機構作為媒合結果
-    //   const randomInstitute = swOrgData[Math.floor(Math.random() * swOrgData.length)];
-    //   setMatchedInstitute(randomInstitute);
-    //   setIsMatching(false);
-    // }, 2000); // 假設媒合時間為2秒
-  };
+    const handleCallMatchingAlgo = async() => {
+        try {
+            const response = await axios.post(`${API}/match_algo`, 
+                { tID: userId }, 
+                {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            if(response.data.success){
+                Alert.alert('媒合成功', '請查看媒合訊息');
+                setTimeout(() => {
+                    navigation.navigate('TempleHomePage', { refresh: true });
+                }, 100)
+            }
+        } catch (error) {
+            // console.error('Matching algorithm error:', error);
+            Alert.alert('媒合失敗');
+        }
+    };
 
-  if (loading) return <Text>Loading...</Text>;
-  if (error) return <Text>Error: {error.message}</Text>;
 
-  return (
-    <SafeAreaProvider>
-      <View
-        style={[
-          styles.container,
-          {
-            paddingTop: insets.top - 30,
-            paddingBottom: insets.bottom,
-            paddingLeft: insets.left,
-            paddingRight: insets.right,
-          },
-        ]}
-      >
-        <View style={styles.flatListContainer}>
-          <FlatList
-            data={swOrgData}
-            renderItem={({ item }) => <MatchingInstituteCard institute={item} />}
-            keyExtractor={(item) => item.id}
-            style={{ flex: 1 }}
-            showsVerticalScrollIndicator={false}
-          />
-        </View>
 
-        <View style={styles.buttonContainer}>
-          <CheckoutBar btnText={'一鍵媒合'} iconName={'arrow-forward-circle-outline'} onPress={handleMatching} />
-        </View>
+  if (loading) return <LoadingScreen />;
+  // Handle error state
+  if (error) {
+        // Alert.alert('Error', 'An error occurred while fetching data.');
+        return null; // Optionally, return a null or some error UI
+    }
 
-        {/* Loading */}
-        {isMatching && (
-          <View style={styles.loadingOverlay}>
-            <ActivityIndicator size="large" color="orange" />
-            <Text style={styles.loadingText}>媒合中...</Text>
-          </View>
-        )}
 
-        {/* 媒合結果 Modal */}
-        {matchedInstitute && (
-          <Modal transparent={true} visible={!!matchedInstitute} animationType="fade">
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              <Text style={styles.modalTitle}>媒合結果</Text>
-
-              <Image
-                source={{ uri: 'https://via.placeholder.com/80x80.png' }} // Replace with your image source
-                style={styles.instituteImage}
-              />
-              <Text style={styles.instituteName}>{matchedInstitute?.name}</Text>
-              <Text style={styles.instituteAddress}>{matchedInstitute?.address}</Text>
-
-              <Text style={styles.modalSubtitle}>品項內容</Text>
-              <FlatList
-                data={matchedInstitute?.offerings}
-                renderItem={({ item }) => (
-                  <View style={styles.tableRow}>
-                    <Text style={styles.tableCell}>{item.NAME}</Text>
-                    <Text style={styles.tableCell}>{item.AMOUNT}</Text>
-                  </View>
-                )}
-                keyExtractor={(item, index) => index.toString()}
-                ListEmptyComponent={<Text>目前無品項</Text>}
-              />
-
-              <Pressable onPress={() => setMatchedInstitute(null)} style={styles.closeButton}>
-                <Text style={styles.closeButtonText}>關閉</Text>
-              </Pressable>
+    return (
+        <SafeAreaProvider>
+            <View style={[styles.container, {
+                paddingTop: insets.top - 30,
+                paddingBottom: insets.bottom,
+                paddingLeft: insets.left,
+                paddingRight: insets.right
+            }]}>
+                <View style={styles.flatListContainer}>
+                    <FlatList // trigger matching algorithm
+                        data={swOrgData}
+                        renderItem={({ item }) => <MatchingInstituteCard institute={item}  />}
+                        keyExtractor={(item) => item.wID}
+                        style={{ flex: 1 }}
+                        showsVerticalScrollIndicator={false}
+                        refreshControl={
+                            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+                        }
+                    />
+                </View>
+                <View style={styles.buttonContainer}>
+                    <CheckoutBar 
+                        btnText={'一鍵媒合'}
+                        iconName={'arrow-forward-circle-outline'}
+                        onPress={handleCallMatchingAlgo}
+                    />
+                </View>
             </View>
-          </View>
-        </Modal>
-        )}
-      </View>
-    </SafeAreaProvider>
-  );
+        </SafeAreaProvider>
+    )
 }
 
 const styles = StyleSheet.create({

@@ -28,7 +28,7 @@ const SavedTemples = () => {
 
   const renderItem = ({ item }) => (
     <CollectedTemple
-      templeImage={{ uri: item.IMAGE || 'default_image_path.png' }}
+      templeImage={{ uri: item.IMAGE ? `${API}${item.IMAGE}` : 'https://news.nsysu.edu.tw/static/file/120/1120/pictures/930/m/mczh-tw810x810_small253522_197187713212.jpg' }}
       templeName={item.NAME}
       address={item.ADDRESS}
       onPressablePress={() => navigation.navigate("OfferingsByTemple")}

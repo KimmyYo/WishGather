@@ -21,7 +21,10 @@ function TextInputSet({ labelName, defaultValue, multiLine, placeholder, onChang
                        placeholder={placeholder}
                        value={defaultValue} 
                        onChangeText={handleTextChange}  
-                       multiline={multiLine ? true : false}/>
+                       multiline={multiLine ? true : false}
+                       blurOnSubmit={multiLine ? true : false}
+                       returnKeyType={multiLine ? "done" : ""}
+                       />
         </View>
     )
 
