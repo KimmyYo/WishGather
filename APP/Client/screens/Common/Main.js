@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
   curvedContainer: {
     backgroundColor: 'white',
     width: '100%',
-    height: '40%',
+    height: '38%',
     borderTopLeftRadius: 50,
     borderTopRightRadius: 50,
     paddingVertical: 80,
@@ -88,16 +88,18 @@ const styles = StyleSheet.create({
     marginBottom: 50,
   },
   buttonContainer: {
+    width: '100%',
     flexDirection: 'row',    
     justifyContent: 'center', 
     alignItems: 'center',     
-    gap: 20,                
+    gap: 20,          
+    // borderWidth:1      
   },
   button: {
+    width: 150,  
     backgroundColor: '#FF9C33',
     padding: 15,
     borderRadius: 25,
-    width: 170,  
     alignItems: 'center',
 
     shadowColor: "#000",
@@ -114,10 +116,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   loginButton: {
+    width: 150,  
     backgroundColor: '#333',
     padding: 15,
     borderRadius: 25,
-    width: 170,  
     alignItems: 'center',
 
     shadowColor: "#000",

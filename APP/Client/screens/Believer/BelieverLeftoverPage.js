@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback, useContext, useRef } from "react";
-import { StyleSheet, View, Text, Dimensions, Pressable, Modal } from "react-native";
+import { StyleSheet, View, Text, Dimensions, Pressable, Modal, FlatList } from "react-native";
 import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from "@react-navigation/native";
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
@@ -184,22 +184,31 @@ const BelieverLeftoverPage = () => {
                 <>
                   {/* Temple Name */}
                   <Text style={styles.modalSubtitle}>{selectedTemple.NAME}</Text>
-        
+                  
                   {/* Offerings Table */}
                   <View style={styles.table}>
+                    {/* Table Header */}
                     <View style={styles.tableRow}>
                       <Text style={styles.tableHeader}>名稱</Text>
                       <Text style={styles.tableHeader}>數量</Text>
                     </View>
-        
-                    {/* Offerings List */}
+
+                    {/* Scrollable Offerings List */}
                     {selectedTemple.offerings && selectedTemple.offerings.length > 0 ? (
-                      selectedTemple.offerings.map((offering, index) => (
-                        <View key={index} style={styles.tableRow}>
-                          <Text style={styles.tableCell}>{offering.NAME}</Text>
-                          <Text style={styles.tableCell}>{offering.AMOUNT}</Text>
-                        </View>
-                      ))
+                      <FlatList
+                        data={selectedTemple.offerings}
+                        keyExtractor={(item, index) => index.toString()}
+                        style={styles.offeringsList}
+                        renderItem={({item}) => (
+                          <View style={styles.tableRow}>
+                            <Text style={styles.tableCell}>{item.NAME}</Text>
+                            <Text style={styles.tableCell}>{item.AMOUNT}</Text>
+                          </View>
+                        )}
+                        ListEmptyComponent={
+                          <Text style={styles.noOfferingsText}>目前尚無供品</Text>
+                        }
+                      />
                     ) : (
                       <Text style={styles.noOfferingsText}>目前尚無供品</Text>
                     )}
@@ -282,16 +291,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)', // 半透明的深色背景
   },
   modalContainer: {
-    width: '75%',
-    backgroundColor: '#fff',
-    borderRadius: 15,
+    backgroundColor: 'white',
+    borderRadius: 20,
     padding: 20,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 5, // 提升陰影效果
-    alignItems: 'center',
+    width: '80%',
+    maxHeight: '70%', // 限制最大高度
+  },
+  offeringsList: {
+    flexGrow: 1, // 允許列表增長但可滾動
+    maxHeight: '70%', // 或根據需要調整
   },
   modalTitle: {
     fontSize: 22,
@@ -309,6 +317,8 @@ const styles = StyleSheet.create({
   },
   table: {
     width: '90%',
+    height: 150,
+    alignSelf:'center',
     marginVertical: 10,
     borderColor: '#ddd',
     borderWidth: 1,
@@ -318,32 +328,40 @@ const styles = StyleSheet.create({
   tableRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    backgroundColor: '#f9f9f9',
+    paddingVertical: 8,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: '#EEEEEE',
   },
+
   tableHeader: {
-    fontSize: 16,
+    flex: 1,
     fontWeight: 'bold',
-    color: '#333',
-  },
-  tableCell: {
     fontSize: 16,
-    color: '#4F4F4F',
-  },
-  noOfferingsText: {
     textAlign: 'center',
-    paddingVertical: 15,
-    color: '#888',
+  },
+
+  tableCell: {
+    flex: 1,
+    fontSize: 14,
+    textAlign: 'center',
+  },
+
+  noOfferingsText: {
+    textAlignVertical:'center',
+    textAlign: 'center',
+    padding: 20,
+    color: '#666',
   },
   closeButton: {
+    width: '40%',
+    alignItems:'center',
+    alignSelf:'center',
     marginTop: 20,
     paddingVertical: 10,
     paddingHorizontal: 30,
     backgroundColor: 'orange',
     borderRadius: 25,
+
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
@@ -354,6 +372,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 16,
     fontWeight: 'bold',
+    textAlign:'center'
   },
 });
 

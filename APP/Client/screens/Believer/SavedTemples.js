@@ -41,7 +41,7 @@ const SavedTemples = () => {
         flex: 1,
         backgroundColor: "white",
         paddingTop: insets.top,
-        paddingBottom: insets.bottom,
+        paddingBottom: insets.bottom - 40,
         paddingLeft: insets.left,
         paddingRight: insets.right
       }}>
