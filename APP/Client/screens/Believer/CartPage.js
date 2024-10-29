@@ -43,7 +43,7 @@ const CartPage = () => {
   // 渲染購物車項目
   const renderItem = ({ item }) => (
     <CartItem
-      onPress={() => navigation.navigate('OrderConfirmationPage', { templeId: item.tID })}
+      onPress={() => navigation.navigate('OrderConfirmationPage', { templeId: item.tID, type: item.TYPE })}
       imageSource={{ uri: item.IMAGE }}
       orderTitle={`${item.templeName}\n`}
       orderDetails={`${item.itemCount} 項商品 · NT$${item.totalAmount}`}
