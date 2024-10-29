@@ -26,6 +26,7 @@ const OrderConfirmationPage = () => {
   const route = useRoute();
   const insets = useSafeAreaInsets();
   const { templeId } = route.params;  // 從 route 取得 templeId
+  const {type} = route.params;
 
   const { userId } = useContext(UserContext); //取得 userId
   const [cartItems, setCartItems] = useState([]);
@@ -105,6 +106,7 @@ const OrderConfirmationPage = () => {
       cart_id: cart_id, // 購物車 ID
       donation: donation, // Include the donation status in the order data
       tID: templeId,
+      type
     };
     
 
