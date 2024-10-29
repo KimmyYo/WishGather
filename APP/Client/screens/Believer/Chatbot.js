@@ -500,14 +500,14 @@ const styles = StyleSheet.create({
   },
   userMessageBox: {
     alignSelf: "flex-end",
-    backgroundColor: "rgb(135,24,68)",
+    backgroundColor: "#FF9C33",
   },
   botMessageBox: {
     alignSelf: "flex-start",
-    backgroundColor: "rgb(237,225,217)",
+    backgroundColor: "#f9e6d2",
   },
   userMessage: {
-    color: "rgb(237,225,217)",
+    color: "#fff",
     lineHeight: 20,
   },
   botMessage: {
@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
     maxHeight: 100,
   },
   sendButton: {
-    backgroundColor: "#F89880",
+    backgroundColor: "#FF9C33",
     borderRadius: 13,
     paddingVertical: 10,
     paddingHorizontal: 20,

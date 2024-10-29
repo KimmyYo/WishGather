@@ -36,7 +36,7 @@ const CollectedTemple = ({
 const styles = StyleSheet.create({
   itemContainer:{
     width: width * 0.95,
-    height: 120,
+    height: 130,
     flexDirection: 'row',
     alignSelf: 'center',
     alignItems: 'center',
@@ -44,6 +44,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 15,
     marginBottom: 10,
+    paddingHorizontal: 15,
     backgroundColor: '#fff',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
@@ -55,6 +56,7 @@ const styles = StyleSheet.create({
     height: 100,
     width: 100,
     borderRadius: 15,
+    marginRight: 10,
   },
   templeName: {
     fontSize: 24,

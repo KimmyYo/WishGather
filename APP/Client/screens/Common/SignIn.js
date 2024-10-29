@@ -261,8 +261,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '100%',
     height:'50%',
-    borderTopLeftRadius: 80,
-    borderTopRightRadius: 80,
+    borderTopLeftRadius: 50,
+    borderTopRightRadius: 50,
     paddingVertical: 40,
     paddingHorizontal: 20,
     justifyContent:'flex-start',
@@ -272,10 +272,10 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
         width: 0,
-        height: -4,
+        height: -2,
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
   },
 
   buttonContainer: {
