@@ -21,7 +21,6 @@ const { width } = Dimensions.get('window');
 function TempleHomePage() {
     const insets = useSafeAreaInsets();
     const navigation = useNavigation();
-
     const { userId } = useContext(UserContext);
     const [templeData, setTempleData] = useState([]);
     const [eventData, setEventData] = useState([]);
@@ -52,6 +51,10 @@ function TempleHomePage() {
         setMatchData(matchResponse.data);
         // setRefreshing(false);
     };
+	const onRefreshEvent = async () => {
+		const eventResponse = await axios.get(`${API}/ceremony/${userId}`);
+    	setEventData(eventResponse.data);
+	}
 
     useEffect(() => {
         // Get data from db 
@@ -89,6 +92,12 @@ function TempleHomePage() {
                         horizontal
                         showsHorizontalScrollIndicator={false}
                         contentContainerStyle={styles.scrollView}
+						refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefreshEvent} // Call onRefresh when user pulls down
+                            />
+                        }
                     />
                 </View>
                 <View style={[styles.sectionContainer, styles.matchingContainer]}>

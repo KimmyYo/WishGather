@@ -17,6 +17,7 @@ function TransportDetail({ route, navigation }) {
   const insets = useSafeAreaInsets();
   const { temple } = route.params; // Passing temple details from the previous page (WelfareTransportPage)
   const { userId } = useContext(UserContext);
+  const [statusCode, setStatusCode] = useState();
   // State to manage if the items list should be shown
   const [showItems, setShowItems] = useState(false);
   const [error, setError] = useState(null);
@@ -24,10 +25,15 @@ function TransportDetail({ route, navigation }) {
   const mapRef = useRef(null);
   const [deliverList, setDeliverList] = useState([]);
 
+  const getStatusCode = (status) => {
+      if(status == '已預定') return 'B'
+      return 'A'
+   }
+
   useEffect(() => {
     const fetchDeliverData = async () => {
       const deliveryResponse = await axios.get(
-        `${API}/matchDetails/${userId}/${temple.tID}`
+        `${API}/matchDetails?wID=${userId}&tID=${temple.tID}&BOOKED_STATUS=${getStatusCode(temple.BOOKED_STATUS)}`
       );
       const matchingDetails = deliveryResponse.data.matchingDetails;
       setDeliverList(matchingDetails);
@@ -35,15 +41,37 @@ function TransportDetail({ route, navigation }) {
     fetchDeliverData();
   })
 
-  const renderDuration = () => {
+  const renderStatus = () => {
       if(deliverList.length){
-        return (
-          <Text style={styles.detailValue}>
-          {deliverList[0].CONFIRMED_STATUS === '已確認' && deliverList[0].DELIVER_STATUS !== '已送達'
-          ? `${temple.UPD_DATETIME.substring(0, 10)} ~ ${new Date(new Date(temple.UPD_DATETIME).setDate(new Date(temple.UPD_DATETIME).getDate() + 7)).toISOString().substring(0, 10)}`
-          : '未配送'}
-          </Text>
-        )
+        
+        if(temple.BOOKED_STATUS == '未預定'){
+          return (
+            <TouchableOpacity style={[styles.viewItemsButton, { backgroundColor: '#FF980E' }]}>
+              <Text style={styles.viewItemsText}>確認預定</Text>
+            </TouchableOpacity>
+          )
+        }
+        else if(temple.CONFIRMED_STATUS == '未確認'){
+          return (
+            <Text>{temple.TEMPLE_NAME}確認中...</Text>
+          )
+        }
+        else if (temple.CONFIRMED_STATUS === '已確認' && temple.DELIVER_STATUS !== '已送達'){
+          let updDateTime = temple.UPD_DATETIME ? `${temple.UPD_DATETIME.substring(0, 10)} ~ ${new Date(new Date(temple.UPD_DATETIME).setDate(new Date(temple.UPD_DATETIME).getDate() + 7)).toISOString().substring(0, 10)}` : '未配送';
+          return (
+            <Text style={styles.detailValue}>
+               {updDateTime}
+            </Text>
+          )
+        }
+        else if (temple.DELIVER_STATUS == "已送達"){
+          return (
+            <Text style={styles.detailValue}>
+              捐贈已送達，請確認
+            </Text>
+          )
+        }
+      
       } 
   }
   // calculate d  istance (mock current user)
@@ -111,7 +139,7 @@ function TransportDetail({ route, navigation }) {
 
           <Text style={styles.detailRow}>   
             <Text style={styles.detailLabel}>配送期限 : </Text>
-            {renderDuration()}
+            {renderStatus()}
           </Text>
 
           <Text style={styles.detailRow}>

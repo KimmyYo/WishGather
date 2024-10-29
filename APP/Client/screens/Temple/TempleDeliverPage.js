@@ -23,11 +23,16 @@ function TempleDeliverPage({ route }) {
     const [isBooked, setIsBooked] = useState();
     const mapRef = useRef(null);
 
+    const getStatusCode = (status) => {
+      if(status == '已預定') return 'B'
+      return 'A'
+   }
+
     useEffect(() => {
       const fetchDeliverData = async () => {
         try {
           const deliveryResponse = await axios.get(
-            `${API}/matchDetails/${welfare.wID}/${userId}`
+            `${API}/matchDetails?wID=${welfare.wID}&tID=${userId}&BOOKED_STATUS=${getStatusCode(welfare.BOOKED_STATUS)}`
           );
           const matchingDetails = deliveryResponse.data.matchingDetails;
           setDeliverList(matchingDetails);

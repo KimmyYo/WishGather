@@ -1,5 +1,5 @@
-import { React, useEffect, useState, useContext } from 'react'
-import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable } from 'react-native'
+import { React, useEffect, useState, useContext, useCallback } from 'react'
+import { View, Text, Button, TouchableOpacity, StyleSheet, Pressable, RefreshControl } from 'react-native'
 import { SafeAreaProvider,  useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -18,20 +18,31 @@ function MatchingStatus() {
     const { userId } = useContext(UserContext);
     const [matchData, setMatchData] = useState([]);
     const [loading, setLoading] = useState(false);
+    const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState(null);
     
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            const response = await axios.get(`${API}/matchData?tID=${userId}`);
+            setMatchData(response.data);
+        } catch (error) {
+            setError(error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     useEffect(() => {
-        // Replace with your API endpoint
-        axios.get(`${API}/matchData?tID=${userId}`)
-            .then(response => {
-                setMatchData(response.data);
-                setLoading(false);
-            })
-            .catch(error => {
-                setError(error);
-                setLoading(false);
-            });
+        fetchData();
     }, []);
+
+    const onRefresh = useCallback(async () => {
+        setRefreshing(true);
+        await fetchData();
+        setRefreshing(false);
+    }, [userId]);
+
     if(loading) return (<LoadingScreen />);
     if(error) return (<View><Text>Error: {error}</Text></View>);
     return (
@@ -50,6 +61,12 @@ function MatchingStatus() {
                         keyExtractor={(item) => item.matchingID}
                         style={{ flex: 1 }}
                         showsVerticalScrollIndicator={false}
+                        refreshControl={
+                            <RefreshControl
+                                refreshing={refreshing}
+                                onRefresh={onRefresh} // Call onRefresh when user pulls down
+                            />
+                        }
                     />
                 </View>
                 ) : (

@@ -25,6 +25,7 @@ function TempleEventPage({route}){
     const [error, setError] = useState(null);
     const { showAlertDialog, renderAlertDialog } = useAlertDialog();
     
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -67,6 +68,7 @@ function TempleEventPage({route}){
     
         return unsubscribe;
     }, [navigation, route.params]);
+    
 
     if (loading) return <Loading />;
     if (error) return <Text>Error: {error.message}</Text>;

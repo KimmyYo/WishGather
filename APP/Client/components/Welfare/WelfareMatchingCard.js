@@ -14,7 +14,7 @@ const API = require('../../screens/config/DBconfig');
 function WelfareMatchingCard({data}){
     const navigation = useNavigation();
     const [modalVisible, setModalVisible] = useState(false);
-
+    
     const openConfirmationModal = () => {
         setModalVisible(true);
     };
@@ -66,7 +66,7 @@ function WelfareMatchingCard({data}){
             <View style={styles.buttonContainer}>
                 <TouchableOpacity 
                     style={styles.detailButton}
-                    onPress={{}}>
+                    onPress={() => navigation.navigate('TransportDetail', { temple: data })}>
                     <Text style={styles.detailText}>查看</Text>
                 </TouchableOpacity>
                 <TouchableOpacity 
