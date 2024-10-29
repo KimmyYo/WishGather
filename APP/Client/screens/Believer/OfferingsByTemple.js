@@ -1,77 +1,213 @@
-// orders_confirm
-app.post('/orders_confirm/:id', async (req, res) => {
-  const userId = req.params.id; // 取得用戶的 pID
+import React, { useState, useCallback, useEffect, useContext } from "react";
+import { StyleSheet, View, Text, Pressable, FlatList, Dimensions, Alert } from 'react-native';
+import { Image } from 'expo-image';
+import { useNavigation } from '@react-navigation/native';
+import { SafeAreaProvider, useSafeAreaInsets } from 'react-native-safe-area-context';
 
-  // 從請求的 body 中獲取訂單資料
-  const { activity_name, totalAmount, pickup_date, pickup_time, payment_method, note, cart_id, donation, tID } = req.body;
+import CheckoutBar from '../../components/Believer/CheckoutBar';
+import OfferingItem from "../../components/Believer/OfferingItem"; 
+import CloseButton from "../../components/Utility/CloseButton";
+import DrawlotsButton from '../../components/Believer/DrawlotsButton';
 
-  // 檢查必要欄位是否存在
-  if (!activity_name || !totalAmount || !pickup_date || !pickup_time || !payment_method || !cart_id) {
-    return res.status(400).json({ error: '請填寫所有必要的訂單資訊' });
-  }
+import { useRoute } from '@react-navigation/native'; // 確保 useRoute 被正確導入
+import { UserContext } from '../../components/Context/UserContext'; //取得 userId
+const API=require('../config/DBconfig')
+import axios from 'axios';
 
-  try {
-    // 1. 先找到最新的 order_id
-    const [id_result] = await db.promise().query('SELECT MAX(order_id) AS order_id FROM hf.訂單');
-    const ORDER_ID = (id_result[0].order_id || 0) + 1; // 如果資料表是空的，從 1 開始
 
-    // 2. 插入訂單到 hf.訂單 表
-    const queryInsertOrder = `
-      INSERT INTO hf.訂單 (order_id, pID, activity_name, pickup_date, pickup_time, payment_method, note, totalAmount, cart_id, donation_status, tID)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-    const values = [
-      ORDER_ID,
-      userId,
-      activity_name,
-      pickup_date,
-      pickup_time,
-      payment_method,
-      note || '',
-      totalAmount,
-      cart_id,
-      donation ? "是" : "否", // 如果 donation 是 true，保存 "是"，否則 "否"
-      tID
-    ];
+const { width, height } = Dimensions.get('window');
 
-    await db.promise().query(queryInsertOrder, values);
+const OfferingsByTemple = () => {
+  const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
+  const { userId } = useContext(UserContext);
+  const route = useRoute();
+  const { templeId } = route.params;  // 從 route 取得 templeId
+  
 
-    // 3. 查詢當前最大的 gID，並用於供品表插入
-    const [maxGIDResult] = await db.promise().query('SELECT MAX(gID) AS max_gID FROM hf.供品');
-    let nextGID = (maxGIDResult[0].max_gID || 0) + 1; // 如果供品表為空，從 1 開始
+  const [selectedOfferings, setSelectedOfferings] = useState([]);  // 儲存供品數據
+  const [chosenItems, setChosenItems] = useState([]);  // 儲存選中的項目
 
-    // 4. 從 cart_items 中取得對應 cart_id 的項目，並插入到供品表
-    const [cartItems] = await db.promise().query('SELECT * FROM cart_items WHERE cart_id = ?', [cart_id]);
+  const [quantities, setQuantities] = useState({});  // 儲存購物車中的數量
+  const [loading, setLoading] = useState(true);  // 加載狀態
+  const [templeInfo, setTempleInfo] = useState({});  // 儲存宮廟資訊
 
-    for (const item of cartItems) {
-      const queryInsertOffering = `
-        INSERT INTO hf.供品 (gID, tID_fk, NAME, TYPE, AMOUNT, IS_DONATED, IS_SCANNED, dID)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-      `;
-      const offeringValues = [
-        nextGID,            // 使用遞增的 gID
-        tID,                // tID_fk 表示對應的 temple ID
-        item.templeName,    // NAME 使用 templeName
-        item.TYPE || '未知',// TYPE，假設存在於 cart_items 中，如果不存在則使用 "未知"
-        item.itemCount,     // AMOUNT 使用 itemCount
-        donation ? 1 : 0,   // IS_DONATED 根據 donation 狀態設置
-        0,                  // IS_SCANNED 初始設為 0
-        null                // dID 設為 null
-      ];
-      await db.promise().query(queryInsertOffering, offeringValues);
-
-      // 更新 gID 以便下一次插入
-      nextGID++;
+ 
+  // 從後端透過 templeId 取得 temple offering 的資料
+  const believerFetchTempleOfferingData = async () => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API}/believer_get_temple_items/${templeId}`);
+      setSelectedOfferings(response.data);
+      console.log(response.data);
+      setLoading(false);
+    } catch (err) {
+      setLoading(false);
+      Alert.alert('Error', 'Failed to fetch temple offerings');
     }
+  };
 
-    // 5. 刪除 cart_items 表中對應的 cart_id 資料
-    const queryDeleteCartItem = 'DELETE FROM cart_items WHERE cart_id = ?';
-    await db.promise().query(queryDeleteCartItem, [cart_id]);
+  // 使用 useEffect 在頁面加載時獲取供品數據和宮廟資訊
+  useEffect(() => {
+    believerFetchTempleOfferingData();
+    fetchTempleInfo();
+  }, [templeId]);
 
-    // 返回成功的響應，包含插入的訂單 ID
-    res.status(200).json({ message: '訂單確認成功，供品已新增，購物車已清除', orderId: ORDER_ID });
-  } catch (err) {
-    console.error('插入訂單或供品時發生錯誤:', err);
-    return res.status(500).json({ error: '插入訂單失敗，請稍後再試' });
-  }
+  // 從後端獲取宮廟資訊
+  const fetchTempleInfo = async () => {
+    try {
+      const response = await axios.get(`${API}/believer_get_temple_info/${templeId}`);
+      setTempleInfo(response.data);
+    } catch (err) {
+      Alert.alert('Error', 'Failed to fetch temple information');
+    }
+  };
+
+  // 將所選物品新增到資料庫的 cart_items 中
+  const handleAddToCart = async (title, quantity, price, image) => {
+    try {
+      const totalAmount = quantity * price;
+      const itemCount = quantity;
+
+      await axios.post(`${API}/add_to_cart`, {
+        templeName: templeInfo.NAME,
+        itemCount,
+        totalAmount,
+        IMAGE: selectedOfferings.IMAGE,
+        pID: userId,  // 使用 pID 來表示 userId
+        tID: templeId,
+      });
+
+      Alert.alert('新增成功', `${title} 已新增至購物車`);
+    } catch (error) {
+      Alert.alert('Error', 'Failed to add item to cart');
+    }
+  };
+
+  // 根據所選類別篩選供品並顯示
+  const renderOfferingItem = ({ item }) => {
+    return (
+      <OfferingItem
+        imageSource={{ uri: item.IMAGE }}  // 使用資料庫中的圖片URL
+        title={item.NAME}                  // 使用資料庫中的名稱
+        price={item.PRICE != null ? item.PRICE.toString() : '0'}  // 確保價格不為 null 或 undefined
+        description={item.DESCRIPTION}     // 使用資料庫中的描述
+        quantity={quantities[item.title]?.quantity || 0}
+        onAddToCart={(title, quantity) => handleAddToCart(title, quantity, item.PRICE, item.id)}
+      />
+    );
+  };
+  
+
+  const handleCheckout = () => {
+    const items = Object.keys(quantities)
+      .filter(title => quantities[title].quantity > 0)
+      .map(title => ({
+        title,
+        quantity: quantities[title].quantity,
+        price: quantities[title].price,
+      }));
+  
+    console.log("Selected items for checkout:", items);
+    navigation.navigate('OrderConfirmationPage', { items });
+  };
+
+  return (
+    <SafeAreaProvider>
+      <View style={{
+        flex: 1,
+        backgroundColor: "white",
+        paddingTop: insets.top -50,
+        paddingBottom: insets.bottom - 40,
+        paddingLeft: insets.left,
+        paddingRight: insets.right
+      }}>
+        
+        <View>
+          <Image 
+            style={styles.headerImage} 
+            contentFit="cover" 
+            source={{ uri: templeInfo.IMAGE ? `${API}${templeInfo.IMAGE}` : require("../../assets/rectangle-3.png") }} 
+          />
+          <CloseButton />
+        </View>
+
+
+        {/* 根據 templeId 顯示宮廟資訊 */}
+        <View style={styles.infoContainer}>
+          <Text style={styles.mainTitle}>{templeInfo.NAME || "宮廟名稱"}</Text>
+        </View>
+          
+        {loading ? (
+          <Text>Loading...</Text>  // 顯示加載狀態
+        ) : (
+          <FlatList
+            data={selectedOfferings}
+            renderItem={renderOfferingItem}
+            keyExtractor={(item) => item.offering_id.toString()}
+            contentContainerStyle={styles.flatListContent}
+          />
+        )}
+        
+        <View style={styles.buttonContainer}>
+           <CheckoutBar btnText={"前往結帳"} iconName={"cart-outline"} onPress={handleCheckout} />
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <DrawlotsButton />
+        </View>
+      </View>
+    </SafeAreaProvider>
+  );
+};
+const styles = StyleSheet.create({
+  headerImage: {
+    height: height * 0.30,
+    opacity: 0.9,
+    width: width,
+    alignSelf: 'center',
+  },
+  infoContainer: {
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 8,
+  },
+  mainTitle: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: '#4F4F4F',
+  },
+  subTitle: {
+    fontSize: 16,
+    color: "#9D9D9D",
+    marginTop: 5,
+  },
+  category: {
+    fontSize: 18,
+    color: "#4F4F4F",
+    fontWeight: "500",
+    paddingHorizontal: 15,
+    paddingVertical: 6,
+    marginLeft: width * 0.05,
+  },
+  selectedCategory: {
+    color: "white",
+    backgroundColor: "#FFA042",
+    borderRadius: 15,
+  },
+  flatListContent: {
+    paddingVertical: 10,
+    justifyContent:'center',
+    alignItems: 'center',
+    paddingBottom:60,
+  },
+  buttonContainer: {
+    width: width,
+    justifyContent: "center",
+    alignItems: 'center',
+    position: 'absolute',
+    bottom: 0,
+  },
 });
+
+export default OfferingsByTemple;
