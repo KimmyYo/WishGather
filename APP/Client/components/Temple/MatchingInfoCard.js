@@ -22,7 +22,7 @@ function MatchingInfoCard({ infos }) {
                 <View style={styles.indicatorContainer}>
                     <Text>媒合狀態：</Text>
                     <Text>{infos.CONFIRMED_STATUS}</Text>   
-                    <MaterialCommunityIcons name="account-alert" color={"#FF681E"} size={20} />) 
+                    <MaterialCommunityIcons name="account-alert" color={"#FF681E"} size={20} />
                 </View>
             )
         }
@@ -42,6 +42,9 @@ function MatchingInfoCard({ infos }) {
                         <MaterialCommunityIcons name="account-check" color={"#FF980E"} size={20} />
                     </View>
             )
+        }
+        else {
+            return (<Text>hello</Text>);
         }
     }
 

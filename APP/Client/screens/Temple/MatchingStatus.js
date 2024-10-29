@@ -17,20 +17,23 @@ function MatchingStatus() {
     const insets = useSafeAreaInsets();
     const { userId } = useContext(UserContext);
     const [matchData, setMatchData] = useState([]);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [error, setError] = useState(null);
     
     const fetchData = async () => {
         try {
-            setLoading(true);
+            // setLoading(true);
             const response = await axios.get(`${API}/matchData?tID=${userId}`);
-            setMatchData(response.data);
+            if(response.data){
+                setLoading(false);
+                console.log(response.data);
+                setMatchData(response.data);
+            }
+            
         } catch (error) {
             setError(error);
-        } finally {
-            setLoading(false);
-        }
+        } 
     };
 
     useEffect(() => {
@@ -43,7 +46,7 @@ function MatchingStatus() {
         setRefreshing(false);
     }, [userId]);
 
-    if(loading) return (<LoadingScreen />);
+    if(loading && matchData.length == 0) return (<LoadingScreen />);
     if(error) return (<View><Text>Error: {error}</Text></View>);
     return (
         <SafeAreaProvider>
@@ -53,7 +56,6 @@ function MatchingStatus() {
                 paddingLeft: insets.left,
                 paddingRight: insets.right
             }]}>
-                {matchData && matchData.length > 0 ? (
                 <View style={styles.flatListContainer}>
                     <FlatList
                         data={matchData}
@@ -64,14 +66,11 @@ function MatchingStatus() {
                         refreshControl={
                             <RefreshControl
                                 refreshing={refreshing}
-                                onRefresh={onRefresh} // Call onRefresh when user pulls down
+                                onRefresh={onRefresh}
                             />
                         }
                     />
                 </View>
-                ) : (
-                    <View><Text>沒有媒合資料</Text></View> // Default text when matchData is null or empty
-                )}
             </View>
         </SafeAreaProvider>
     );
