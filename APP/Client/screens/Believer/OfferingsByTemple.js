@@ -23,6 +23,7 @@ const OfferingsByTemple = () => {
   const { userId } = useContext(UserContext);
   const route = useRoute();
   const { templeId } = route.params;  // 從 route 取得 templeId
+  
 
   const [selectedOfferings, setSelectedOfferings] = useState([]);  // 儲存供品數據
   const [chosenItems, setChosenItems] = useState([]);  // 儲存選中的項目
@@ -87,14 +88,15 @@ const OfferingsByTemple = () => {
     return (
       <OfferingItem
         imageSource={{ uri: item.IMAGE }}  // 使用資料庫中的圖片URL
-        title={item.NAME}                 // 使用資料庫中的名稱
-        price={item.PRICE.toString()}     // 使用資料庫中的價格
-        description={item.DESCRIPTION}    // 使用資料庫中的描述
+        title={item.NAME}                  // 使用資料庫中的名稱
+        price={item.PRICE != null ? item.PRICE.toString() : '0'}  // 確保價格不為 null 或 undefined
+        description={item.DESCRIPTION}     // 使用資料庫中的描述
         quantity={quantities[item.title]?.quantity || 0}
         onAddToCart={(title, quantity) => handleAddToCart(title, quantity, item.PRICE, item.id)}
       />
     );
-  }; 
+  };
+  
 
   const handleCheckout = () => {
     const items = Object.keys(quantities)
