@@ -9,11 +9,10 @@ import OfferingItem from "../../components/Believer/OfferingItem";
 import CloseButton from "../../components/Utility/CloseButton";
 import DrawlotsButton from '../../components/Believer/DrawlotsButton';
 
-import { useRoute } from '@react-navigation/native'; // 確保 useRoute 被正確導入
-import { UserContext } from '../../components/Context/UserContext'; //取得 userId
-const API=require('../config/DBconfig')
+import { useRoute } from '@react-navigation/native';
+import { UserContext } from '../../components/Context/UserContext';
+const API = require('../config/DBconfig');
 import axios from 'axios';
-
 
 const { width, height } = Dimensions.get('window');
 
@@ -22,24 +21,19 @@ const OfferingsByTemple = () => {
   const insets = useSafeAreaInsets();
   const { userId } = useContext(UserContext);
   const route = useRoute();
-  const { templeId } = route.params;  // 從 route 取得 templeId
-  
+  const { templeId } = route.params;
 
-  const [selectedOfferings, setSelectedOfferings] = useState([]);  // 儲存供品數據
-  const [chosenItems, setChosenItems] = useState([]);  // 儲存選中的項目
+  const [selectedOfferings, setSelectedOfferings] = useState([]);
+  const [quantities, setQuantities] = useState({});
+  const [loading, setLoading] = useState(true);
+  const [templeInfo, setTempleInfo] = useState({});
 
-  const [quantities, setQuantities] = useState({});  // 儲存購物車中的數量
-  const [loading, setLoading] = useState(true);  // 加載狀態
-  const [templeInfo, setTempleInfo] = useState({});  // 儲存宮廟資訊
-
- 
-  // 從後端透過 templeId 取得 temple offering 的資料
+  // Fetch temple offering data by templeId
   const believerFetchTempleOfferingData = async () => {
     try {
       setLoading(true);
       const response = await axios.get(`${API}/believer_get_temple_items/${templeId}`);
       setSelectedOfferings(response.data);
-      console.log(response.data);
       setLoading(false);
     } catch (err) {
       setLoading(false);
@@ -47,13 +41,7 @@ const OfferingsByTemple = () => {
     }
   };
 
-  // 使用 useEffect 在頁面加載時獲取供品數據和宮廟資訊
-  useEffect(() => {
-    believerFetchTempleOfferingData();
-    fetchTempleInfo();
-  }, [templeId]);
-
-  // 從後端獲取宮廟資訊
+  // Fetch temple information
   const fetchTempleInfo = async () => {
     try {
       const response = await axios.get(`${API}/believer_get_temple_info/${templeId}`);
@@ -63,8 +51,13 @@ const OfferingsByTemple = () => {
     }
   };
 
-  // 將所選物品新增到資料庫的 cart_items 中
-  const handleAddToCart = async (title, quantity, price, image) => {
+  useEffect(() => {
+    believerFetchTempleOfferingData();
+    fetchTempleInfo();
+  }, [templeId]);
+
+  // Add selected item to the cart_items table in the backend
+  const handleAddToCart = async (title, quantity, price, image, type) => {
     try {
       const totalAmount = quantity * price;
       const itemCount = quantity;
@@ -73,9 +66,10 @@ const OfferingsByTemple = () => {
         templeName: templeInfo.NAME,
         itemCount,
         totalAmount,
-        IMAGE: selectedOfferings.IMAGE,
-        pID: userId,  // 使用 pID 來表示 userId
+        IMAGE: image,
+        pID: userId,
         tID: templeId,
+        type
       });
 
       Alert.alert('新增成功', `${title} 已新增至購物車`);
@@ -84,33 +78,47 @@ const OfferingsByTemple = () => {
     }
   };
 
-  // 根據所選類別篩選供品並顯示
-  const renderOfferingItem = ({ item }) => {
-    return (
-      <OfferingItem
-        imageSource={{ uri: item.IMAGE }}  // 使用資料庫中的圖片URL
-        title={item.NAME}                  // 使用資料庫中的名稱
-        price={item.PRICE != null ? item.PRICE.toString() : '0'}  // 確保價格不為 null 或 undefined
-        description={item.DESCRIPTION}     // 使用資料庫中的描述
-        quantity={quantities[item.title]?.quantity || 0}
-        onAddToCart={(title, quantity) => handleAddToCart(title, quantity, item.PRICE, item.id)}
-      />
-    );
-  };
-  
+  // Checkout and add all selected items to cart_items in backend
+  const handleCheckout = async () => {
+    const itemsToAdd = selectedOfferings.filter(item => quantities[item.NAME]?.quantity > 0);
 
-  const handleCheckout = () => {
-    const items = Object.keys(quantities)
-      .filter(title => quantities[title].quantity > 0)
-      .map(title => ({
-        title,
-        quantity: quantities[title].quantity,
-        price: quantities[title].price,
-      }));
-  
-    console.log("Selected items for checkout:", items);
-    navigation.navigate('OrderConfirmationPage', { items });
+    try {
+      for (const item of itemsToAdd) {
+        const title = item.NAME;
+        const quantity = quantities[item.NAME]?.quantity;
+        const price = item.PRICE;
+        const image = item.IMAGE;
+        const type = item.TYPE;
+        const totalAmount = quantity * price;
+
+        await axios.post(`${API}/add_to_cart`, {
+          templeName: templeInfo.NAME,
+          itemCount: quantity,
+          totalAmount,
+          IMAGE: image,
+          pID: userId,
+          tID: templeId,
+          type
+        });
+      }
+
+      navigation.navigate('OrderConfirmationPage', { templeId, templeName: templeInfo.NAME });
+    } catch (error) {
+      console.error('Failed to checkout:', error);
+      Alert.alert('Error', 'Failed to checkout');
+    }
   };
+
+  const renderOfferingItem = ({ item }) => (
+    <OfferingItem
+      imageSource={{ uri: item.IMAGE }}
+      title={item.NAME}
+      price={item.PRICE != null ? item.PRICE.toString() : '0'}
+      description={item.DESCRIPTION}
+      quantity={quantities[item.NAME]?.quantity || 0}
+      onAddToCart={(title, quantity) => handleAddToCart(title, quantity, item.PRICE, item.IMAGE, item.TYPE)}
+    />
+  );
 
   return (
     <SafeAreaProvider>
@@ -132,14 +140,13 @@ const OfferingsByTemple = () => {
           <CloseButton />
         </View>
 
-
-        {/* 根據 templeId 顯示宮廟資訊 */}
+        {/* Display temple information */}
         <View style={styles.infoContainer}>
           <Text style={styles.mainTitle}>{templeInfo.NAME || "宮廟名稱"}</Text>
         </View>
           
         {loading ? (
-          <Text>Loading...</Text>  // 顯示加載狀態
+          <Text>Loading...</Text>
         ) : (
           <FlatList
             data={selectedOfferings}
@@ -160,6 +167,7 @@ const OfferingsByTemple = () => {
     </SafeAreaProvider>
   );
 };
+
 const styles = StyleSheet.create({
   headerImage: {
     height: height * 0.30,
@@ -176,24 +184,6 @@ const styles = StyleSheet.create({
     fontSize: 26,
     fontWeight: "bold",
     color: '#4F4F4F',
-  },
-  subTitle: {
-    fontSize: 16,
-    color: "#9D9D9D",
-    marginTop: 5,
-  },
-  category: {
-    fontSize: 18,
-    color: "#4F4F4F",
-    fontWeight: "500",
-    paddingHorizontal: 15,
-    paddingVertical: 6,
-    marginLeft: width * 0.05,
-  },
-  selectedCategory: {
-    color: "white",
-    backgroundColor: "#FFA042",
-    borderRadius: 15,
   },
   flatListContent: {
     paddingVertical: 10,
