@@ -7,7 +7,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import TempleCard from "../../components/Believer/TempleCard";
 import GoBackButton1 from "../../components/Utility/GoBackButton1";
-import DrawlotsButton from "../../components/Believer/DrawlotsButton";
 import axios from 'axios';
 const API = require('../config/DBconfig');
 
@@ -91,10 +90,6 @@ const TemplesByOffering = () => {
         paddingRight: insets.right
       }}>
         <GoBackButton1 destination="OfferingPage4" />
-
-        <View style={styles.buttonContainer}>
-          <DrawlotsButton />
-        </View>
 
         <View style={styles.titleContainer}>
           <MaterialCommunityIcons name="basket" size={24} color="orange" style={styles.icon} />
