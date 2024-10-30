@@ -1,16 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { Pressable, View, Text, Image, StyleSheet, Dimensions } from "react-native";
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get('window');
 
-const TempleCard = ({ imageSource, title, distance, onPress, onSave }) => {
-  const [isSaved, setIsSaved] = useState(false);
-
+const TempleCard = ({ imageSource, title, distance, onPress, onSave, isSaved }) => {
+  
   const handleSavePress = () => {
-    const newSaveState = !isSaved;
-    setIsSaved(newSaveState);
-    onSave(newSaveState); // Call the onSave function with the new save state
+    onSave(); // 呼叫父組件中的 onSave 函數
   };
 
   return (

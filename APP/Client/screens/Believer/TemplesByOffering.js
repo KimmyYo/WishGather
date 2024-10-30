@@ -24,6 +24,7 @@ const TemplesByOffering = () => {
   const { selectedTitle } = route.params;
   const [temples, setTemples] = useState([]);
 
+  // 載入已收藏的宮廟 ID，並且在每次登入時重新加載收藏狀態
   useEffect(() => {
     axios.get(`${API}/temples`)
       .then(response => {
@@ -33,18 +34,16 @@ const TemplesByOffering = () => {
         console.error('Error fetching temples:', error);
       });
     
+    const loadSavedTemples = async () => {
+      try {
+        const saved = await AsyncStorage.getItem("savedTempleIds");
+        if (saved) setSavedTempleIds(JSON.parse(saved));
+      } catch (error) {
+        console.error("Error loading saved temples:", error);
+      }
+    };
     loadSavedTemples(); // 載入已收藏的宮廟
   }, []);
-
-  // 載入已收藏的宮廟
-  const loadSavedTemples = async () => {
-    try {
-      const saved = await AsyncStorage.getItem("savedTempleIds");
-      if (saved) setSavedTempleIds(JSON.parse(saved));
-    } catch (error) {
-      console.error("Error loading saved temples:", error);
-    }
-  };
 
   // 更新收藏狀態
   const handleSave = async (templeId) => {
@@ -138,7 +137,6 @@ const TemplesByOffering = () => {
     </SafeAreaProvider>
   );
 };
-
 
 const styles = StyleSheet.create({
   // ... (與您的原始樣式相同)
