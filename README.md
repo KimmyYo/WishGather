@@ -1,3 +1,4 @@
+# ![WishGather Logo](./logo.png)  
 # WishGather: AI-Assisted Sustainable Offering Platform
 
 ## Project Overview
