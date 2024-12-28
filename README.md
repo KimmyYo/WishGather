@@ -1,20 +1,40 @@
-# WishGather-資管114畢業專案
-<hr>
+# WishGather: AI-Assisted Sustainable Offering Platform
 
-## 環境設置&開啟專案
-1. vs code中terminal cd進APP/Client，輸入 npm install (下載套件!只要第一次就好下載過之後就不用)
-2. 同上 cd進APP/Server，輸入 npm install (下載套件!只要第一次就好下載過之後就不用)
-3. 開啟伺服器: (terminal) App/Server目錄下 node index.js
-4. 開啟APP頁面: (terminal) App/Client目錄下 npx expo start --tunnel
+## Project Overview
+WishGather is an innovative platform designed to address the issue of offering waste in traditional worship practices. By leveraging artificial intelligence, we aim to streamline the donation process, optimize resource allocation, and promote sustainability while respecting cultural traditions.
 
-## 暑假共編提醒(運用Github Desktop)
-#### 每次開始前都要->確保自己電腦上的與main的版本相同: 
-1. check上中按鈕(current branch)在main
-2. 點上右按鈕(fetch)，fetch完再點pull origin
-#### 自己電腦上的內容有改動->上傳到自己的branch:
-1. check上中按鈕(current branch)在 [自己的branch]
-2. 左下commit to [自己的branch]-(上面空格內容要打)
-3. 點上右按鈕(push)，上傳到[自己的branch]
-#### gitnore
-因為套件(node_modules)們不適合上傳，要用這個檔案讓github desktop在檢查時不會上傳他們
-確認自己的WishGather目錄下有這個檔案
+## Features
+- **Optimized Offering Matching**: Efficient allocation of surplus offerings to welfare organizations using linear programming algorithms.
+- **Offering Recognition**: AI-powered image recognition for quick categorization and documentation of offerings.
+- **Leftover Map**: Real-time map showing available surplus offerings at nearby temples for easy pickup.
+- **AI-Based Lot Drawing and Interpretation**: Generative AI for interactive lot drawing and interpretations to enhance user engagement.
+
+## Team Members
+- **Advisor**:  
+  - Huei-Fang Yang  
+    - National Sun Yat-sen University  
+
+- **Team Members** (Alphabetical Order):  
+  1. Guan-Ru Lin  
+  2. Shang-Chen Tsai  
+  3. Tan Wang  
+  4. Tzu-Yi Chuang  
+  5. Ya-Chi Yu  
+  6. Yeh-Ju Shan  
+  7. Yu-Chen Tung  
+
+## Project Goals
+1. Reduce offering waste by creating a sustainable donation ecosystem.
+2. Improve temple management efficiency through digitization.
+3. Enhance user experience with AI-driven features.
+
+## Achievements
+- **Awards**:
+  - 2nd Place, IP3 Group, IT Service Competition
+  - Best Business Award, Department of Information Management Project Competition
+
+## Demo
+[Watch Demo Video](https://youtu.be/hGHAEZD5eGc)
+
+## Future Outlook
+WishGather envisions becoming a comprehensive platform connecting temples, donors, and welfare organizations, ensuring the effective utilization of offerings while fostering community engagement and environmental sustainability.
