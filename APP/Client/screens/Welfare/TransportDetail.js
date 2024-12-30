@@ -26,7 +26,7 @@ function TransportDetail({ route, navigation }) {
       if(status == '已預定') return 'B'
       return 'A'
    }
-   console.log(temple);
+
    const fetchDeliverData = useCallback(async () => {
     try {
       const deliveryResponse = await axios.get(
@@ -59,9 +59,11 @@ function TransportDetail({ route, navigation }) {
     }
   };
   const renderStatus = () => {
-      if(deliverList.length){
-        
-        if(temple.BOOKED_STATUS == '未預定'){
+   
+    if(deliverList.length){
+      console.log(deliverList);
+      console.log(temple.BOOKED_STATUS);
+      if(temple.BOOKED_STATUS == '未預定'){
           return (
             <TouchableOpacity 
               style={[styles.viewItemsButton, { backgroundColor: '#FF980E' }]}
@@ -70,7 +72,7 @@ function TransportDetail({ route, navigation }) {
             </TouchableOpacity>
           )
         }
-        else if(temple.CONFIRMED_STATUS == '未確認'){
+        else if(temple.BOOKED_STATUS == '已預定' && temple.CONFIRMED_STATUS == '未確認'){
           return (
             <Text style={styles.detailValue}>{temple.TEMPLE_NAME}確認中...</Text>
           )

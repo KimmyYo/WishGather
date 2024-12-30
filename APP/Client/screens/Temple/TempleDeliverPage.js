@@ -14,174 +14,163 @@ const { width, height } = Dimensions.get('window');
 const API = require('../config/DBconfig');
 
 function TempleDeliverPage({ route }) {
-    const insets = useSafeAreaInsets();
-    const navigation = useNavigation();
-    const { userId } = useContext(UserContext);
-    const { welfare } = route.params;
-    const [showItems, setShowItems] = useState(false);
-    const [deliverList, setDeliverList] = useState([]);
-    const [isBooked, setIsBooked] = useState();
-    const mapRef = useRef(null);
+  const insets = useSafeAreaInsets();
+  const navigation = useNavigation();
+  const { userId } = useContext(UserContext);
+  const { welfare } = route.params;
+  const [showItems, setShowItems] = useState(false);
+  const [deliverList, setDeliverList] = useState([]);
+  const [isBooked, setIsBooked] = useState();
+  const mapRef = useRef(null);
 
-    const getStatusCode = (status) => {
-      if(status == '已預定') return 'B'
-      return 'A'
-   }
+  const getStatusCode = (status) => {
+    if(status === '已預定') return 'B';
+    return 'A';
+  };
 
-    useEffect(() => {
-      const fetchDeliverData = async () => {
-        try {
-          const deliveryResponse = await axios.get(
-            `${API}/matchDetails?wID=${welfare.wID}&tID=${userId}&BOOKED_STATUS=${getStatusCode(welfare.BOOKED_STATUS)}`
-          );
-          const matchingDetails = deliveryResponse.data.matchingDetails;
-          setDeliverList(matchingDetails);
-          if(deliverList.length){
-            if(deliverList[0].CONFIRMED_STATUS != '已確認' && deliverList[0].BOOKED_STATUS == '已預定')
-              setIsBooked(1);
+  useEffect(() => {
+    const fetchDeliverData = async () => {
+      try {
+        const deliveryResponse = await axios.get(
+          `${API}/matchDetails?wID=${welfare.wID}&tID=${userId}&BOOKED_STATUS=${getStatusCode(welfare.BOOKED_STATUS)}`
+        );
+        const matchingDetails = deliveryResponse.data.matchingDetails;
+        setDeliverList(matchingDetails);
+        if (matchingDetails.length) {
+          if (matchingDetails[0].CONFIRMED_STATUS !== '已確認' && matchingDetails[0].BOOKED_STATUS === '已預定') {
+            setIsBooked('已預定');
           }
-        } catch (error) {
-          console.error('Error fetching delivery data:', error);
         }
-      };
-      fetchDeliverData();
-    }, [welfare.wID, userId]); // Add dependencies here if needed, or [] if it only needs to run once
-  // calculate d  istance (mock current user)
-    const calculateDistance = (lat1, lon1, lat2, lon2) => {
-      const R = 6371; // Radius of the earth in km
-      const dLat = deg2rad(lat2 - lat1);
-      const dLon = deg2rad(lon2 - lon1);
-      const a = 
-        Math.sin(dLat/2) * Math.sin(dLat/2) +
-        Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
-        Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      const d = R * c; // Distance in km
-      return Math.round(d * 100) / 100;
+      } catch (error) {
+        console.error('Error fetching delivery data:', error);
+      }
     };
-    const deg2rad = (deg) => {
-      return deg * (Math.PI/180);
-    };
-    const renderDuration = () => {
-      if(deliverList.length){
-        return (
-          <Text style={styles.detailValue}>
+    fetchDeliverData();
+  }, [welfare.wID, userId]);
+
+  const calculateDistance = (lat1, lon1, lat2, lon2) => {
+    const R = 6371; // Radius of the earth in km
+    const dLat = deg2rad(lat2 - lat1);
+    const dLon = deg2rad(lon2 - lon1);
+    const a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return Math.round(R * c * 100) / 100; // Distance in km
+  };
+
+  const deg2rad = (deg) => deg * (Math.PI / 180);
+
+  const renderDuration = () => {
+    if (deliverList.length) {
+      return (
+        <Text style={styles.detailValue}>
           {deliverList[0].CONFIRMED_STATUS === '已確認' && deliverList[0].DELIVER_STATUS !== '已送達'
-          ? `${welfare.UPD_DATETIME.substring(0, 10)} ~ ${new Date(new Date(welfare.UPD_DATETIME).setDate(new Date(welfare.UPD_DATETIME).getDate() + 7)).toISOString().substring(0, 10)}`
-          : '未配送'}
-          </Text>
-        )
-      } 
-  }
-    const handleConfirmDonate = () => {
-      Alert.alert(
-          `捐贈給${welfare.WELFARE_NAME}?`,
-          `確認後請將包裹寄出`,
-          [
-              { text: '取消', style: 'cancel' }, 
-              { text: '確認', onPress: () => updateConfirmStatus() }
-          ]
+            ? `${welfare.UPD_DATETIME.substring(0, 10)} ~ ${new Date(new Date(welfare.UPD_DATETIME).setDate(new Date(welfare.UPD_DATETIME).getDate() + 7)).toISOString().substring(0, 10)}`
+            : '未配送'}
+        </Text>
       );
+    }
+  };
+
+  const handleConfirmDonate = () => {
+    Alert.alert(
+      `捐贈給${welfare.WELFARE_NAME}?`,
+      `確認後請將包裹寄出`,
+      [
+        { text: '取消', style: 'cancel' }, 
+        { text: '確認', onPress: () => updateConfirmStatus() }
+      ]
+    );
+  };
+
+  const renderConfirmButton = () => {
+    if (deliverList.length && deliverList[0].BOOKED_STATUS === '已預定' && deliverList[0].CONFIRMED_STATUS === '未確認') {
+      return (
+        <View style={styles.detailRow}>
+          <Text style={styles.detailLabel}>社福已確認，請確認出貨</Text>
+          <TouchableOpacity
+            style={[styles.viewItemsButton, { backgroundColor: '#D3212C' }]}
+            onPress={handleConfirmDonate}
+          >
+            <Text style={{ color: 'white', fontWeight: 'bold' }}>確認</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
   };
 
   const updateConfirmStatus = async () => {
-
     try {
-        const response = await axios.put(`${API}/updateStatus`, { 
-            CONFIRMED_STATUS: 'B',
-            matchingID: welfare.matchingID.split(',')
-        });
-        // Show success alert only after successful request
-        if (response.data.success) {
-            Alert.alert('出貨成功');
-            setTimeout(() => {
-              navigation.navigate('TempleHomePage', { refresh: true })
-            }, 100)
-           
-        }
-        else{
-          Alert.alert('出貨失敗', '請稍後再試');
-        }
-
-    } catch (error) {
+      const response = await axios.put(`${API}/updateStatus`, { 
+        CONFIRMED_STATUS: 'B',
+        matchingID: welfare.matchingID.split(',')
+      });
+      if (response.data.success) {
+        Alert.alert('出貨成功');
+        setTimeout(() => {
+          navigation.navigate('TempleHomePage', { refresh: true });
+        }, 100);
+      } else {
         Alert.alert('出貨失敗', '請稍後再試');
+      }
+    } catch (error) {
+      Alert.alert('出貨失敗', '請稍後再試');
     }
-};
+  };
 
+  const renderTableTab = () => (
+    <ScrollView style={styles.deliverListContainer}>
+      <DataTable>
+        <DataTable.Header style={styles.tableHeader}>
+          <DataTable.Title textStyle={styles.tableTitle}>名稱</DataTable.Title>
+          <DataTable.Title numeric textStyle={styles.tableTitle}>種類</DataTable.Title>
+          <DataTable.Title numeric textStyle={styles.tableTitle}>數量</DataTable.Title>
+        </DataTable.Header>
+        {deliverList.map((item, index) => (
+          <DataTable.Row key={index}>
+            <DataTable.Cell>{item.CHN}</DataTable.Cell>
+            <DataTable.Cell numeric>{item.TYPE}</DataTable.Cell>
+            <DataTable.Cell numeric>{item.AMOUNT}</DataTable.Cell>
+          </DataTable.Row>
+        ))}
+      </DataTable>
+    </ScrollView>
+  );
 
-    // Tab scenes
-    const renderTableTab = () => (
-        <ScrollView style={styles.deliverListContainer}>
-            <DataTable>
-                <DataTable.Header style={styles.tableHeader}>
-                    <DataTable.Title textStyle={styles.tableTitle}>名稱</DataTable.Title>
-                    <DataTable.Title numeric textStyle={styles.tableTitle}>種類</DataTable.Title>
-                    <DataTable.Title numeric textStyle={styles.tableTitle}>數量</DataTable.Title>
-                </DataTable.Header>
-                {deliverList.map((item, index) => (
-                    <DataTable.Row key={index}>
-                        <DataTable.Cell>{item.CHN}</DataTable.Cell>
-                        <DataTable.Cell numeric>{item.TYPE}</DataTable.Cell>
-                        <DataTable.Cell numeric>{item.AMOUNT}</DataTable.Cell>
-                    </DataTable.Row>
-                ))}
-            </DataTable>
-        </ScrollView>
-    );
-
-    return (
-      <SafeAreaProvider>
+  return (
+    <SafeAreaProvider>
       <View style={{
         flex: 1,
         backgroundColor: '#f2f2f2',
-        paddingTop: insets.top - 100,
-        paddingBottom: insets.bottom - 2000,
+        paddingTop: insets.top,
+        paddingBottom: insets.bottom,
         paddingLeft: insets.left,
         paddingRight: insets.right,
       }}>
-
-        {/* Top Section */}
         <View style={styles.headerSection}>
-          <Image source={{ uri: welfare.WELFARE_IMAGE ? `${API}${welfare.WELFARE_IMAGE}`: `${API}/uploads/profilePictures/default.jpg` }}
+          <Image source={{ uri: welfare.WELFARE_IMAGE ? `${API}${welfare.WELFARE_IMAGE}` : `${API}/uploads/profilePictures/default.jpg` }}
                  style={styles.templeImage} />
           <Text style={styles.templeName}>{welfare.WELFARE_NAME}</Text>
           <Text style={styles.templeAddress}>{welfare.WELFARE_ADDRESS}</Text>
         </View>
-
         <View style={styles.btncontainer}>
           <CloseButton />
         </View>
-
-        {/* Details Section */}
         <View style={styles.detailsContainer}>
-          {isBooked == '已預定' ? (
-            <View  style={styles.detailRow}>
-              <Text style={styles.detailLabel}>社福已確認，請確認出貨</Text>
-              <TouchableOpacity
-                style={[styles.viewItemsButton, { backgroundColor: '#D3212C' }]}
-                onPress={handleConfirmDonate}
-              >
-                <Text style={{ color: 'white', fontWeight: 'bold'}}>確認</Text>
-              </TouchableOpacity>
-            </View>
-          ): (
-            <View  style={styles.detailRow}>
-              <Text style={styles.detailLabel}>{welfare.DELIVER_STATUS}...</Text>
-            </View>
-          )}
+          {renderConfirmButton()}
           <Text style={styles.detailRow}>   
             <Text style={styles.detailLabel}>配送期限 : </Text>
             {renderDuration()}
           </Text>
-
           <Text style={styles.detailRow}>
             <Text style={styles.detailLabel}>配送距離 : </Text>
-            <Text style={styles.detailValue}>{
-                  calculateDistance(welfare.TEMPLE_COORDINATE.y, welfare.TEMPLE_COORDINATE.x,
-                                    welfare.WELFARE_COORDINATE.y, welfare.WELFARE_COORDINATE.x)}公里
+            <Text style={styles.detailValue}>
+              {calculateDistance(welfare.TEMPLE_COORDINATE.y, welfare.TEMPLE_COORDINATE.x,
+                                 welfare.WELFARE_COORDINATE.y, welfare.WELFARE_COORDINATE.x)}公里
             </Text>
           </Text>
-
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>配送物資 : </Text>
             <TouchableOpacity
@@ -191,47 +180,35 @@ function TempleDeliverPage({ route }) {
               <Text style={styles.viewItemsText}>{showItems ? '收起' : '查看'}</Text>
             </TouchableOpacity>
           </View>
-          
-
-          {/* Conditionally render items list */}
-          {showItems && (
-            renderTableTab()
-          )}
-
-          {/* Map Section */}
+          {showItems && renderTableTab()}
           <MapView
             ref={mapRef}
-            style={{ width: '100%', height: '55%', alignItems: 'center' }}
+            style={{ width: '100%', height: '55%' }}
             initialRegion={{
-              latitude: welfare.WELFARE_COORDINATE ? welfare.WELFARE_COORDINATE.y : 22.623, // Default latitude
-              longitude: welfare.WELFARE_COORDINATE ? welfare.WELFARE_COORDINATE.x : 120.293, // Default longitude
+              latitude: welfare.WELFARE_COORDINATE?.y || 22.623,
+              longitude: welfare.WELFARE_COORDINATE?.x || 120.293,
               latitudeDelta: 0.1,
               longitudeDelta: 0.1,
             }}
           >
-            {/* 添加當前寺廟的 Marker */}
             {welfare.WELFARE_COORDINATE && (
               <Marker
-                coordinate={welfare.WELFARE_COORDINATE}
-                title={welfare.WELFARE_NAME}
-                pinColor="orange"
-              />
-            )}
-            <Marker
-                key={welfare.tID}
                 coordinate={{
-                  latitude: welfare.WELFARE_COORDINATE.y,
-                  longitude: welfare.WELFARE_COORDINATE.x,
+                  latitude: welfare.WELFARE_COORDINATE.x,
+                  longitude: welfare.WELFARE_COORDINATE.y
                 }}
                 title={welfare.WELFARE_NAME}
                 pinColor="orange"
-             />
+              >
+              </Marker>
+            )}
           </MapView>
         </View>
       </View>
     </SafeAreaProvider>
-    );
+  );
 }
+
 
 const styles = StyleSheet.create({
   headerSection: {

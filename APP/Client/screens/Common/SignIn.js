@@ -84,11 +84,11 @@ function SignIn() {
   const refreshTokens = async () => {
     const storedRefreshToken = await AsyncStorage.getItem('refreshToken');
     try {
-    const response = await axios.post(`${API}/refreshtoken`, { refreshToken: storedRefreshToken });
-    const { token } = response.data;
+      const response = await axios.post(`${API}/refreshtoken`, { refreshToken: storedRefreshToken });
+      const { token } = response.data;
 
-    // Save new access token
-    await AsyncStorage.setItem('userToken', token);
+      // Save new access token
+      await AsyncStorage.setItem('userToken', token);
     } catch (error) {
       console.error('Error refreshing token:', error);
     }
@@ -129,11 +129,10 @@ function SignIn() {
           await AsyncStorage.setItem('refreshToken', refreshToken);
           setIsLoading(false);
         } else {
-          console.log("no token here...");
           showAlertDialog('登入失敗', '請重新試');
         }
       } catch (error) {
-        console.error('Sign-in failed:', error);
+        
         showAlertDialog('登入失敗', '請重新嘗試');
       } 
     }

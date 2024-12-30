@@ -16,6 +16,7 @@ import axios from "axios";
 import drawLotsData from "../../assets/drawLotsData.json";
 import { OPENAI_API_KEY } from "@env";
 
+
 const WishGatherChatbot = ({ route, navigation }) => {
   
   const [userMessage, setUserMessage] = useState("");
@@ -140,6 +141,7 @@ const WishGatherChatbot = ({ route, navigation }) => {
 
   useEffect(() => {
     console.log("Full drawLotsData:", JSON.stringify(drawLotsData, null, 2));
+    //console.log("openaikey: " + OPENAI_API_KEY);
     const { lotNumber, lotMessage, fromDrawLot } = route.params || {};
     console.log("Route params:", { lotNumber, lotMessage });
 

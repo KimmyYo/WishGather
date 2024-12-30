@@ -24,7 +24,7 @@ function WelfareMatchingPage() {
 
   // Fetch temple data from API using async/await
   const fetchTempleMatchData = async () => {
-      const matchResponse = await axios.get(`${API}/matchData?wID=${userId}&BOOKED_STATUS=A`);
+      // const matchResponse = await axios.get(`${API}/matchData?wID=${userId}&BOOKED_STATUS=A`);
       setTempleMatch(matchResponse.data);
   };
 
