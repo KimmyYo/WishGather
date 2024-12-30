@@ -12,8 +12,8 @@ APP/Server/index.js
 
 APP/Client/.env
 
-.expo/
-
-.vscode/
+**/.vscode/
 
 node_modules/
+
+**/.expo/
