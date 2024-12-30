@@ -11,3 +11,9 @@ APP/Server/uploads/image.png
 APP/Server/index.js
 
 APP/Client/.env
+
+.expo 
+
+.vscode 
+
+node_modules/

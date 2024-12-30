@@ -15,20 +15,6 @@ app = Flask(__name__)
 # Configure logging
 logging.basicConfig(level=logging.DEBUG)
 
-# Load your YOLO model here
-# try:
-#     logging.debug("Loading the YOLO model...")
-#     model_path = os.path.abspath('../../../Model/best.pt')
-#     if not os.path.exists(model_path):
-#         raise FileNotFoundError(f"Model file is not in {model_path}")
-#     # model = torch.hub.load('ultralytics/yolov8', 'custom', path='../../../Model/best.pt')
-#     # model.eval()  # Set the model to evaluation mode
-
-#     model = YOLO(model_path)
-#     logging.debug("YOLO model loaded successfully.")
-# except Exception as e:
-#     logging.error(f"Failed to load model: {e}")
-#     raise
 model_path = os.path.abspath('../../../Model/best.pt')
 model = YOLOWorld(model_path)
 
@@ -56,19 +42,7 @@ def detect():
         logging.debug("Performing inference...")
         results = model.predict(img, imgsz=800)
         logging.debug("Inference complete.")
-        
-        # Process results
-        # detections = results.pandas().xyxy[0].to_json(orient='records')
-        # detections = []
-        # for result in results:
-        #     boxes = result.boxes
-        #     for box in boxes:
-        #         detection = {
-        #             'bbox': box.xyxy[0].tolist(),
-        #             'confidence': float(box.conf[0]),
-        #             'class': result.names[int(box.cls[0])]
-        #         }
-        #         detections.append(detection)
+
         detections = []
 
         for result in results:
