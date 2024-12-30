@@ -151,21 +151,26 @@ const BelieverLeftoverPage = () => {
             <Marker
               key={temple.tID}
               coordinate={{
-                latitude: temple.latitude,
                 longitude: temple.longitude,
+                latitude: temple.latitude
               }}
               title={temple.NAME}
               pinColor="orange"
               onPress={() => setSelectedTemple(temple)}
-            />
+            >
+            </Marker>
           ))}
 
           {userLocation && (
             <Marker
-              coordinate={userLocation}
+              coordinate={{
+                longitude: userLocation.longitude,
+                latitude: userLocation.latitude
+              }}
               title="我的位置"
               pinColor="#600000"
-            />
+            >
+            </Marker>
           )}
         </MapView>
 

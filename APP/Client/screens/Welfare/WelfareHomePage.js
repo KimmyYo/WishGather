@@ -71,7 +71,7 @@ function WelfareHomePage() {
         <View style={{ width: width * 0.95, flexDirection: 'row', justifyContent: 'flex-start', alignSelf: 'center', marginBottom: 35 }}>
           <MaterialCommunityIcons name="home-heart" size={30} color="orange" style={{ marginRight: 8 }} />
           <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#4F4F4F' }}>
-            {'歡迎回來 ! '}{deliverData ? deliverData[0].WELFARE_NAME : null}
+            {'歡迎回來 ! '}
           </Text>
         </View>
 
