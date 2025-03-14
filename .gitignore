@@ -11,3 +11,11 @@ APP/Server/uploads/image.png
 APP/Server/index.js
 
 APP/Client/.env
+
+**/.vscode/
+
+
+node_modules/
+
+**/.expo/
+
